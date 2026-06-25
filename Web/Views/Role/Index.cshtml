@@ -1,0 +1,131 @@
+﻿@using Domain.Enums;
+@model Application.Common.PaginatedList<Application.Dtos.Role.RoleVm>
+
+@{
+    ViewData["Title"] = "Quản lý Nhóm quyền";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between mb-2">
+        <form method="get" class="d-flex gap-2">
+            <input type="text" name="RoleName" value="@Context.Request.Query["RoleName"]" class="form-control" placeholder="Tên role..." />
+            <select name="Status" class="form-select">
+                @{
+                    var currentStatus = Context.Request.Query["Status"].ToString();
+                }
+                <option value="@RoleStatus.Active" selected="@(currentStatus == "Active")">Hoạt động</option>
+                <option value="@RoleStatus.Inactive" selected="@(currentStatus == "Inactive")">Không hoạt động</option>
+            </select>
+            <button type="submit" class="btn btn-danger" style="flex-shrink: 0;"><i class="fa fa-search"></i>Tìm kiếm</button>
+        </form>
+        <button class="btn btn-danger" onclick="openCreateModal()">
+            <i class="fa fa-plus"></i> Tạo mới Role
+        </button>
+    </div>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <table class="table table-bordered table-hover mb-0">
+                <thead class="bg-danger text-white">
+                    <tr>
+                        <th class="text-center" width="5%">STT</th>
+                        <th class="text-center" width="15%">Tên vai trò</th>
+                        <th class="text-center" width="15%">Mô tả</th>
+                        <th class="text-center" width="50%">Danh sách chức năng</th>
+                        <th class="text-center" width="15%">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Data != null)
+                    {
+                        int stt = 1;
+                        foreach (var role in Model.Data)
+                        {
+                            <tr>
+                                <td>@(stt++)</td>
+                                <td>@role.RoleName</td>
+                                <td>@role.RoleDescription</td>
+                                <td>
+                                    <ul class="mb-0" style="padding-left: 1rem;">
+                                        @foreach (var category in role.FunctionCategories)
+                                        {
+                                            <li>
+                                                <strong>@category.CategoryDecription:</strong>
+                                                @string.Join(", ", category.Functions.Select(f => f.FunctionDescription))
+                                            </li>
+                                        }
+                                    </ul>
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-outline-info" onclick="openEditModal(@role.RoleId)">
+                                        <i class="fa fa-pencil"></i>
+                                    </button>
+                                    <form action="/Role/Delete" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa?');">
+                                        <input type="hidden" name="RoleId" value="@role.RoleId" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="roleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="modal-content-body">
+            @* Partial view nằm đây *@
+            <div class="text-center p-5">
+                <div class="spinner-border text-danger" role="status"></div>
+                <p>Đang tải dữ liệu...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openCreateModal() {
+        $('#roleModal').modal('show');
+        $.get('/Role/Create', function (htmlResult) {
+        $('#modal-content-body').html(htmlResult);
+        initCheckboxLogic();
+        });
+        }
+        function openEditModal(roleId) {
+        $('#roleModal').modal('show');
+        // Gọi AJAX lấy form Edit kèm theo ID
+        $.get('/Role/Edit/' + roleId, function (htmlResult) {
+        $('#modal-content-body').html(htmlResult);
+        initCheckboxLogic();
+        });
+        }
+
+        function initCheckboxLogic() {
+        // Check All Toàn cầu
+        $('#checkAllGlobal').on('change', function () {
+        $('.func-checkbox').prop('checked', $(this).is(':checked'));
+        $('.checkAllCategory').prop('checked', $(this).is(':checked'));
+        });
+        // Check All từng Nhóm (Category)
+        $('.checkAllCategory').on('change', function () {
+        let isChecked = $(this).is(':checked');
+        $(this).closest('.card').find('.func-checkbox').prop('checked', isChecked);
+
+        // Tự động bỏ chọn checkAllGlobal nếu có 1 nhóm bị bỏ chọn
+        if (!isChecked) $('#checkAllGlobal').prop('checked', false);
+        });
+        // Nếu người dùng tự tích tay vào từng quyền con, check xem bỏ hay tích thẻ All
+        $('.func-checkbox').on('change', function () {
+        let card = $(this).closest('.card');
+        let allCheckedInCard = card.find('.func-checkbox:not(:checked)').length === 0;
+        card.find('.checkAllCategory').prop('checked', allCheckedInCard);
+        });
+        }
+    </script>
+}

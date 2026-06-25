@@ -1,0 +1,65 @@
+﻿@model Application.Dtos.Role.UpdateRoleRequest
+
+<div class="modal-header">
+    <h5 class="modal-title">Chỉnh sửa Nhóm quyền</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<form method="post" action="/Role/Edit">
+    <div class="modal-body">
+        <input type="hidden" name="RoleId" value="@Model.RoleId" />
+
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <label class="fw-bold">RoleName <span class="text-danger">*</span></label>
+                <input type="text" name="Name" value="@Model.Name" class="form-control" required />
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <label class="fw-bold">Description</label>
+                <input type="text" name="Description" value="@Model.Description" class="form-control" />
+            </div>
+        </div>
+
+        <hr />
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="fw-bold text-danger mb-0">Danh sách quyền *</h6>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="checkAllGlobal">
+                <label class="form-check-label fw-bold" for="checkAllGlobal">Chọn tất cả</label>
+            </div>
+        </div>
+
+        @foreach (var category in ViewBag.AllFunctions)
+        {
+            <div class="card mb-3 shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">@category.CategoryDecription</span>
+                    <div class="form-check">
+                        <input class="form-check-input checkAllCategory" type="checkbox">
+                        <label class="form-check-label text-danger">All</label>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var func in category.Functions)
+                        {
+                            bool isChecked = Model.FunctionIds != null && Model.FunctionIds.Contains((int)func.FunctionId);
+
+                            <div class="col-md-3 mb-2">
+                                <div class="form-check">
+                                    <input class="form-check-input func-checkbox" type="checkbox" name="FunctionIds" value="@func.FunctionId" id="editFunc_@func.FunctionId" @(isChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="editFunc_@func.FunctionId">@func.FunctionDescription</label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-danger">Save Changes</button>
+    </div>
+</form>

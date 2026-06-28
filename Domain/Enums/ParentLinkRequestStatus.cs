@@ -1,7 +1,6 @@
-﻿namespace Domain.Enums;
+namespace Domain.Enums;
 
-public enum ParentLinkRequestStatus
-{
+public enum ParentLinkRequestStatus : byte{
     Pending = 1,
     Approved = 2,
     Rejected = 3,

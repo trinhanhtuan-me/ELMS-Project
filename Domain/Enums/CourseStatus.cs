@@ -1,7 +1,6 @@
-﻿namespace Domain.Enums;
+namespace Domain.Enums;
 
-public enum CourseStatus
-{
+public enum CourseStatus : byte{
     Draft = 1,
     Submitted = 2,
     Approved = 3,

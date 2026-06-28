@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Dtos.Identity
 {
-    public sealed record LoginRequest(string Identifier, string Password);
+    public sealed record LoginRequest(string Identifier, string Password, bool IsRemember);
 
     public class LoginRequestValidator : AbstractValidator<LoginRequest>
     {

@@ -1,7 +1,6 @@
-﻿namespace Domain.Enums;
+namespace Domain.Enums;
 
-public enum LessonContentType
-{
+public enum LessonContentType : byte{
     Video = 1,
     Reading = 2
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Domain.Entities;
 namespace Infrastructure.Data;
+
 public partial class ElmsDbContext : DbContext
 {
     public ElmsDbContext()
@@ -98,6 +99,7 @@ public partial class ElmsDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<Mail> Mails { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Assignment>(entity =>
@@ -524,7 +526,7 @@ public partial class ElmsDbContext : DbContext
 
         modelBuilder.Entity<Otp>(entity =>
         {
-            entity.HasKey(e => e.Email).HasName("PK__Otp__A9D10535055C2095");
+            entity.HasKey(e => new { e.Email, e.Type }).HasName("PK__Otp__A9D10535055C2095");
 
             entity.ToTable("Otp");
 
@@ -597,7 +599,7 @@ public partial class ElmsDbContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("name");
             entity.Property(e => e.Status)
-                
+
                 .HasColumnName("status");
 
             entity.HasMany(d => d.Functions).WithMany(p => p.Roles)
@@ -930,6 +932,25 @@ public partial class ElmsDbContext : DbContext
                         j.IndexerProperty<int>("RoleId").HasColumnName("role_id");
                     });
         });
+
+        modelBuilder.Entity<Mail>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.To)
+                .IsRequired()
+                .HasMaxLength(150);
+            entity.Property(e => e.Subject)
+                .IsRequired()
+                .HasMaxLength(255);
+
+            entity.Property(e => e.Body)
+                .IsRequired();
+
+            entity.Property(e => e.Status)
+                .IsRequired();
+        });
+
 
         // Data Seeding for 5 core roles
         modelBuilder.Entity<PRole>().HasData(

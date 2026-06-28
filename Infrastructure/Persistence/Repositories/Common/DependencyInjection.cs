@@ -17,7 +17,8 @@ namespace Infrastructure.Persistence.Repositories.Common
             services.AddKeyedScoped<IFunctionRepository, FunctionRepository>("original");
             services.AddScoped<IFunctionRepository, CacheFunctionRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
-
+            services.AddScoped<IMailRepository, MailRepository>();
+            services.AddScoped<IOtpRepository, OtpRepository>();
             return services;
         }
     }

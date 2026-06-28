@@ -1,7 +1,6 @@
-﻿namespace Domain.Enums;
+namespace Domain.Enums;
 
-public enum FlashcardSetStatus
-{
+public enum FlashcardSetStatus : byte{
     Private = 1,
     Public = 2,
     Inactive = 3

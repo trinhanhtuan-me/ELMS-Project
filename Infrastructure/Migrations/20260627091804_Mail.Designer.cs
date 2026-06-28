@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ElmsDbContext))]
-    partial class ElmsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260627091804_Mail")]
+    partial class Mail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,8 +50,8 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("PassingScorePct")
                         .HasColumnType("decimal(5, 2)");
 
-                    b.Property<byte>("SubmissionType")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("SubmissionType")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -88,8 +91,8 @@ namespace Infrastructure.Migrations
                     b.Property<decimal?>("Score")
                         .HasColumnType("decimal(6, 2)");
 
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("SubmittedAt")
                         .HasColumnType("datetime2");
@@ -201,8 +204,8 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("PublishAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("Thumbnail")
                         .HasMaxLength(255)
@@ -342,8 +345,8 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("ParentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uniqueidentifier");
@@ -447,8 +450,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("(sysdatetime())");
 
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uniqueidentifier");
@@ -535,8 +538,8 @@ namespace Infrastructure.Migrations
                     b.Property<string>("LastUpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uniqueidentifier");
@@ -608,8 +611,8 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte>("ContentType")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("ContentType")
+                        .HasColumnType("int");
 
                     b.Property<int?>("DurationSec")
                         .HasColumnType("int");
@@ -710,8 +713,8 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("SentAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("Subject")
                         .IsRequired()
@@ -837,8 +840,8 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte>("ItemType")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("ItemType")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("LastUpdatedAt")
                         .HasColumnType("datetime2");
@@ -929,11 +932,11 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("ParentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte>("PaymentMethod")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
 
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id")
                         .HasName("PK__Orders__3214EC07E3CDB0A4");
@@ -986,9 +989,6 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<byte>("Type")
-                        .HasColumnType("tinyint");
-
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -999,7 +999,7 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.HasKey("Email", "Type")
+                    b.HasKey("Email")
                         .HasName("PK__Otp__A9D10535055C2095");
 
                     b.ToTable("Otp", (string)null);
@@ -1218,8 +1218,8 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("ParentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uniqueidentifier");
@@ -1352,11 +1352,11 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte>("PaymentMethod")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
 
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("TxnRef")
                         .IsRequired()
@@ -1394,8 +1394,8 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("StartedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
@@ -1469,8 +1469,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("(sysdatetime())");
 
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uniqueidentifier");
@@ -2471,8 +2471,8 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<byte?>("Gender")
-                        .HasColumnType("tinyint");
+                    b.Property<int?>("Gender")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");

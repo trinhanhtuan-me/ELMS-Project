@@ -1,7 +1,6 @@
-﻿namespace Domain.Enums;
+namespace Domain.Enums;
 
-public enum QuizAttemptStatus
-{
+public enum QuizAttemptStatus : byte{
     Draft = 1,
     Submitted = 2
 }

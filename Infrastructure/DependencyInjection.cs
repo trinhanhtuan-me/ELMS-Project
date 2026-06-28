@@ -1,5 +1,6 @@
 using Infrastructure.Data;
 using Infrastructure.Persistence.Repositories.Common;
+using Infrastructure.Shared.Mails;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,7 @@ namespace Infrastructure
 
             services.AddRepositories(configuration);
             services.AddCacheService(configuration);
+            services.AddMailService(configuration);
             return services;
         }
 
@@ -23,7 +25,7 @@ namespace Infrastructure
             var redisConnection = configuration.GetConnectionString("Redis");
             services.AddStackExchangeRedisCache(option =>
             {
-                option.Configuration = redisConnection;
+                option.Configuration =  redisConnection;
                 option.InstanceName = "ELMS_";
             });
 

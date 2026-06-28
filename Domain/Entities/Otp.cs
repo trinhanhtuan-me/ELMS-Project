@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace Domain.Entities;
@@ -10,6 +11,8 @@ public partial class Otp
     public string Code { get; set; } = null!;
 
     public DateTime ExpiryDate { get; set; }
+
+    public OtpType Type { get; set; }
 
     public bool IsDeleted { get; set; }
 }

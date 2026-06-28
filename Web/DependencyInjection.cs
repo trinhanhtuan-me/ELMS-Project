@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Web.CustomAuthorization;
 
@@ -16,12 +17,12 @@ namespace WebMVC
                     policy.AddRequirements(new EndPointAccessRequirement());
                 });
             });
-
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = "/Auth/Login";
-                options.AccessDeniedPath = "/Error/403";
-            });
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Identity/Login";
+                    options.AccessDeniedPath = "/Error/403";
+                });
 
             return services;
         }

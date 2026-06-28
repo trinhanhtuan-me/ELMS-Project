@@ -1,7 +1,6 @@
-﻿namespace Domain.Enums;
+namespace Domain.Enums;
 
-public enum OrderStatus
-{
+public enum OrderStatus : byte{
     Pending = 1,
     Paid = 2,
     Cancelled = 3

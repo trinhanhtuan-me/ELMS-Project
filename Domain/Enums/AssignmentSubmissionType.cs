@@ -1,7 +1,6 @@
-﻿namespace Domain.Enums;
+namespace Domain.Enums;
 
-public enum AssignmentSubmissionType
-{
+public enum AssignmentSubmissionType : byte{
     Text = 1,
     File = 2
 }

@@ -961,6 +961,45 @@ public partial class ElmsDbContext : DbContext
             new PRole { Id = 5, Name = "Manager", Status = Domain.Enums.RoleStatus.Active, IsDeleted = false, Description = "Manager Role" }
         );
 
+        // Data Seeding for Users
+        var adminId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+        var studentId = Guid.Parse("22222222-2222-2222-2222-222222222222");
+        var parentId = Guid.Parse("33333333-3333-3333-3333-333333333333");
+        var teacherId = Guid.Parse("44444444-4444-4444-4444-444444444444");
+        var managerId = Guid.Parse("55555555-5555-5555-5555-555555555555");
+        var defaultPasswordHash = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy"; // 123456aA@
+
+        modelBuilder.Entity<User>().HasData(
+            new User { Id = adminId, Username = "admin", Email = "admin@elms.com", FullName = "System Admin", Password = defaultPasswordHash, IsActive = true, IsDeleted = false },
+            new User { Id = studentId, Username = "student", Email = "student@elms.com", FullName = "Sample Student", Password = defaultPasswordHash, IsActive = true, IsDeleted = false },
+            new User { Id = parentId, Username = "parent", Email = "parent@elms.com", FullName = "Sample Parent", Password = defaultPasswordHash, IsActive = true, IsDeleted = false },
+            new User { Id = teacherId, Username = "teacher", Email = "teacher@elms.com", FullName = "Sample Teacher", Password = defaultPasswordHash, IsActive = true, IsDeleted = false },
+            new User { Id = managerId, Username = "manager", Email = "manager@elms.com", FullName = "Sample Manager", Password = defaultPasswordHash, IsActive = true, IsDeleted = false }
+        );
+
+        // Data Seeding for Many-to-Many PUserRole Join Table
+        modelBuilder.Entity("PUserRole").HasData(
+            new { UserId = adminId, RoleId = 1 },
+            new { UserId = studentId, RoleId = 2 },
+            new { UserId = parentId, RoleId = 3 },
+            new { UserId = teacherId, RoleId = 4 },
+            new { UserId = managerId, RoleId = 5 }
+        );
+
+        // Data Seeding for User Profiles
+        modelBuilder.Entity<StudentProfile>().HasData(
+            new StudentProfile { Id = studentId, Institution = "FPT University", GradeLevel = "University", Address = "Hoa Lac" }
+        );
+        modelBuilder.Entity<ParentProfile>().HasData(
+            new ParentProfile { Id = parentId, Occupation = "Engineer", Address = "Hanoi" }
+        );
+        modelBuilder.Entity<InstructorProfile>().HasData(
+            new InstructorProfile { Id = teacherId, Bio = "Experienced Teacher", Expertise = "Software Engineering", Qualifications = "PhD" }
+        );
+        modelBuilder.Entity<ManagerProfile>().HasData(
+            new ManagerProfile { Id = managerId, Position = "Academic Head", Specialization = "Operations" }
+        );
+
         // Data Seeding for SystemKey
         modelBuilder.Entity<SystemKey>().HasData(
             new SystemKey { Id = 1, ParentId = null, CodeKey = "USER_GENDER", CodeValue = 0, Description = "User Gender", SortOrder = 0, IsDeleted = false },

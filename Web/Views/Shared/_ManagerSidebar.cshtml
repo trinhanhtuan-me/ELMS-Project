@@ -1,0 +1,79 @@
+﻿@{
+    // Lấy đường dẫn hiện tại để check xem menu nào đang được chọn (đổi màu active)
+    var currentPath = Context.Request.Path.Value?.ToLower() ?? "";
+
+    // Xử lý logic avatar và tên người dùng (lấy từ Claims hoặc gán mặc định)
+    var profilePicture = User.FindFirst("Avatar")?.Value;
+    if (string.IsNullOrEmpty(profilePicture))
+    {
+        profilePicture = Url.Content("~/Images/views-manager/Icon/default.png");
+    }
+    var fullName = User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "Manager";
+}
+
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <a href="@Url.Action("Dashboard", "Manager")" class="logo">
+            <img src="~/Images/views-manager/Icon/ELMS.png" alt="Logo">
+        </a>
+    </div>
+
+    <nav class="sidebar-nav">
+        <!-- Thay thế hàm endsWith/contains của Java bằng cách so sánh string của C# -->
+        <a href="@Url.Action("Dashboard", "Manager")"
+           class="@(currentPath.EndsWith("/manager/dashboard") ? "active" : "")">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+
+        <a href="@Url.Action("Index", "CourseManager")"
+           class="@(currentPath.Contains("/coursemanager") ? "active" : "")">
+            <i class="fas fa-book"></i> Quản lý khóa học
+        </a>
+
+        <a href="@Url.Action("Index", "Category")"
+           class="@(currentPath.Contains("/cate-topic") ? "active" : "")">
+            <i class="fa fa-layer-group"></i> Quản lý chủ đề và danh mục
+        </a>
+
+        <a href="@Url.Action("Index", "RevenueReport")"
+           class="@(currentPath.Contains("/revenue-report") ? "active" : "")">
+            <i class="fas fa-chart-bar"></i> Báo cáo
+        </a>
+
+        <a href="@Url.Action("Publish", "Course")"
+           class="@(currentPath.Contains("/coursepublish") ? "active" : "")">
+            <i class="fas fa-calendar-days"></i> Lịch đăng khóa học
+        </a>
+
+        <a href="@Url.Action("Index", "FlashcardManager")"
+           class="@(currentPath.Contains("/manager-flashcard") ? "active" : "")">
+            <i class="fa fa-clone"></i> Quản lí flashcard
+        </a>
+
+        <a href="@Url.Action("Index", "QuestionManager")"
+           class="@(currentPath.Contains("/question-manager") ? "active" : "")">
+            <i class="fa fa-question"></i> Quản lí câu hỏi
+        </a>
+    </nav>
+
+    <div class="sidebar-user">
+        <!-- In Avatar và Tên ra -->
+        <img src="@profilePicture" alt="Avatar" class="user-avatar">
+        <span>@fullName</span>
+
+        <div class="sidebar-dropdown">
+            <a href="@Url.Action("Profile", "Manager")">
+                <i class="fas fa-user"></i> Hồ sơ cá nhân
+            </a>
+            <a href="@Url.Action("ChangePassword", "Manager")">
+                <i class="fas fa-key"></i> Đổi mật khẩu
+            </a>
+            <a href="@Url.Action("ReportList", "Manager")">
+                <i class="fas fa-user"></i> Báo lỗi hệ thống
+            </a>
+            <a href="@Url.Action("Logout", "Auth")">
+                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+            </a>
+        </div>
+    </div>
+</aside>

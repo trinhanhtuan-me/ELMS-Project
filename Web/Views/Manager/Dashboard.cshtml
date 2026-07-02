@@ -1,0 +1,293 @@
+﻿@model Application.Dtos.Manager.DashboardVm
+@{
+    ViewData["Title"] = "Manager Dashboard — EnglishLMS";
+    
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/manager-dashboard.css" asp-append-version="true">
+}
+
+
+<main class="main-content">
+    <div class="topbar">
+        <h2>Manager Dashboard</h2>
+    </div>
+
+    <section class="kpi">
+        <div class="card">
+            <div class="icon blue"><i class="fa fa-book"></i></div>
+            <div><div class="meta">Total Courses</div><div class="value">@Model.TotalCourses</div></div>
+        </div>
+        <div class="card">
+            <div class="icon green"><i class="fa fa-coins"></i></div>
+            <div>
+                <div class="meta">Revenue (30d)</div>
+                <div class="value">@Model.TotalRevenue30d.ToString("N0") ₫</div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="icon orange"><i class="fa fa-user-tie"></i></div>
+            <div><div class="meta">Active Instructors</div><div class="value">@Model.TotalInstructors</div></div>
+        </div>
+        <a href="@Url.Action("Index", "CourseManager", new { status = "submitted", sort = "newest" })" style="text-decoration:none; color:inherit;">
+            <div class="card" style="cursor:pointer;">
+                <div class="icon red"><i class="fa fa-hourglass-half"></i></div>
+                <div>
+                    <div class="meta">Pending Approvals</div>
+                    <div class="value">@Model.PendingCourses</div>
+                </div>
+            </div>
+        </a>
+    </section>
+
+    <section class="dashboard-grid">
+        <div>
+            <!-- Biểu đồ doanh thu -->
+            <div class="card" style="margin-bottom:16px">
+                <div class="flex-between">
+                    <h3>Revenue by Month (@DateTime.Now.Year)</h3>
+                    <button class="btn btn-ghost btn-xs" onclick="window.location.href = '@Url.Action("Index", "RevenueReport")'">
+                        <i class="fa fa-eye"></i> Xem chi tiết
+                    </button>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="revChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Bảng Khoá học Approved / Rejected -->
+            <div class="card" style="margin-bottom:16px">
+                <div class="flex-between">
+                    <h3>Approved / Rejected Courses</h3>
+                    <button class="btn btn-ghost btn-xs" onclick="window.location.href = '@Url.Action("Index", "CourseManager")'">
+                        <i class="fa fa-eye"></i> Xem chi tiết
+                    </button>
+                </div>
+
+                <div class="table-scroll">
+                    <table class="table">
+                        <thead><tr><th>Course</th><th>Instructor</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            @foreach (var c in Model.ApprovedRejected)
+                            {
+                                <tr>
+                                    <td>@c.Title</td>
+                                    <td>@c.InstructorFullName</td>
+                                    <td>@(c.CreatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</td>
+                                    <td><span class="status @c.Status.ToString().ToLower()">@c.Status</span></td>
+                                    <td>
+                                        <div class="actions">
+                                            <button class="btn-icon view" title="Xem chi tiết"
+                                                    onclick="window.location.href = '@Url.Action("Detail", "Course", new { id = c.CourseId })'">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+
+                                            @if (c.Status == Domain.Enums.CourseStatus.Submitted)
+                                            {
+                                                <form method="post" action="@Url.Action("Approve", "Manager")" style="display:inline;">
+                                                    <input type="hidden" name="courseId" value="@c.CourseId">
+                                                    <button type="submit" class="btn-icon green" title="Duyệt"><i class="fa fa-check"></i></button>
+                                                </form>
+                                                <button type="button" class="btn-icon red" title="Từ chối" onclick="openRejectModal('@c.CourseId')">
+                                                    <i class="fa fa-xmark"></i>
+                                                </button>
+                                            }
+                                            else if (c.Status == Domain.Enums.CourseStatus.Approved)
+                                            {
+                                                <button type="button" class="btn-icon red" title="Từ chối lại" onclick="openRejectModal('@c.CourseId')">
+                                                    <i class="fa fa-xmark"></i>
+                                                </button>
+                                            }
+                                            
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Bảng khoá học Publish / Unpublish -->
+            <div class="card">
+                <div class="flex-between">
+                    <h3>Published / Unpublished Courses</h3>
+                    <button class="btn btn-ghost btn-xs" onclick="window.location.href = '@Url.Action("Publish", "Course")'">
+                        <i class="fa fa-eye"></i> Xem chi tiết
+                    </button>
+                </div>
+                <div class="table-scroll">
+                    <table class="table">
+                        <thead><tr><th>Course</th><th>Instructor</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            @foreach (var c in Model.PublishedUnpublished)
+                            {
+                                <tr>
+                                    <td>@c.Title</td>
+                                    <td>@c.InstructorFullName</td>
+                                    <td>@(c.PublishAt?.ToString("dd/MM/yyyy") ?? "—")</td>
+                                    <td><span class="status @c.Status.ToString().ToLower()">@c.Status</span></td>
+                                    <td>
+                                        <div class="actions">
+                                            <button class="btn-icon view" title="Xem chi tiết"
+                                                    onclick="window.location.href = '@Url.Action("Detail", "Course", new { id = c.CourseId })'">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+
+                                            @if (c.Status == Domain.Enums.CourseStatus.Publish)
+                                            {
+                                                <form method="post" action="@Url.Action("Unpublish", "Manager")" style="display:inline;">
+                                                    <input type="hidden" name="courseId" value="@c.CourseId">
+                                                    <button type="submit" class="btn-icon download" title="Gỡ đăng"><i class="fas fa-download"></i></button>
+                                                </form>
+                                            }
+                                            else if (c.Status == Domain.Enums.CourseStatus.Unpublish)
+                                            {
+                                                <button type="button" class="btn-icon upload" title="Đặt lịch đăng" onclick="openScheduleModal('@c.CourseId')">
+                                                    <i class="fas fa-upload"></i>
+                                                </button>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <!-- Biểu đồ trạng thái -->
+            <div class="card" style="margin-bottom:16px">
+                <h3>Course Status Overview</h3>
+                <div class="chart-wrap"><canvas id="statusChart"></canvas></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modals (Chưa css hiển thị nên tôi để display:none mặc định) -->
+    <div id="rejectModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>Nhập lý do từ chối</h3>
+            <form method="post" action="@Url.Action("Reject", "Manager")">
+                <input type="hidden" name="courseId" id="rejectCourseId">
+                <textarea name="rejectReason" required placeholder="Nhập lý do..."></textarea>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-danger">Gửi</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeRejectModal()">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="scheduleModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>Chọn ngày xuất bản</h3>
+            <form method="post" action="@Url.Action("Publish", "Manager")">
+                <input type="hidden" name="courseId" id="scheduleCourseId">
+                <div class="form-group">
+                    <label for="publishDate">Ngày đăng:</label>
+                    <input type="date" name="publishDate" id="publishDate" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">Lưu lịch</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeScheduleModal()">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <script>
+        // Dữ liệu biểu đồ doanh thu (Bắn thẳng C# sang JS)
+        const reports = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyRevenue.Select(r => new
+        {
+            label = $"T{r.Month}/{r.Year}",
+            totalRevenue = r.TotalRevenue
+        })));
+
+        const labels = reports.map(r => r.label);
+        const dataRevenue = reports.map(r => r.totalRevenue);
+
+        const baseOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: {
+        datalabels: { anchor: 'end', align: 'top', color: '#333' },
+        legend: { display: false },
+        title: { display: true, text: 'Doanh thu theo tháng (₫)', font: { size: 18 } }
+        },
+        scales: {
+        x: { grid: { display: false }, ticks: { maxRotation: 0, minRotation: 0, autoSkip: false, font: { size: 12 } } },
+        y: { beginAtZero: true, ticks: { callback: v => v.toLocaleString('vi-VN') + ' ₫' }, grid: { color: '#e5e7eb' } }
+        }
+        };
+
+        const ctxRevenue = document.getElementById('revChart').getContext('2d');
+        new Chart(ctxRevenue, {
+        type: 'bar',
+        data: {
+        labels,
+        datasets: [{
+        label: 'Doanh thu (₫)',
+        data: dataRevenue,
+        backgroundColor: 'rgba(79,70,229,0.6)',
+        borderRadius: 6
+        }]
+        },
+        options: {
+        ...baseOptions,
+        scales: {
+        ...baseOptions.scales,
+        y: { ...baseOptions.scales.y, suggestedMax: Math.max(...dataRevenue, 0) * 1.2 }
+        }
+        }
+        });
+
+        // Dữ liệu biểu đồ trạng thái (Bắn C# Dictionary sang JSON object JS)
+        const statusCounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CourseStatusCounts));
+        const statusLabels = Object.keys(statusCounts);
+        const statusValues = Object.values(statusCounts);
+
+        new Chart(document.getElementById("statusChart").getContext("2d"), {
+        type: "doughnut",
+        data: {
+        labels: statusLabels,
+        datasets: [{
+        data: statusValues,
+        backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#6366f1', '#9ca3af', '#ef4444']
+        }]
+        },
+        options: {
+        maintainAspectRatio: false,
+        plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 12 } } },
+        title: { display: true, text: 'Tổng quan trạng thái khóa học', font: { size: 16 } }
+        }
+        }
+        });
+
+        // Xử lý Modal js cũ
+        function openRejectModal(id) {
+        document.getElementById('rejectCourseId').value = id;
+        document.getElementById('rejectModal').style.display = 'flex';
+        }
+        function closeRejectModal() {
+        document.getElementById('rejectModal').style.display = 'none';
+        }
+        function openScheduleModal(id) {
+        document.getElementById('scheduleCourseId').value = id;
+        document.getElementById('scheduleModal').style.display = 'flex';
+        }
+        function closeScheduleModal() {
+        document.getElementById('scheduleModal').style.display = 'none';
+        }
+    </script>
+}

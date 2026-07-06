@@ -1,10 +1,12 @@
 ﻿using Application.Dtos.Manager;
 using Application.Interfaces;
+using Domain.Entities;
 using Domain.Enums;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -43,15 +45,15 @@ namespace Infrastructure.Persistence.Repositories
                 .Where(p => p.CapturedAt != null
                          && p.CapturedAt.Value.Year == year
                          && p.Status == PaymentStatus.Captured)
-                .Select(p => new { p.CapturedAt, p.AmountVnd }) 
+                .Select(p => new { p.CapturedAt, p.AmountVnd })
                 .ToListAsync();
-           
+
             var revenueByMonth = payments
                 .GroupBy(p => p.CapturedAt!.Value.Month)
                 .Select(g => new MonthlyRevenueVm(
                     Month: g.Key,
                     Year: year,
-                    TotalRevenue: g.Sum(x => x.AmountVnd) 
+                    TotalRevenue: g.Sum(x => x.AmountVnd)
                 ))
                 .ToList();
 
@@ -68,7 +70,7 @@ namespace Infrastructure.Persistence.Repositories
         {
             var statusCounts = await _context.Courses
                 .Where(c => !c.IsDeleted && c.Status != CourseStatus.Draft)
-                .GroupBy(c => c.Status )
+                .GroupBy(c => c.Status)
                 .Select(g => new { Status = g.Key.ToString(), Count = g.Count() })
                 .ToDictionaryAsync(k => k.Status, v => v.Count);
 
@@ -78,7 +80,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<List<DashboardCourseRowVm>> GetApprovedRejectedCoursesAsync()
         {
             return await _context.Courses
-                .Where(c => !c.IsDeleted && (c.Status == CourseStatus.Approved || c.Status == CourseStatus.Submitted))
+                .Where(c => !c.IsDeleted && ( c.Status == CourseStatus.Submitted))
                 .OrderByDescending(c => c.CreatedAt)
                 .Select(c => new DashboardCourseRowVm(
                     c.Id,
@@ -94,7 +96,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<List<DashboardCourseRowVm>> GetPublishedUnpublishedCoursesAsync()
         {
             return await _context.Courses
-                .Where(c => !c.IsDeleted && (c.Status == CourseStatus.Publish || c.Status == CourseStatus.Unpublish))
+                .Where(c => !c.IsDeleted && (c.Status == CourseStatus.Publish || c.Status == CourseStatus.Unpublish || c.Status == CourseStatus.Approved))
                 .OrderByDescending(c => c.PublishAt)
                 .Select(c => new DashboardCourseRowVm(
                     c.Id,
@@ -106,5 +108,94 @@ namespace Infrastructure.Persistence.Repositories
                 ))
                 .ToListAsync();
         }
+
+        public async Task<bool> ApproveCourseAsync(Guid courseId)
+        {
+            var course = await _context.Courses.FindAsync(courseId);
+            if (course == null || course.IsDeleted)
+            {
+                return false;
+            }
+
+            course.Status = CourseStatus.Approved;
+            course.UpdatedAt = DateTime.UtcNow;
+
+            return true;
+
+        }
+
+        public async Task<bool> RejectCourseAsync(Guid courseId, Guid managerId, string rejectReason)
+        {
+            var course = await _context.Courses.FindAsync(courseId);
+            if (course == null || course.IsDeleted)
+            {
+                return false;
+            }
+
+            course.Status = CourseStatus.Rejected;
+            course.UpdatedAt = DateTime.UtcNow;
+
+            var courseManager = await _context.CourseManagers.FirstOrDefaultAsync(c => c.CourseId == courseId && c.UserId == managerId);
+
+            if (courseManager == null)
+            {
+                courseManager = new CourseManager
+                {
+                    CourseId = course.Id,
+                    UserId = managerId,
+                    RejectReason = rejectReason
+                };
+                _context.CourseManagers.Add(courseManager);
+            }
+            else
+            {
+                courseManager.RejectReason = rejectReason;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> UnpublishCourseAsync(Guid courseId)
+        {
+            var course = await _context.Courses.FindAsync(courseId);
+            if (course == null || course.IsDeleted) return false;
+
+            course.Status = CourseStatus.Unpublish;
+            course.PublishAt = null; 
+            course.UpdatedAt = DateTime.UtcNow;
+
+            return true; 
+        }
+        public async Task<bool> PublishCourseAsync(Guid courseId, DateTime publishDate, decimal price)
+        {
+            var course = await _context.Courses.FindAsync(courseId);
+            if (course == null || course.IsDeleted) return false;
+            
+            course.Status = CourseStatus.Publish;
+            course.PublishAt = publishDate;
+            course.UpdatedAt = DateTime.UtcNow;
+        
+            var existingPrice = await _context.CoursePrices
+                .FirstOrDefaultAsync(p => p.CourseId == courseId && p.IsActive);
+            
+            if (existingPrice != null)
+            {
+                existingPrice.IsActive = false; 
+                existingPrice.EndDate = DateTime.UtcNow;
+            }
+
+            var newPrice = new Domain.Entities.CoursePrice
+            {
+                CourseId = courseId,
+                PriceAmount = price,
+                EffectiveDate = publishDate,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.CoursePrices.Add(newPrice);
+            return true; 
+        }
+
     }
 }

@@ -1,4 +1,6 @@
-﻿using Application.Dtos.Manager;
+﻿using Application.Common.Interfaces;
+using Application.Dtos.Manager;
+using Application.Exceptions;
 using Application.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -11,8 +13,12 @@ namespace Application.UseCases
     public interface IManagerDashboardService
     {
         Task<DashboardVm> GetDashboardAsync();
+        Task<bool> ApproveCourseAsync(Guid courseId);
+        Task<bool> RejectCourseAsync(Guid courseId, Guid managerId, string rejectReason);
+        Task<bool> UnpublishCourseAsync(Guid courseId);
+        Task<bool> PublishCourseAsync(Guid courseId, DateTime publishDate, decimal price);
     }
-    public class ManagerDashboardService(IManagerDashboardRepository _repo) : IManagerDashboardService
+    public class ManagerDashboardService(IManagerDashboardRepository _repo , IUnitOfWork _unitOfWork) : IManagerDashboardService
     {
         public async Task<DashboardVm> GetDashboardAsync()
         {
@@ -36,5 +42,49 @@ namespace Application.UseCases
                 PublishedUnpublished: publishedUnpub
             );
         }
+
+        public async Task<bool> ApproveCourseAsync(Guid courseId)
+        {
+            var success = await _repo.ApproveCourseAsync(courseId);
+            if (success)
+            { 
+                await _unitOfWork.SaveChangeAsync();
+            }
+            return success;
+        }
+        public async Task<bool> RejectCourseAsync(Guid courseId, Guid managerId, string rejectReason)
+        {
+            var success = await _repo.RejectCourseAsync(courseId, managerId, rejectReason);
+            if (success)
+            {
+                await _unitOfWork.SaveChangeAsync();
+            }
+            return success;
+        }
+
+        public async Task<bool> UnpublishCourseAsync(Guid courseId)
+        {
+            var success = await _repo.UnpublishCourseAsync(courseId);
+
+            if (!success)
+                throw new BusinessRuleException("Course not exitsted or was deleted in system!");
+
+            await _unitOfWork.SaveChangeAsync();
+            return true;
+        }
+
+        public async Task<bool> PublishCourseAsync(Guid courseId, DateTime publishDate, decimal price)
+        {
+            var success = await _repo.PublishCourseAsync(courseId, publishDate, price);
+
+            if (!success)
+                throw new BusinessRuleException("Course not exitsted or was deleted in system!");
+
+            await _unitOfWork.SaveChangeAsync();
+            return true;
+        }
+
+
+
     }
 }

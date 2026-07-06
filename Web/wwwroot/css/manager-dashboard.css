@@ -565,3 +565,139 @@ th {
     display: block;
     margin: 0 auto; 
 }
+
+/* ========================================= */
+/* TOAST NOTIFICATION STYLES (ĐỘC LẬP)       */
+/* ========================================= */
+/* 1. Các class cơ bản thay thế Bootstrap */
+.toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1055;
+    pointer-events: none;
+}
+
+.toast {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: auto;
+}
+
+    .toast.show {
+        display: block;
+        opacity: 1;
+    }
+
+.d-flex {
+    display: flex;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.btn-close {
+    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+    border: 0;
+    width: 1em;
+    height: 1em;
+    cursor: pointer;
+    margin-top: 8px;
+}
+/* 2. Phần Style "Bong bóng" (Kế thừa từ site.css của Leader) */
+.custom-toast {
+    border-radius: 24px;
+    padding: 12px 16px 12px 12px;
+    border: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    position: relative;
+    overflow: hidden;
+    width: 380px;
+    font-family: sans-serif;
+}
+
+.custom-toast-success {
+    background-color: #d7eedd;
+    color: #1a4d2e;
+}
+
+.custom-toast-error {
+    background-color: #fce2e4;
+    color: #6a1a21;
+}
+
+.custom-toast::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    opacity: 0.5;
+    z-index: 0;
+}
+
+.custom-toast-success::before {
+    background-color: #b5e0c6;
+}
+
+.custom-toast-error::before {
+    background-color: #f5b0b7;
+}
+
+.custom-toast-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    z-index: 1;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.custom-toast-success .custom-toast-icon {
+    color: #4fb973;
+}
+
+.custom-toast-error .custom-toast-icon {
+    color: #d94250;
+    font-weight: bold;
+}
+
+.custom-toast-content {
+    margin-left: 16px;
+    z-index: 1;
+    position: relative;
+    flex-grow: 1;
+}
+
+.custom-toast-title {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+
+.custom-toast-message {
+    font-size: 14px;
+    opacity: 0.85;
+    line-height: 1.4;
+}
+
+.custom-toast .btn-close {
+    z-index: 1;
+    position: relative;
+    align-self: flex-start;
+    opacity: 0.4;
+}

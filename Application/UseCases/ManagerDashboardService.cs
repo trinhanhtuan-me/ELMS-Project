@@ -17,6 +17,8 @@ namespace Application.UseCases
         Task<bool> RejectCourseAsync(Guid courseId, Guid managerId, string rejectReason);
         Task<bool> UnpublishCourseAsync(Guid courseId);
         Task<bool> PublishCourseAsync(Guid courseId, DateTime publishDate, decimal price);
+        Task<CourseDetailVm?> GetCourseDetailAsync(Guid courseId);
+
     }
     public class ManagerDashboardService(IManagerDashboardRepository _repo , IUnitOfWork _unitOfWork) : IManagerDashboardService
     {
@@ -82,6 +84,16 @@ namespace Application.UseCases
 
             await _unitOfWork.SaveChangeAsync();
             return true;
+        }
+
+        public async Task<CourseDetailVm?> GetCourseDetailAsync(Guid courseId)
+        {
+            var detail = await _repo.GetCourseDetailAsync(courseId);
+
+            if (detail == null)
+                throw new BusinessRuleException("Course not exitsted or was deleted in system!");
+
+            return detail;
         }
 
 

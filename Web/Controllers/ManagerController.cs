@@ -97,6 +97,21 @@ namespace Web.Controllers
             return RedirectToAction(nameof(Dashboard));
         }
 
+        [HttpGet("course-detail/{id}")]
+        public async Task<IActionResult> CourseDetail(Guid id)
+        {
+            try
+            {
+                var courseDetail = await _dashboardService.GetCourseDetailAsync(id);
+                return View(courseDetail);
+            }
+            catch (BusinessRuleException ex)
+            {
+                TempData["ErrorToast"] = ex.Message;
+                return RedirectToAction(nameof(Dashboard));
+            }
+        }
+
 
 
 

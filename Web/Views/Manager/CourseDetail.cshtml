@@ -1,0 +1,307 @@
+﻿@model Application.Dtos.Manager.CourseDetailVm
+@{
+    ViewData["Title"] = "Chi tiết khóa học - Manager Dashboard";
+}
+
+@section Styles {
+    <!-- Phải load file này để giữ lại bộ khung Sidebar và Topbar -->
+    <link rel="stylesheet" href="~/css/manager-dashboard.css" asp-append-version="true" />
+
+    <!-- File CSS riêng của trang detail -->
+    <link rel="stylesheet" href="~/css/manager-detail.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+}
+<main class="main-content">
+
+    <div class="container course-container">
+        <div style="display: flex; gap: 1rem; margin-bottom: 3rem;">
+            <a href="@Url.Action("Dashboard", "Manager")" class="back-btn">
+                <i class="fa fa-arrow-left"></i> Quay lại Dashboard
+            </a>
+        </div>
+
+        <div class="course-detail-header">
+            <div class="course-info">
+                <h1 class="course-title">@Model.Title</h1>
+                <p class="course-desc">
+                    @(string.IsNullOrEmpty(Model.Description) ? "Chưa có mô tả." : Model.Description)
+                </p>
+                <p class="muted">
+                    <i class="fa fa-calendar"></i> Ngày tạo:
+                    @(Model.CreatedAt?.ToString("dd/MM/yyyy") ?? "Không xác định")
+                </p>
+            </div>
+
+            <div class="course-meta">
+                <p>
+                    <strong>Trạng thái:</strong>
+                    <span class="status-badge @Model.Status">@Model.Status</span>
+                </p>
+                <p>
+                    <strong>Giá:</strong>
+                    @(Model.Price != null ? Model.Price.Value.ToString("N0") + " ₫" : "Chưa đặt")
+                </p>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            @if (Model.Status == "submitted")
+            {
+                <form method="post" action="@Url.Action("Approve", "Manager")" style="display:inline-block;">
+                    <input type="hidden" name="courseId" value="@Model.CourseId" />
+                    <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Duyệt</button>
+                </form>
+                <button type="button" class="btn btn-danger" onclick="openRejectModal('@Model.CourseId')">
+                    <i class="fa fa-times"></i> Từ chối
+                </button>
+            }
+            else if (Model.Status == "approved")
+            {
+                <button type="button" class="btn btn-danger" onclick="openRejectModal('@Model.CourseId')">
+                    <i class="fa fa-times"></i> Từ chối lại
+                </button>
+                <button type="button" class="btn btn-primary" onclick="openScheduleModal('@Model.CourseId')">
+                    <i class="fa fa-upload"></i> Xuất bản
+                </button>
+            }
+            else if (Model.Status == "publish")
+            {
+                <form method="post" action="@Url.Action("Unpublish", "Manager")" style="display:inline-block;">
+                    <input type="hidden" name="courseId" value="@Model.CourseId" />
+                    <button type="submit" class="btn btn-warning"><i class="fa fa-download"></i> Gỡ đăng</button>
+                </form>
+            }
+            else if (Model.Status == "unpublish")
+            {
+                <button type="button" class="btn btn-primary" onclick="openScheduleModal('@Model.CourseId')">
+                    <i class="fa fa-upload"></i> Đăng lại
+                </button>
+            }
+        </div>
+
+        <div class="course-overview">
+            <section class="course-stats">
+                <h3>Tổng quan khóa học</h3>
+                <ul>
+                    <li>Modules: @Model.Stats.ModuleCount</li>
+                    <li>Bài học: @Model.Stats.LessonCount</li>
+                    <li>Quiz: @Model.Stats.QuizCount</li>
+                    <li>Assignment: @Model.Stats.AssignmentCount</li>
+                    <li>Discussion: @Model.Stats.DiscussionCount</li>
+                    <li><strong>Tổng nội dung:</strong> @(Model.Stats.LessonCount + Model.Stats.QuizCount + Model.Stats.AssignmentCount + Model.Stats.DiscussionCount)</li>
+                </ul>
+            </section>
+
+            <section class="course-instructor">
+                <h3>Giảng viên phụ trách</h3>
+                <div class="instructor-card">
+                    <p><strong>Họ tên:</strong> @Model.Instructor.FullName</p>
+                    <p><strong>Email:</strong> @Model.Instructor.Email</p>
+                    <p><strong>Chuyên môn:</strong> @(string.IsNullOrEmpty(Model.Instructor.Expertise) ? "Chưa cập nhật" : Model.Instructor.Expertise)</p>
+                    <p><strong>Giới thiệu:</strong> @(string.IsNullOrEmpty(Model.Instructor.Bio) ? "Không có mô tả" : Model.Instructor.Bio)</p>
+                </div>
+            </section>
+        </div>
+
+        <section class="course-outline">
+            <h3>Chương trình học</h3>
+            @if (!Model.Modules.Any())
+            {
+                <div class="empty">Khóa học này chưa có module nào.</div>
+            }
+            else
+            {
+                @foreach (var m in Model.Modules)
+                {
+                    <div class="module">
+                        <div class="module-header" onclick="toggleModule(this)">
+                            <span>Chương @m.OrderIndex: @m.Title</span>
+                            <i class="fa fa-chevron-down"></i>
+                        </div>
+
+                        <div class="module-lessons" style="display:none;">
+                            @foreach (var i in m.Items)
+                            {
+                                <div class="lesson-block">
+                                    <div class="item-header" onclick="toggleItem(this)">
+                                        <h4 class="item-title">
+                                            @if (i.ItemType == "lesson")
+                                            {
+                                                <i class="fa fa-play-circle"></i>
+                                            }
+                                            else if (i.ItemType == "quiz")
+                                            {
+
+                                                <i class="fa fa-question-circle"></i>
+                                            }
+                                            else if (i.ItemType == "assignment")
+                                            {
+
+                                                <i class="fa fa-tasks"></i>
+                                            }
+                                            else if (i.ItemType == "discussion")
+                                            {
+
+                                                <i class="fa fa-comments"></i>
+                                            }
+                                            @i.Title
+                                        </h4>
+                                        <i class="fa fa-chevron-down toggle-icon"></i>
+                                    </div>
+
+                                    <div class="item-detail" style="display:none;">
+                                        @if (i.ItemType == "lesson")
+                                        {
+                                            <p><strong>Loại nội dung:</strong> @i.ContentType</p>
+                                            @if (!string.IsNullOrEmpty(i.VideoUrl))
+                                            {
+                                                var embedUrl = i.VideoUrl.Replace("watch?v=", "embed/");
+                                                <iframe width="560" height="315" src="@embedUrl" frameborder="0" allowfullscreen></iframe>
+                                                <p><i class="fa fa-clock"></i> Thời lượng: @i.DurationSec giây</p>
+                                            }
+                                            @if (!string.IsNullOrEmpty(i.TextContent))
+                                            {
+                                                <div class="text-content">@Html.Raw(i.TextContent)</div>
+                                            }
+                                        }
+                                        else if (i.ItemType == "quiz")
+                                        {
+                                            <p><strong>Giới hạn thời gian:</strong> @(i.TimeLimitMin != null ? i.TimeLimitMin + " phút" : "Không giới hạn")</p>
+                                            <p>Tỉ lệ qua: @i.QuizPassingPct%</p>
+                                            <p>Số câu chọn ngẫu nhiên: @i.PickCount</p>
+                                        }
+                                        else if (i.ItemType == "assignment")
+                                        {
+                                            <div class="assignment-detail">
+                                                <p><strong>Hình thức nộp:</strong> @i.SubmissionType</p>
+                                                <p><strong>Tỉ lệ qua:</strong> @i.AssignmentPassingPct%</p>
+                                                @if (!string.IsNullOrEmpty(i.AssignmentInstructions))
+                                                {
+                                                    <div class="text-content"><h5>Hướng dẫn:</h5> @Html.Raw(i.AssignmentInstructions)</div>
+                                                }
+                                            </div>
+                                        }
+
+                                        @if (i.Questions != null && i.Questions.Any())
+                                        {
+                                            <div class="lesson-questions">
+                                                <h5 style="margin-top: 15px;">Các câu hỏi:</h5>
+                                                @foreach (var q in i.Questions)
+                                                {
+                                                    <div class="question-item" style="margin-bottom: 15px; padding-left: 10px; border-left: 3px solid #ccc;">
+                                                        <strong>Câu hỏi:</strong> @Html.Raw(q.Content)
+
+                                                        @if (!string.IsNullOrEmpty(q.Explanation))
+                                                        {
+                                                            <div class="muted"><em>Giải thích:</em> @q.Explanation</div>
+                                                        }
+
+                                                        @if (q.Options != null && q.Options.Any())
+                                                        {
+                                                            <div class="option-list" style="margin-top: 5px;">
+                                                                @foreach (var opt in q.Options)
+                                                                {
+                                                                    <div class="option" style="color: @(opt.IsCorrect ? "green" : "inherit"); font-weight: @(opt.IsCorrect ? "bold" : "normal");">
+                                                                        <i class="fa @(opt.IsCorrect ? "fa-check-circle" : "fa-circle")"></i> @opt.Content
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        </section>
+    </div> <!-- HẾT PHẦN COURSE-CONTAINER -->
+    <!-- Tái sử dụng lại Modal từ Dashboard cho chuẩn xác (để đồng nhất tính năng Giá tiền) -->
+    <div id="rejectModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>Nhập lý do từ chối</h3>
+            <form method="post" action="@Url.Action("Reject", "Manager")">
+                <input type="hidden" name="courseId" id="rejectCourseId">
+                <textarea name="rejectReason" required placeholder="Nhập lý do..."></textarea>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-danger">Gửi</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeRejectModal()">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="scheduleModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>Xuất bản khóa học</h3>
+            <form method="post" action="@Url.Action("Publish", "Manager")">
+                <input type="hidden" name="courseId" id="scheduleCourseId">
+
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label for="publishDate" style="display:block; margin-bottom:5px; font-weight:bold;">Ngày đăng:</label>
+                    <input type="date" name="publishDate" id="publishDate" class="form-control" style="width:100%; padding:8px;" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label for="price" style="display:block; margin-bottom:5px; font-weight:bold;">Giá bán (VNĐ):</label>
+                    <input type="number" name="price" id="price" class="form-control" style="width:100%; padding:8px;" required min="0" step="1000" placeholder="Ví dụ: 500000">
+                </div>
+
+                <div class="modal-buttons" style="display:flex; justify-content:flex-end; gap:10px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeScheduleModal()">Hủy</button>
+                    <button type="submit" class="btn btn-primary" style="background-color:#4f46e5; color:white; border:none; padding:8px 16px; border-radius:4px;">Lưu lịch & Xuất bản</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</main> <!-- ĐÓNG THẺ MAIN -->
+@section Scripts {
+    <script>
+        function toggleModule(h) {
+            const c = h.nextElementSibling;
+            const i = h.querySelector("i");
+            const open = c.style.display === "block";
+            // Đóng tất cả modules khác
+            document.querySelectorAll('.module-lessons').forEach(e => e.style.display = "none");
+            document.querySelectorAll('.module-header i').forEach(e => e.classList.replace("fa-chevron-up", "fa-chevron-down"));
+
+            if (!open) {
+                c.style.display = "block";
+                i.classList.replace("fa-chevron-down", "fa-chevron-up");
+            }
+        }
+
+        function toggleItem(h) {
+            const d = h.nextElementSibling;
+            const i = h.querySelector("i.toggle-icon");
+            const open = d.style.display === "block";
+            // Đóng tất cả items khác trong cùng 1 module
+            h.closest('.module-lessons').querySelectorAll(".item-detail").forEach(e => e.style.display = "none");
+            h.closest('.module-lessons').querySelectorAll(".item-header i.toggle-icon").forEach(e => e.classList.replace("fa-chevron-up", "fa-chevron-down"));
+
+            if (!open) {
+                d.style.display = "block";
+                i.classList.replace("fa-chevron-down", "fa-chevron-up");
+            }
+        }
+
+        function openRejectModal(id) {
+            document.getElementById('rejectCourseId').value = id;
+            document.getElementById('rejectModal').style.display = 'flex';
+        }
+        function closeRejectModal() {
+            document.getElementById('rejectModal').style.display = 'none';
+        }
+        function openScheduleModal(id) {
+            document.getElementById('scheduleCourseId').value = id;
+            document.getElementById('scheduleModal').style.display = 'flex';
+        }
+        function closeScheduleModal() {
+            document.getElementById('scheduleModal').style.display = 'none';
+        }
+    </script>
+}

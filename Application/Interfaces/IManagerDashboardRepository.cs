@@ -21,6 +21,7 @@ namespace Application.Interfaces
         Task<bool> RejectCourseAsync(Guid courseId, Guid userId, string rejectReason);
         Task<bool> UnpublishCourseAsync(Guid courseId);
         Task<bool> PublishCourseAsync(Guid courseId, DateTime publishDate, decimal price);
+        Task<CourseDetailVm> GetCourseDetailAsync(Guid courseId);
 
     }
 }

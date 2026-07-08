@@ -197,5 +197,112 @@ namespace Infrastructure.Persistence.Repositories
             return true; 
         }
 
+        public async Task<CourseDetailVm?> GetCourseDetailAsync(Guid courseId)
+        {
+            var courseDetail = await _context.Courses
+                .AsNoTracking() 
+                .Where(c => c.Id == courseId && !c.IsDeleted)
+                .Select(c => new CourseDetailVm
+                {
+                    CourseId = c.Id,
+                    Title = c.Title,
+                    Description = c.Description,
+                    CreatedAt = c.CreatedAt,
+                    Status = c.Status.ToString().ToLower(),
+
+                    Price = c.CoursePrice != null && c.CoursePrice.IsActive ? c.CoursePrice.PriceAmount : null,
+
+                    // thông tin Giảng viên 
+                    Instructor = new InstructorDetailVm
+                    {
+                        FullName = c.CreatedByNavigation.IdNavigation.FullName ?? "Chưa cập nhật",
+                        Email = c.CreatedByNavigation.IdNavigation.Email,
+                        Expertise = c.CreatedByNavigation.Expertise,
+                        Bio = c.CreatedByNavigation.Bio
+                    },
+
+                    // count
+                    Stats = new CourseStatsVm
+                    {
+                        ModuleCount = c.Modules.Count(),
+                        LessonCount = c.Modules.SelectMany(m => m.ModuleItems).Count(i => i.ItemType == ModuleItemType.Lesson),
+                        QuizCount = c.Modules.SelectMany(m => m.ModuleItems).Count(i => i.ItemType == ModuleItemType.Quiz),
+                        AssignmentCount = c.Modules.SelectMany(m => m.ModuleItems).Count(i => i.ItemType == ModuleItemType.Assignment),
+                        DiscussionCount = c.Modules.SelectMany(m => m.ModuleItems).Count(i => i.ItemType == ModuleItemType.Discussion)
+                    },
+
+                    // Giáo trình (Modules -> Items -> Lessons/Quizzes -> Questions -> Options)
+                    Modules = c.Modules.OrderBy(m => m.OrderIndex).Select(m => new ModuleDetailVm
+                    {
+                        ModuleId = m.Id,
+                        OrderIndex = m.OrderIndex,
+                        Title = m.Title,
+                        Items = m.ModuleItems.OrderBy(i => i.OrderIndex).Select(i => new ModuleItemDetailVm
+                        {
+                            ItemId = i.Id,
+                            ModuleId = m.Id,
+                            ItemType = i.ItemType.ToString().ToLower(), // Ép thành "lesson", "quiz",... cho giống JSP cũ
+
+                            // title
+                            Title = i.ItemType == ModuleItemType.Lesson ? i.Lesson!.Title :
+                                    i.ItemType == ModuleItemType.Quiz ? i.Quiz!.Title :
+                                    i.ItemType == ModuleItemType.Assignment ? i.Assignment!.Title :
+                                    i.Discussion!.Title,
+
+                            // lession
+                            ContentType = i.Lesson != null ? i.Lesson.ContentType.ToString() : null,
+                            VideoUrl = i.Lesson != null ? i.Lesson.VideoUrl : null,
+                            DurationSec = i.Lesson != null ? i.Lesson.DurationSec : null,
+                            TextContent = i.Lesson != null ? i.Lesson.TextContent : null,
+
+                            // quiz
+                            TimeLimitMin = i.Quiz != null ? i.Quiz.TimeLimitMin : null,
+                            QuizPassingPct = i.Quiz != null ? i.Quiz.PassingScorePct : null,
+                            PickCount = i.Quiz != null ? i.Quiz.PickCount : null,
+
+                            // assignment 
+                            SubmissionType = i.Assignment != null ? i.Assignment.SubmissionType.ToString() : null,
+                            AssignmentPassingPct = i.Assignment != null ? i.Assignment.PassingScorePct : null,
+                            AssignmentInstructions = i.Assignment != null ? i.Assignment.Instructions : null,
+                            AttachmentUrl = i.Assignment != null ? i.Assignment.AttachmentUrl : null,
+                            AssignmentContent = i.Assignment != null ? i.Assignment.Content : null,
+
+                            // discussion 
+                            DiscussionDescription = i.Discussion != null ? i.Discussion.Description : null,
+
+                            // key
+                            Questions = i.Lesson != null ? i.Lesson.LessonQuestions.Select(lq => new QuestionDetailVm
+                            {
+                                QuestionId = lq.Id,
+                                Content = lq.Content,
+                                Explanation = lq.Explanation,
+                                Options = lq.LessonOptions.Select(lo => new QuestionOptionVm
+                                {
+                                    Content = lo.Content,
+                                    IsCorrect = lo.IsCorrect
+                                }).ToList()
+                            }).ToList() :
+                            i.Quiz != null ? i.Quiz.QuizQuestions.Where(qq => !qq.IsDeleted).Select(qq => new QuestionDetailVm
+                            {
+                                QuestionId = qq.Id,
+                                Content = qq.Content,
+                                MediaUrl = qq.MediaUrl,
+                                Explanation = qq.Explanation,
+                                Options = qq.QuizOptions.Select(qo => new QuestionOptionVm
+                                {
+                                    Content = qo.Content,
+                                    IsCorrect = qo.IsCorrect
+                                }).ToList()
+                            }).ToList() : new List<QuestionDetailVm>()
+
+                        }).ToList()
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            return courseDetail;
+        }
+
+
     }
 }

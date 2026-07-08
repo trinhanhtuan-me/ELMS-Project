@@ -16,6 +16,7 @@ namespace Application
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IFunctionService, FunctionService>();
             services.AddScoped<IManagerDashboardService , ManagerDashboardService>();
+            services.AddScoped<IManagerCourseService, ManagerCourseService>();
             return services;
         }
     }

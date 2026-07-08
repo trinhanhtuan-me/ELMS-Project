@@ -20,6 +20,7 @@ namespace Infrastructure.Persistence.Repositories.Common
             services.AddScoped<IMailRepository, MailRepository>();
             services.AddScoped<IOtpRepository, OtpRepository>();
             services.AddScoped<IManagerDashboardRepository, ManagerDashboardRepository>();
+            services.AddScoped<IManagerCourseRepository, ManagerCourseRepository>();
             return services;
         }
     }

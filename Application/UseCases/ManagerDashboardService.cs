@@ -48,20 +48,26 @@ namespace Application.UseCases
         public async Task<bool> ApproveCourseAsync(Guid courseId)
         {
             var success = await _repo.ApproveCourseAsync(courseId);
-            if (success)
-            { 
-                await _unitOfWork.SaveChangeAsync();
+
+            if (!success)
+            {
+                throw new BusinessRuleException("Course not found or it is no longer in 'Submitted' status!");
             }
-            return success;
+
+            await _unitOfWork.SaveChangeAsync();
+            return true; 
         }
         public async Task<bool> RejectCourseAsync(Guid courseId, Guid managerId, string rejectReason)
         {
             var success = await _repo.RejectCourseAsync(courseId, managerId, rejectReason);
-            if (success)
+
+            if (!success)
             {
-                await _unitOfWork.SaveChangeAsync();
+                throw new BusinessRuleException("Course not found or it cannot be rejected!");
             }
-            return success;
+
+            await _unitOfWork.SaveChangeAsync();
+            return true;
         }
 
         public async Task<bool> UnpublishCourseAsync(Guid courseId)

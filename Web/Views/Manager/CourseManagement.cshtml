@@ -1,0 +1,233 @@
+﻿@{
+    ViewData["Title"] = "Course Management - Manager Dashboard";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/manager-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator_semanticui.min.css" rel="stylesheet">
+
+    <!-- Link tới file CSS mới tạo -->
+    <link rel="stylesheet" href="~/css/course-management.css" asp-append-version="true" />
+}
+
+<main class="main-content">
+    <div class="container">
+        <div class="table-header" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 class="table-title" style="margin-bottom: 4px;">Course Management</h2>
+                <p class="page-subtitle" style="color: #6b7280; font-size: 14px;">Review and view course details</p>
+            </div>
+
+            <div class="bulk-actions">
+                <button type="button" class="btn btn-success" id="btn-bulk-approve"><i class="fa fa-check"></i> Bulk Approve</button>
+                <button type="button" class="btn btn-danger" id="btn-bulk-reject"><i class="fa fa-times"></i> Bulk Reject</button>
+            </div>
+        </div>
+
+        <!-- Bảng Tabulator -->
+        <div id="course-table"></div>
+    </div>
+</main>
+<!-- Modal Nhập lý do từ chối -->
+<div id="rejectModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h3 style="margin-top: 0;">Rejection Reason</h3>
+        <p id="rejectCount" class="muted" style="margin-bottom: 16px; font-size: 14px;"></p>
+        <textarea id="rejectReason" placeholder="Please provide a reason..." rows="4" style="width: 100%; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px; margin-bottom: 16px; resize: vertical; box-sizing: border-box;"></textarea>
+        <div class="modal-buttons" style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" class="btn btn-outline" onclick="closeRejectModal()">Cancel</button>
+            <button type="button" id="btn-submit-reject" class="btn btn-danger" onclick="submitReject()">Submit</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js"></script>
+    <script>
+        // Khai báo mảng chứa ID chuẩn bị từ chối
+        let pendingRejectIds = [];
+        const courseFormatter = (cell) => {
+        const data = cell.getData();
+        const img = data.thumbnail ? `/${data.thumbnail}` : '/Images/views-manager/Icon/logo.png';
+        return `<div class="flex-cell">
+        <img src="${img}" class="thumb" onerror="this.src='/Images/views-manager/Icon/ELMS.png'">
+        <div class="text-info">
+        <strong>${data.title}</strong>
+        <small>${data.categoryName}</small>
+        </div>
+        </div>`;
+        };
+
+        const teacherFormatter = (cell) => {
+        const data = cell.getData();
+        const img = data.teacherAvatar ? `/${data.teacherAvatar}` : '/Images/views-manager/Icon/default.png';
+        return `<div class="flex-cell">
+        <img src="${img}" class="ava" onerror="this.src='/Images/views-manager/Icon/default.png'">
+        <div class="text-info">
+        <strong>${data.teacherName}</strong>
+        <small>${data.teacherEmail}</small>
+        </div>
+        </div>`;
+        };
+
+        const statusFormatter = (cell) => {
+        const status = cell.getValue();
+        return `<span class="status-badge ${status}">${status.toUpperCase()}</span>`;
+        };
+
+        const actionFormatter = (cell) => {
+        const courseId = cell.getData().courseId;
+        return `<div style="display: flex; justify-content: center; gap: 6px;">
+        <!-- Đã gắn thêm đuôi ?source=management vào link -->
+        <button class="btn btn-outline btn-xs" onclick="window.location.href = '/manager/course-detail/${courseId}?source=management'" title="Detail">
+        <i class="fa fa-eye"></i> Detail
+        </button>
+        <button class="btn btn-success btn-xs" onclick="approveSingle('${courseId}')" title="Approve">
+        <i class="fas fa-check"></i>
+        </button>
+        <button class="btn btn-danger btn-xs" onclick="rejectSingle('${courseId}')" title="Reject">
+        <i class="fas fa-times"></i>
+        </button>
+        </div>`;
+        };
+
+
+        var table = new Tabulator("#course-table", {
+        ajaxURL: "/manager/api/courses",
+        pagination: true,
+        paginationMode: "remote",
+        filterMode: "remote",
+        paginationSize: 10,
+        paginationSizeSelector: [10, 20, 50],
+        layout: "fitColumns",
+        selectableRows: true,
+        rowHeight: 64,
+        ajaxURLGenerator: function(url, config, params) {
+        let status = "all";
+        let keyword = "";
+        if (params.filter) {
+        params.filter.forEach(f => {
+        if (f.field === "title" || f.field === "teacherName") keyword = f.value;
+        if (f.field === "status" && f.value !== "") status = f.value;
+        });
+        }
+        return `${url}?page=${params.page}&size=${params.size}&keyword=${encodeURIComponent(keyword)}&status=${status}`;
+        },
+
+        columns: [
+        {formatter: "rowSelection", titleFormatter: "rowSelection", headerSort: false, width: 50, align: "center"},
+        {
+        title: "Course",
+        field: "title",
+        formatter: courseFormatter,
+        width: 350,
+        headerFilter: "input",
+        headerFilterPlaceholder: "Search course..."
+        },
+
+        {
+        title: "Instructor",
+        field: "teacherName",
+        formatter: teacherFormatter,
+        width: 250,
+        headerFilter: "input",
+        headerFilterPlaceholder: "Search instructor..."
+        },
+
+        {
+        title: "Submitted Date",
+        field: "createdDate",
+        width: 130,
+        formatter: (cell) => `<strong>${cell.getValue()}</strong><br><small class="muted">${cell.getData().createdTime}</small>`
+        },
+
+        {
+        title: "Status",
+        field: "status",
+        formatter: statusFormatter,
+        width: 140,
+        align: "center"
+        },
+
+        // Đã tăng chiều rộng cột Actions lên 180 để chứa thoải mái 3 nút
+        {title: "Actions", formatter: actionFormatter, width: 180, headerSort: false, align: "center"}
+        ]
+        });
+        // ============================================
+        // CÁC HÀM XỬ LÝ SỰ KIỆN NÚT BẤM VÀ GỌI API
+        // ============================================
+
+        // --- 1. XỬ LÝ APPROVE (DUYỆT) ---
+        function approveSingle(courseId) {
+            callApproveApi([courseId]); // Bấm là duyệt thẳng, không hỏi han
+        }
+
+        document.getElementById('btn-bulk-approve').addEventListener('click', function() {
+            let selectedData = table.getSelectedData();
+            if(selectedData.length === 0) return; 
+            
+            let ids = selectedData.map(d => d.courseId);
+            callApproveApi(ids);
+        });
+
+        function callApproveApi(courseIds) {
+            fetch('/manager/api/bulk-approve', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(courseIds)
+            })
+            .then(res => {
+                if(res.ok) {
+                    window.location.reload(); 
+                }
+            });
+        }
+
+        // --- 2. XỬ LÝ REJECT (TỪ CHỐI) ---
+        function rejectSingle(courseId) {
+            pendingRejectIds = [courseId];
+            document.getElementById('rejectCount').innerText = "Rejecting 1 course.";
+            document.getElementById('rejectReason').value = "";
+            document.getElementById('rejectModal').style.display = 'flex';
+        }
+
+        document.getElementById('btn-bulk-reject').addEventListener('click', function() {
+            let selectedData = table.getSelectedData();
+            if(selectedData.length === 0) return; 
+            
+            pendingRejectIds = selectedData.map(d => d.courseId);
+            document.getElementById('rejectCount').innerText = `Rejecting ${pendingRejectIds.length} courses.`;
+            document.getElementById('rejectReason').value = "";
+            document.getElementById('rejectModal').style.display = 'flex';
+        });
+
+        function closeRejectModal() {
+            document.getElementById('rejectModal').style.display = 'none';
+        }
+
+        function submitReject() {
+            const reason = document.getElementById('rejectReason').value.trim();
+            if(!reason) return; 
+
+            const btn = document.getElementById('btn-submit-reject');
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            fetch('/manager/api/bulk-reject', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseIds: pendingRejectIds, reason: reason })
+            })
+            .then(res => {
+                btn.innerText = "Submit";
+                btn.disabled = false;
+                if(res.ok) {
+                    closeRejectModal();
+                    window.location.reload(); 
+                }
+            });
+        }
+
+    </script>
+}

@@ -1,4 +1,4 @@
-﻿using Application.Dtos.Manager;
+using Application.Dtos.Manager;
 using Application.Exceptions;
 using Application.UseCases;
 using Domain.Entities;
@@ -58,7 +58,7 @@ namespace Web.Controllers
         }
 
         [HttpPost("unpublish")]
-        public async Task<IActionResult> Unpublish(Guid courseId)
+        public async Task<IActionResult> Unpublish(Guid courseId, [FromForm] string? source)
         {
             try
             {
@@ -70,11 +70,12 @@ namespace Web.Controllers
                 TempData["ErrorToast"] = ex.Message;
             }
 
+            if (source == "publish") return RedirectToAction(nameof(CoursePublish));
             return RedirectToAction(nameof(Dashboard));
         }
 
         [HttpPost("publish")]
-        public async Task<IActionResult> Publish(PublishCourseRequest request)
+        public async Task<IActionResult> Publish(PublishCourseRequest request, [FromForm] string? source)
         {
             if (!ModelState.IsValid)
             {
@@ -84,6 +85,7 @@ namespace Web.Controllers
                     .FirstOrDefault();
 
                 TempData["ErrorToast"] = errorMessage ?? "Invalid Validation";
+                if (source == "publish") return RedirectToAction(nameof(CoursePublish));
                 return RedirectToAction(nameof(Dashboard));
             }
 
@@ -94,10 +96,10 @@ namespace Web.Controllers
             }
             catch (BusinessRuleException ex)
             {
-               
                 TempData["ErrorToast"] = ex.Message;
             }
 
+            if (source == "publish") return RedirectToAction(nameof(CoursePublish));
             return RedirectToAction(nameof(Dashboard));
         }
 
@@ -193,6 +195,13 @@ namespace Web.Controllers
             return Ok();
         }
 
+        [HttpGet("course-publish")]
+        public IActionResult CoursePublish()
+        {
+            return View();
+        }
+
+        
 
 
 

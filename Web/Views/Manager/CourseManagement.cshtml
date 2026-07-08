@@ -78,19 +78,22 @@
 
         const actionFormatter = (cell) => {
         const courseId = cell.getData().courseId;
-        return `<div style="display: flex; justify-content: center; gap: 6px;">
-        <!-- Đã gắn thêm đuôi ?source=management vào link -->
-        <button class="btn btn-outline btn-xs" onclick="window.location.href = '/manager/course-detail/${courseId}?source=management'" title="Detail">
+        return `<div style="display: flex; justify-content: center; gap: 8px;">
+        <!-- Xem chi tiết (Xanh biển) -->
+        <button class="btn btn-xs" style="background-color: #17a2b8; color: white; border: none; border-radius: 4px; padding: 6px 10px; cursor: pointer;" onclick="window.location.href = '/manager/course-detail/${courseId}?source=management'" title="Detail">
         <i class="fa fa-eye"></i> Detail
         </button>
-        <button class="btn btn-success btn-xs" onclick="approveSingle('${courseId}')" title="Approve">
+        <!-- Duyệt (Xanh lá) -->
+        <button class="btn btn-xs" style="background-color: #28a745; color: white; border: none; border-radius: 4px; padding: 6px 10px; cursor: pointer;" onclick="approveSingle('${courseId}')" title="Approve">
         <i class="fas fa-check"></i>
         </button>
-        <button class="btn btn-danger btn-xs" onclick="rejectSingle('${courseId}')" title="Reject">
+        <!-- Từ chối (Đỏ) -->
+        <button class="btn btn-xs" style="background-color: #dc3545; color: white; border: none; border-radius: 4px; padding: 6px 10px; cursor: pointer;" onclick="rejectSingle('${courseId}')" title="Reject">
         <i class="fas fa-times"></i>
         </button>
         </div>`;
         };
+
 
 
         var table = new Tabulator("#course-table", {
@@ -104,8 +107,9 @@
         selectableRows: true,
         rowHeight: 64,
         ajaxURLGenerator: function(url, config, params) {
-        let status = "all";
+        let status = "submitted";  
         let keyword = "";
+
         if (params.filter) {
         params.filter.forEach(f => {
         if (f.field === "title" || f.field === "teacherName") keyword = f.value;

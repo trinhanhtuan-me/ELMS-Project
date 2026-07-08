@@ -30,18 +30,18 @@
             <i class="fas fa-book"></i> Quản lý khóa học
         </a>
 
-        <a href="@Url.Action("Index", "Category")"
-           class="@(currentPath.Contains("/cate-topic") ? "active" : "")">
+        <a href="@Url.Action("CoursePublish", "Manager")"
+           class="@(currentPath.Contains("??") ? "active" : "")">
             <i class="fa fa-layer-group"></i> Quản lý chủ đề và danh mục
         </a>
 
-        <a href="@Url.Action("Index", "RevenueReport")"
-           class="@(currentPath.Contains("/revenue-report") ? "active" : "")">
+        <a href="@Url.Action("CoursePublish", "Manager")"
+           class="@(currentPath.Contains("??") ? "active" : "")">
             <i class="fas fa-chart-bar"></i> Báo cáo
         </a>
 
-        <a href="@Url.Action("Publish", "Course")"
-           class="@(currentPath.Contains("/coursepublish") ? "active" : "")">
+        <a href="@Url.Action("CoursePublish", "Manager")"
+           class="@(currentPath.Contains("/course-publish") ? "active" : "")">
             <i class="fas fa-calendar-days"></i> Lịch đăng khóa học
         </a>
 

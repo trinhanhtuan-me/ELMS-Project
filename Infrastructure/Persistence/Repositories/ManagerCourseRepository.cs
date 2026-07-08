@@ -25,15 +25,27 @@ namespace Infrastructure.Persistence.Repositories
                 .Include(c => c.CreatedByNavigation)
                     .ThenInclude(i => i.IdNavigation)
                 .Include(c => c.CoursePrice)
-                .Where(c=>c.Status == CourseStatus.Submitted)
+         
                 .AsQueryable();
 
-            // Lọc theo Trạng thái
+
+
+            // Logic Lọc theo Trạng thái 
             if (!string.IsNullOrEmpty(status) && status.ToLower() != "all")
             {
-                if (Enum.TryParse<CourseStatus>(status, true, out var parsedStatus))
+                var statusStrings = status.Split(',').Select(s => s.Trim()).ToList();
+                var validStatuses = new List<CourseStatus>();
+
+                foreach (var s in statusStrings)
                 {
-                    query = query.Where(c => c.Status == parsedStatus);
+                    if (Enum.TryParse<CourseStatus>(s, true, out var parsedStatus))
+                    {
+                        validStatuses.Add(parsedStatus);
+                    }
+                }
+                if (validStatuses.Any())
+                {
+                    query = query.Where(c => validStatuses.Contains(c.Status));
                 }
             }
 
@@ -82,6 +94,8 @@ namespace Infrastructure.Persistence.Repositories
                     CreatedAt = c.CreatedAt,
                     CreatedDate = c.CreatedAt.ToString("dd/MM/yyyy"),
                     CreatedTime = c.CreatedAt.ToString("HH:mm"),
+                    PublishDate = c.PublishAt.HasValue ? c.PublishAt.Value.ToString("dd/MM/yyyy") : "Not public yet",
+                    PublishTime = c.PublishAt.HasValue ? c.PublishAt.Value.ToString("HH:mm") : "",
                     Status = c.Status.ToString().ToLower(),
                     Price = c.CoursePrice != null && c.CoursePrice.IsActive ? c.CoursePrice.PriceAmount : 0
                 })

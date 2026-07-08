@@ -16,6 +16,8 @@ public class CourseListVm
     public string CreatedDate { get; set; } = null!;
     public string CreatedTime { get; set; } = null!;
     public DateTime CreatedAt { get; set; }
+    public string? PublishDate { get; set; }
+    public string? PublishTime { get; set; }
 
     public string Status { get; set; } = null!;
     public decimal Price { get; set; }

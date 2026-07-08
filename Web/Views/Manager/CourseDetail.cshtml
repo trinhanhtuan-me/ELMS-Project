@@ -1,4 +1,4 @@
-﻿@model Application.Dtos.Manager.CourseDetailVm
+@model Application.Dtos.Manager.CourseDetailVm
 @{
     ViewData["Title"] = "Chi tiết khóa học - Manager Dashboard";
 }
@@ -19,6 +19,12 @@
             {
                 <a href="@Url.Action("CourseManagement", "Manager")" class="btn btn-outline" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
                     <i class="fas fa-arrow-left"></i> Back to Course Management
+                </a>
+            }
+            else if (ViewBag.Source == "publish")
+            {
+                <a href="@Url.Action("CoursePublish", "Manager")" class="btn btn-outline" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-arrow-left"></i> Back to Course Publish
                 </a>
             }
             else

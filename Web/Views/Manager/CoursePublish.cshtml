@@ -1,0 +1,182 @@
+﻿@{
+    ViewData["Title"] = "Course Publish - Manager Dashboard";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/manager-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator_semanticui.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/course-management.css" asp-append-version="true" />
+}
+
+<main class="main-content">
+    <div class="container">
+        <div class="table-header" style="margin-bottom: 24px;">
+            <h2 class="table-title" style="margin-bottom: 4px;">Course Publish Schedule</h2>
+            <p class="page-subtitle" style="color: #6b7280; font-size: 14px;">Manage courses that are approved, published, and unpublished</p>
+        </div>
+
+        <!-- Bảng Tabulator -->
+        <div id="course-table"></div>
+    </div>
+
+    <!-- Modal Xuất bản -->
+    <div id="scheduleModal" class="modal" style="display:none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center;">
+        <div class="modal-content" style="background-color: #fff; padding: 24px; border-radius: 12px; width: 400px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
+            <h3 style="margin-top: 0;">Publish Course</h3>
+            <form method="post" action="@Url.Action("Publish", "Manager")">
+                <!-- Đánh dấu luồng về -->
+                <input type="hidden" name="source" value="publish" />
+                <input type="hidden" name="courseId" id="scheduleCourseId">
+
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label for="publishDate" style="display:block; margin-bottom:5px; font-weight:bold;">Publish Date:</label>
+                    <input type="date" name="publishDate" id="publishDate" class="form-control" style="width:100%; padding:8px; border: 1px solid #ccc; border-radius: 4px;" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label for="price" style="display:block; margin-bottom:5px; font-weight:bold;">Price (VND):</label>
+                    <input type="number" name="price" id="price" class="form-control" style="width:100%; padding:8px; border: 1px solid #ccc; border-radius: 4px;" required min="0" step="1000" placeholder="e.g. 500000">
+                </div>
+
+                <div class="modal-buttons" style="display:flex; justify-content:flex-end; gap:10px;">
+                    <button type="button" class="btn btn-outline" onclick="closeScheduleModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Publish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Form Ẩn dùng để Gỡ đăng nhanh (Không cần Modal) -->
+    <form id="unpublishForm" method="post" action="@Url.Action("Unpublish", "Manager")" style="display:none;">
+        <input type="hidden" name="source" value="publish" />
+        <input type="hidden" name="courseId" id="unpublishCourseId" />
+    </form>
+</main>
+
+@section Scripts {
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js"></script>
+    <script>
+        const courseFormatter = (cell) => {
+        const data = cell.getData();
+        const img = data.thumbnail ? `/${data.thumbnail}` : '/Images/views-manager/Icon/logo.png';
+        return `<div class="flex-cell">
+        <img src="${img}" class="thumb" onerror="this.src='/Images/views-manager/Icon/ELMS.png'">
+        <div class="text-info">
+        <strong>${data.title}</strong>
+        <small>${data.categoryName}</small>
+        </div>
+        </div>`;
+        };
+
+        const teacherFormatter = (cell) => {
+        const data = cell.getData();
+        const img = data.teacherAvatar ? `/${data.teacherAvatar}` : '/Images/views-manager/Icon/default.png';
+        return `<div class="flex-cell">
+        <img src="${img}" class="ava" onerror="this.src='/Images/views-manager/Icon/default.png'">
+        <div class="text-info">
+        <strong>${data.teacherName}</strong>
+        <small>${data.teacherEmail}</small>
+        </div>
+        </div>`;
+        };
+
+        const statusFormatter = (cell) => {
+        const status = cell.getValue();
+        return `<span class="status-badge ${status}">${status.toUpperCase()}</span>`;
+        };
+
+        const actionFormatter = (cell) => {
+        const data = cell.getData();
+        const courseId = data.courseId;
+        const status = data.status;
+
+        // Màu xanh biển (Detail)
+        let buttons = `<button class="btn btn-xs" style="background-color: #17a2b8; color: white; border: none; border-radius: 4px; padding: 6px 10px; cursor: pointer; transition: 0.2s;" onclick="window.location.href = '/manager/course-detail/${courseId}?source=publish'" title="Detail"><i class="fa fa-eye"></i></button>`;
+
+        if (status === 'approved') {
+        // Màu xanh lá (Publish)
+        buttons += `<button class="btn btn-xs" style="background-color: #28a745; color: white; border: none; border-radius: 4px; padding: 6px 10px; cursor: pointer; transition: 0.2s;" onclick="openScheduleModal('${courseId}')" title="Publish"><i class="fas fa-upload"></i></button>`;
+        } else if (status === 'publish') {
+        // Màu đỏ (Unpublish)
+        buttons += `<button class="btn btn-xs" style="background-color: #dc3545; color: white; border: none; border-radius: 4px; padding: 6px 10px; cursor: pointer; transition: 0.2s;" onclick="submitUnpublish('${courseId}')" title="Unpublish"><i class="fas fa-download"></i></button>`;
+        } else if (status === 'unpublish') {
+        // Màu cam (Republish)
+        buttons += `<button class="btn btn-xs" style="background-color: #fd7e14; color: white; border: none; border-radius: 4px; padding: 6px 10px; cursor: pointer; transition: 0.2s;" onclick="openScheduleModal('${courseId}')" title="Republish"><i class="fas fa-rotate-right"></i></button>`;
+        }
+
+        return `<div style="display: flex; justify-content: center; gap: 8px;">${buttons}</div>`;
+        };
+
+
+        var table = new Tabulator("#course-table", {
+        ajaxURL: "/manager/api/courses",
+        pagination: true,
+        paginationMode: "remote",
+        filterMode: "remote",
+        paginationSize: 10,
+        paginationSizeSelector: [10, 20, 50],
+        layout: "fitColumns",
+        rowHeight: 64,
+
+        ajaxURLGenerator: function(url, config, params) {
+        let status = "approved,publish,unpublish";
+        let keyword = "";
+
+        if (params.filter) {
+        params.filter.forEach(f => {
+        if (f.field === "title" || f.field === "teacherName") keyword = f.value;
+        if (f.field === "status" && f.value !== "") status = f.value;
+        if (f.field === "status" && f.value === "") status = "approved,publish,unpublish";
+        });
+        }
+        return `${url}?page=${params.page}&size=${params.size}&keyword=${encodeURIComponent(keyword)}&status=${status}`;
+        },
+
+        columns: [
+        {
+        title: "Course", field: "title", formatter: courseFormatter, width: 350,
+        headerFilter: "input", headerFilterPlaceholder: "Search course..."
+        },
+        {
+        title: "Instructor", field: "teacherName", formatter: teacherFormatter, width: 250,
+        headerFilter: "input", headerFilterPlaceholder: "Search instructor..."
+        },
+        {
+        title: "Date", field: "publishDate", width: 130, align: "center",
+        formatter: (cell) => {
+        let date = cell.getValue();
+        let time = cell.getData().publishTime;
+        // Nếu có giờ thì hiện giờ, không thì chỉ hiện mỗi chữ "Chưa đăng"
+        return time ? `<strong>${date}</strong><br><small class="muted">${time}</small>` : `<strong class="muted">${date}</strong>`;
+        }
+        },
+        {
+        title: "Status", field: "status", formatter: statusFormatter, width: 140, align: "center",
+        headerFilter: "select", headerFilterParams: {
+        values: {"": "All", "approved": "Approved", "publish": "Publish", "unpublish": "Unpublish"}
+        }
+        },
+        {
+        title: "Price (VND)", field: "price", width: 120, align: "center",
+        formatter: (cell) => cell.getValue() ? cell.getValue().toLocaleString() + " đ" : "0 đ"
+        },
+        {title: "Actions", formatter: actionFormatter, width: 140, headerSort: false, align: "center"}
+        ]
+        });
+
+        function openScheduleModal(id) {
+        document.getElementById('scheduleCourseId').value = id;
+        document.getElementById('scheduleModal').style.display = 'flex';
+        }
+
+        function closeScheduleModal() {
+        document.getElementById('scheduleModal').style.display = 'none';
+        }
+
+        function submitUnpublish(id) {
+        if(confirm("Are you sure you want to unpublish this course?")) {
+        document.getElementById('unpublishCourseId').value = id;
+        document.getElementById('unpublishForm').submit();
+        }
+        }
+    </script>
+}

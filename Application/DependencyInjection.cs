@@ -15,6 +15,7 @@ namespace Application
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IFunctionService, FunctionService>();
+            services.AddScoped<ICourseService, CourseService>();
             return services;
         }
     }

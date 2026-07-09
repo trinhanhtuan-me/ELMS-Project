@@ -16,6 +16,7 @@ namespace Infrastructure
             services.AddRepositories(configuration);
             services.AddCacheService(configuration);
             services.AddMailService(configuration);
+            services.AddScoped<Application.Interfaces.IFileStorageService, Infrastructure.Shared.CloudinaryStorageService>();
             return services;
         }
 

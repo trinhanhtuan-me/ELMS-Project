@@ -1,0 +1,305 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f7fe;
+    color: #2b3674;
+}
+
+/* --- Layout Structure --- */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    width: 280px;
+    background-color: #5b72ff;
+    color: white;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-logo {
+    padding: 2rem 2rem 1rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar-profile {
+    text-align: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 1rem;
+}
+
+.sidebar-profile img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.2);
+    margin-bottom: 10px;
+    object-fit: cover;
+}
+
+.sidebar-profile .name { font-weight: 600; font-size: 1.1rem; margin: 0; }
+.sidebar-profile .email { font-size: 0.8rem; color: #c4ccff; margin: 0; }
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li a {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    gap: 15px;
+    transition: 0.3s;
+}
+
+.sidebar-menu li a:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.sidebar-menu li.active a {
+    background-color: #7086ff; /* Màu xanh nhạt hơn */
+    border-left: 4px solid white;
+    color: white;
+}
+
+/* --- Main Content --- */
+.main-content {
+    flex-grow: 1;
+    padding: 2.5rem 3rem;
+    overflow-y: auto;
+    background-color: #f4f7fe;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2b3674;
+    margin: 0;
+}
+
+.btn-primary-blue {
+    background-color: #5b72ff;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: 0.3s;
+    box-shadow: 0 4px 10px rgba(91, 114, 255, 0.3);
+}
+
+.btn-primary-blue:hover {
+    background-color: #4459e2;
+    color: white;
+}
+
+/* --- Filters --- */
+.filters-bar {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    color: #a3aed1;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.filter-select {
+    border: 1px solid #e0e5f2;
+    border-radius: 4px;
+    padding: 0.2rem 0.5rem;
+    color: #5b72ff;
+    font-weight: 600;
+    background: transparent;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-bar input {
+    border: none;
+    background: transparent;
+    outline: none;
+    color: #2b3674;
+}
+
+/* --- Card Table --- */
+.card-table-wrapper {
+    width: 100%;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px; /* Khoảng cách giữa các dòng */
+}
+
+.custom-table thead th {
+    color: #a3aed1;
+    font-weight: 500;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    padding: 0 1.5rem 10px;
+    border: none;
+}
+
+.custom-table tbody tr {
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    transition: 0.2s;
+}
+
+.custom-table tbody tr:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transform: translateY(-2px);
+}
+
+.custom-table tbody td {
+    padding: 1.2rem 1.5rem;
+    vertical-align: middle;
+    border: none;
+}
+
+.custom-table tbody td:first-child { border-radius: 10px 0 0 10px; }
+.custom-table tbody td:last-child { border-radius: 0 10px 10px 0; }
+
+/* Dữ liệu trong bảng */
+.course-title {
+    font-weight: 600;
+    color: #2b3674;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+}
+
+.course-subtitle {
+    font-size: 0.8rem;
+    color: #a3aed1;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Badges */
+.status-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-active { background-color: #e5f9f4; color: #05cd99; }
+.status-draft { background-color: #fff1e5; color: #ff9800; }
+.status-primary { background-color: #e5e9ff; color: #5b72ff; }
+
+/* Thống kê (Bars & Circles) */
+.stat-item {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+.stat-circle {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 2px solid #5b72ff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 600; color: #5b72ff;
+}
+
+/* --- Pagination --- */
+.pagination-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    color: #a3aed1;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.page-btn {
+    width: 32px; height: 32px;
+    border-radius: 4px;
+    border: none;
+    background: transparent;
+    color: #a3aed1;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none;
+}
+
+.page-btn.active {
+    background-color: #5b72ff;
+    color: white;
+}
+
+/* --- Bổ sung: Image Thumbnail --- */
+.img-wrap {
+    width: 64px;
+    height: 48px;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #f4f7fe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e0e5f2;
+}
+
+.img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* --- Bổ sung: Action Buttons --- */
+.action-btn {
+    background: transparent;
+    border: none;
+    color: #a3aed1;
+    font-size: 1.1rem;
+    padding: 0.4rem 0.6rem;
+    transition: 0.2s;
+    border-radius: 6px;
+}
+
+.action-btn:hover {
+    color: #5b72ff;
+    background-color: #e5e9ff;
+}
+
+.action-btn.text-danger:hover {
+    color: #ff4757 !important;
+    background-color: #ffeaea;
+}

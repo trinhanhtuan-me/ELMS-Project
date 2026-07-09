@@ -12,6 +12,8 @@ namespace Application.Interfaces
         Task<User?> FindUserByEmailOrUsernameAsync(string username, string email);
         Task AddAsync(User user);
         Task<User?> FindUserLoginAsync(string identifier);
+        Task<User?> FindUserByIdAsync(Guid id);
+
 
     }
 }

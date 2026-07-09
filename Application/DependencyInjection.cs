@@ -17,6 +17,9 @@ namespace Application
             services.AddScoped<IFunctionService, FunctionService>();
             services.AddScoped<IManagerDashboardService , ManagerDashboardService>();
             services.AddScoped<IManagerCourseService, ManagerCourseService>();
+            services.AddScoped<IManagerCategoryService, ManagerCategoryService>();
+            services.AddScoped<IManagerProfileService, ManagerProfileService>();
+            services.AddScoped<IManagerFlashcardService, ManagerFlashcardService>();
             return services;
         }
     }

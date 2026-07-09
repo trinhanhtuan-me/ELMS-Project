@@ -154,7 +154,6 @@
         align: "center"
         },
 
-        // Đã tăng chiều rộng cột Actions lên 180 để chứa thoải mái 3 nút
         {title: "Actions", formatter: actionFormatter, width: 180, headerSort: false, align: "center"}
         ]
         });
@@ -164,7 +163,7 @@
 
         // --- 1. XỬ LÝ APPROVE (DUYỆT) ---
         function approveSingle(courseId) {
-            callApproveApi([courseId]); // Bấm là duyệt thẳng, không hỏi han
+            callApproveApi([courseId]); 
         }
 
         document.getElementById('btn-bulk-approve').addEventListener('click', function() {

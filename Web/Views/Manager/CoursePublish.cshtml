@@ -145,7 +145,7 @@
         formatter: (cell) => {
         let date = cell.getValue();
         let time = cell.getData().publishTime;
-        // Nếu có giờ thì hiện giờ, không thì chỉ hiện mỗi chữ "Chưa đăng"
+       
         return time ? `<strong>${date}</strong><br><small class="muted">${time}</small>` : `<strong class="muted">${date}</strong>`;
         }
         },
@@ -173,10 +173,9 @@
         }
 
         function submitUnpublish(id) {
-        if(confirm("Are you sure you want to unpublish this course?")) {
         document.getElementById('unpublishCourseId').value = id;
         document.getElementById('unpublishForm').submit();
         }
-        }
+
     </script>
 }

@@ -184,7 +184,7 @@ namespace Infrastructure.Persistence.Repositories
                 existingPrice.EndDate = DateTime.UtcNow;
             }
 
-            var newPrice = new Domain.Entities.CoursePrice
+            var newPrice = new CoursePrice
             {
                 CourseId = courseId,
                 PriceAmount = price,

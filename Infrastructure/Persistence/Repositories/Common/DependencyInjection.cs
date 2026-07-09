@@ -21,6 +21,8 @@ namespace Infrastructure.Persistence.Repositories.Common
             services.AddScoped<IOtpRepository, OtpRepository>();
             services.AddScoped<IManagerDashboardRepository, ManagerDashboardRepository>();
             services.AddScoped<IManagerCourseRepository, ManagerCourseRepository>();
+            services.AddScoped<IManagerCategoryRepository, ManagerCategoryRepository>();
+            services.AddScoped<IManagerFlashcardRepository, ManagerFlashcardRepository>();
             return services;
         }
     }

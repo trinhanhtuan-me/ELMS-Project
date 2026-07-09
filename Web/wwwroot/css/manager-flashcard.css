@@ -1,0 +1,209 @@
+/* ================================
+   BUTTONS
+   ================================ */
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-back {
+  background: var(--brand);
+  color: white;
+  text-decoration: none;
+}
+    .btn-back:hover {
+        background: #3730a3;
+        color: white;
+    }
+.btn-delete-set {
+  background: var(--danger);
+  color: white;
+}
+.btn-delete-set:hover {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+.btn-delete2{
+  background: var(--danger);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.2s; 
+}
+.btn-delete {
+  background: var(--danger);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn-delete:hover {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+.btn-view {
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+}
+.btn-view:hover {
+  background: #0ea46a;
+}
+.btn-hide {
+  background-color: var(--warning, #f59e0b);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+.btn-hide:hover {
+  background-color: #d97706;
+}
+.btn-show {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+/* ================================
+   FLASHCARD MANAGER PAGE
+   ================================ */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.filter-bar {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.search-box input {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width: 250px;
+  margin-right: 1rem;
+}
+.sort-select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.deck-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 1.5rem;
+}
+.deck-card {
+  background: linear-gradient(135deg, #eef2ff, #fff);
+  border: 2px solid #ddd;
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  transition: 0.25s;
+  display: flex;
+  flex-direction: column;
+}
+.deck-card:hover {
+  transform: translateY(-6px);
+}
+.deck-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--brand);
+  margin-bottom: 0.4rem;
+}
+.deck-meta {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+.deck-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.badge-public {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+.badge-inactive {
+  background: #fef3c7;
+  color: #92400e;
+}
+.badge-private {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* Flashcard Detail (dành cho phần sau) */
+.flashcard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.flashcard-item {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: space-between;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: 0.2s;
+}
+.flashcard-item:hover {
+  background: #f9fafb;
+  transform: translateY(-2px);
+}
+.flashcard-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  width: 100%;
+}
+.term-box, .definition-box {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.8rem 1rem;
+  background: #fff;
+}
+.term-title, .definition-title {
+  font-weight: 600;
+  color: var(--brand);
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}

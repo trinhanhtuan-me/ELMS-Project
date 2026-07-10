@@ -1009,10 +1009,23 @@ public partial class ElmsDbContext : DbContext
             new ParentProfile { Id = parentId, Occupation = "Engineer", Address = "Hanoi" }
         );
         modelBuilder.Entity<InstructorProfile>().HasData(
-            new InstructorProfile { Id = teacherId, Bio = "Experienced Teacher", Expertise = "Software Engineering", Qualifications = "PhD" }
+            new InstructorProfile { 
+                Id = teacherId, 
+                Bio = "Experienced Teacher", 
+                Expertise = "Software Engineering", 
+                Qualifications = "PhD",
+                CreatedAt = new DateTime(2024, 1, 1),
+                LastUpdatedAt = new DateTime(2024, 1, 1)
+            }
         );
         modelBuilder.Entity<ManagerProfile>().HasData(
-            new ManagerProfile { Id = managerId, Position = "Academic Head", Specialization = "Operations" }
+            new ManagerProfile { 
+                Id = managerId, 
+                Position = "Academic Head", 
+                Specialization = "Operations",
+                CreatedAt = new DateTime(2024, 1, 1),
+                LastUpdatedAt = new DateTime(2024, 1, 1)
+            }
         );
 
         // Data Seeding for SystemKey

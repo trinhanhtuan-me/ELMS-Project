@@ -1,9 +1,13 @@
+using Application.Common.Cache;
+using Fido2NetLib;
 using Infrastructure.Data;
 using Infrastructure.Persistence.Repositories.Common;
+using Infrastructure.Shared.Cache;
 using Infrastructure.Shared.Mails;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using ZiggyCreatures.Caching.Fusion;
 using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
 namespace Infrastructure
@@ -16,6 +20,8 @@ namespace Infrastructure
             services.AddRepositories(configuration);
             services.AddCacheService(configuration);
             services.AddMailService(configuration);
+            services.AddScoped<ICacheService, CacheService>();
+            services.AddFido2Security(configuration);
             return services;
         }
 
@@ -25,7 +31,7 @@ namespace Infrastructure
             var redisConnection = configuration.GetConnectionString("Redis");
             services.AddStackExchangeRedisCache(option =>
             {
-                option.Configuration =  redisConnection;
+                option.Configuration = redisConnection;
                 option.InstanceName = "ELMS_";
             });
 
@@ -36,6 +42,19 @@ namespace Infrastructure
             })
             .WithSerializer(new FusionCacheSystemTextJsonSerializer())
             .WithRegisteredDistributedCache();
+
+            return services;
+        }
+
+        private static IServiceCollection AddFido2Security(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<Fido2Configuration>(configuration.GetSection("Fido2"));
+
+            services.AddSingleton<IFido2>(sp =>
+            {
+                var fidoConfig = sp.GetRequiredService<IOptions<Fido2Configuration>>().Value;
+                return new Fido2(fidoConfig);
+            });
 
             return services;
         }

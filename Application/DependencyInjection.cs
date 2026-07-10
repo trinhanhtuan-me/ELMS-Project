@@ -1,4 +1,5 @@
 using System.Reflection;
+using Application.Common.Cache;
 using Application.UseCases;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ namespace Application
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IFunctionService, FunctionService>();
+            services.AddScoped<IPasskeyService, PasskeyService>();
             return services;
         }
     }

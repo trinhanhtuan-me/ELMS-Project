@@ -19,6 +19,9 @@ namespace Infrastructure.Persistence.Repositories.Common
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IMailRepository, MailRepository>();
             services.AddScoped<IOtpRepository, OtpRepository>();
+            services.AddScoped<IParentLinkRequestRepository, ParentLinkRequestRepository>();
+            services.AddScoped<IStudentProfileRepository, StudentProfileRepository>();
+            services.AddScoped<ICourseRequestRepository, CourseRequestRepository>();
             return services;
         }
     }

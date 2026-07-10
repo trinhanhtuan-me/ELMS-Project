@@ -1,5 +1,6 @@
 using System.Reflection;
 using Application.UseCases;
+using Application.Interfaces;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 

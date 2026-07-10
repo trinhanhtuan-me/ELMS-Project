@@ -31,57 +31,86 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Approve(Guid requestId)
+        public async Task<IActionResult> Approve(ApproveLinkRequestDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                return await RenderIndexViewWithErrors("Pending");
+            }
+
             try
             {
                 var parentId = GetCurrentUserId();
-                await linkService.ApproveRequestAsync(parentId, new ApproveLinkRequestDto { RequestId = requestId });
+                await linkService.ApproveRequestAsync(parentId, dto);
                 TempData["SuccessToast"] = localizer["toast_success_approve"];
+                return RedirectToAction("Index", new { status = "Pending" });
             }
             catch (BusinessRuleException ex)
             {
-                TempData["ErrorToast"] = ex.Message;
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return await RenderIndexViewWithErrors("Pending");
             }
-            return RedirectToAction("Index", new { status = "Pending" });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Reject(Guid requestId, string note)
+        public async Task<IActionResult> Reject(RejectLinkRequestDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return await RenderIndexViewWithErrors("Pending");
+            }
+
+            try
+            {
+                var parentId = GetCurrentUserId();
+                await linkService.RejectRequestAsync(parentId, dto);
+                TempData["SuccessToast"] = localizer["toast_success_reject"];
+                return RedirectToAction("Index", new { status = "Pending" });
+            }
+            catch (BusinessRuleException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return await RenderIndexViewWithErrors("Pending");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Unlink(Guid studentId, string note)
         {
             if (string.IsNullOrWhiteSpace(note))
             {
-                TempData["ErrorToast"] = localizer["err_reject_reason_required"];
-                return RedirectToAction("Index", new { status = "Pending" });
+                ModelState.AddModelError(string.Empty, localizer["err_unlink_reason_required"]);
+                return await RenderIndexViewWithErrors("Approved");
             }
 
             try
             {
                 var parentId = GetCurrentUserId();
-                await linkService.RejectRequestAsync(parentId, new RejectLinkRequestDto { RequestId = requestId, Note = note });
-                TempData["SuccessToast"] = localizer["toast_success_reject"];
+                await linkService.UnlinkStudentAsync(parentId, studentId, note);
+                TempData["SuccessToast"] = localizer["toast_success_unlink"];
+                return RedirectToAction("Index", new { status = "Approved" });
             }
             catch (BusinessRuleException ex)
             {
-                TempData["ErrorToast"] = ex.Message;
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return await RenderIndexViewWithErrors("Approved");
             }
-            return RedirectToAction("Index", new { status = "Pending" });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Unlink(Guid studentId)
+        private async Task<IActionResult> RenderIndexViewWithErrors(string status)
         {
             try
             {
                 var parentId = GetCurrentUserId();
-                await linkService.UnlinkStudentAsync(parentId, studentId, "Phụ huynh chủ động gỡ liên kết.");
-                TempData["SuccessToast"] = localizer["toast_success_unlink"];
+                var requests = await linkService.GetRequestsForParentAsync(parentId, status, 1, 6);
+                ViewBag.CurrentStatus = status;
+                return View("~/Views/Parent/Link/Index.cshtml", requests);
             }
-            catch (BusinessRuleException ex)
+            catch (Exception ex)
             {
                 TempData["ErrorToast"] = ex.Message;
+                return RedirectToAction("Index", "Home");
             }
-            return RedirectToAction("Index", new { status = "Approved" });
         }
 
         private Guid GetCurrentUserId()

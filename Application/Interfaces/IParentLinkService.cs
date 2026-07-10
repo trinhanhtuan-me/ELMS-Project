@@ -1,10 +1,9 @@
 using Application.Common;
 using Application.Dtos.ParentLink;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Application.UseCases;
+namespace Application.Interfaces;
 
 public interface IParentLinkService
 {

@@ -24,6 +24,17 @@
         <p class="text-sm text-slate-500 mt-1">@Localizer["page_description"]</p>
     </div>
 
+    <!-- Validation Summary (Tailwind styling) -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-xl flex gap-3 items-start">
+            <i class="fa-solid fa-triangle-exclamation text-rose-500 shrink-0 mt-0.5 text-base"></i>
+            <div>
+                <div asp-validation-summary="All" class="font-medium list-disc pl-2"></div>
+            </div>
+        </div>
+    }
+
     <!-- Filter Tabs (Tailwind styling) -->
     <div class="mb-8 border-b border-slate-200">
         <nav class="-mb-px flex gap-6" aria-label="Tabs">
@@ -37,6 +48,12 @@
                class="shrink-0 border-b-2 px-1 pb-4 text-sm font-medium transition-all @(currentStatus == "Pending" ? "border-amber-500 text-amber-600" : "border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700")">
                 <i class="fa-solid fa-clock mr-1.5"></i>
                 @Localizer["tab_pending"]
+            </a>
+
+            <a href="@Url.Action("Index", "ParentLink", new { status = "Rejected" })" 
+               class="shrink-0 border-b-2 px-1 pb-4 text-sm font-medium transition-all @(currentStatus == "Rejected" ? "border-rose-500 text-rose-600" : "border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700")">
+                <i class="fa-solid fa-circle-xmark mr-1.5"></i>
+                @Localizer["tab_rejected"]
             </a>
             
             <a href="@Url.Action("Index", "ParentLink", new { status = "Unlink" })" 
@@ -151,35 +168,25 @@
                         @if (req.Status == ParentLinkRequestStatus.Pending)
                         {
                             <div class="flex gap-3">
-                                <!-- Approve -->
-                                <form asp-action="Approve" asp-controller="ParentLink" method="post" class="flex-1" onsubmit="return confirm('@Localizer["msg_confirm_approve"]');">
-                                    <input type="hidden" name="requestId" value="@req.RequestId" />
-                                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1.5">
-                                        <i class="fa-solid fa-check"></i>
-                                        @Localizer["btn_approve"]
-                                    </button>
-                                </form>
-                                <!-- Reject -->
-                                <form asp-action="Reject" asp-controller="ParentLink" method="post" class="flex-1" onsubmit="return confirmReject(this);">
-                                    <input type="hidden" name="requestId" value="@req.RequestId" />
-                                    <input type="hidden" name="note" />
-                                    <button type="submit" class="w-full border border-rose-200 hover:bg-rose-50 text-rose-600 font-semibold text-xs py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1.5">
-                                        <i class="fa-solid fa-xmark"></i>
-                                        @Localizer["btn_reject"]
-                                    </button>
-                                </form>
+                                <!-- Trigger Approve Modal -->
+                                <button type="button" onclick="openApproveModal('@req.RequestId', '@req.StudentName')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-check"></i>
+                                    @Localizer["btn_approve"]
+                                </button>
+                                <!-- Trigger Reject Modal -->
+                                <button type="button" onclick="openRejectModal('@req.RequestId')" class="w-full border border-rose-200 hover:bg-rose-50 text-rose-600 font-semibold text-xs py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-xmark"></i>
+                                    @Localizer["btn_reject"]
+                                </button>
                             </div>
                         }
                         else if (req.Status == ParentLinkRequestStatus.Approved)
                         {
-                            <!-- Unlink -->
-                            <form asp-action="Unlink" asp-controller="ParentLink" method="post" onsubmit="return confirmUnlink(this);">
-                                <input type="hidden" name="studentId" value="@req.StudentId" />
-                                <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1.5">
-                                    <i class="fa-solid fa-link-slash"></i>
-                                    @Localizer["btn_unlink"]
-                                </button>
-                            </form>
+                            <!-- Trigger Unlink Modal -->
+                            <button type="button" onclick="openUnlinkModal('@req.StudentId', '@req.StudentName')" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-link-slash"></i>
+                                @Localizer["btn_unlink"]
+                            </button>
                         }
                     </div>
                 </div>
@@ -286,24 +293,87 @@
     }
 </div>
 
+<!-- Custom Modals -->
+<partial name="~/Views/Parent/Link/_Modals.cshtml" />
+
 @section Scripts {
     <script>
-        function confirmReject(form) {
-            var reason = prompt("@Localizer["msg_prompt_reject_reason"]");
-            if (reason === null) {
+        // Helper to open modal with transition
+        function showModal(modalId) {
+            var modal = document.getElementById(modalId);
+            var card = modal.querySelector('.modal-card');
+            
+            // Show backdrop
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100', 'pointer-events-auto');
+            
+            // Scale and fade card in
+            card.classList.remove('scale-95', 'opacity-0');
+            card.classList.add('scale-100', 'opacity-100');
+        }
+
+        // Helper to close modal with transition
+        function hideModal(modalId) {
+            var modal = document.getElementById(modalId);
+            var card = modal.querySelector('.modal-card');
+            
+            // Scale and fade card out
+            card.classList.remove('scale-100', 'opacity-100');
+            card.classList.add('scale-95', 'opacity-0');
+            
+            // Hide backdrop
+            modal.classList.remove('opacity-100', 'pointer-events-auto');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // Modal Approve
+        function openApproveModal(requestId, studentName) {
+            document.getElementById('approveRequestId').value = requestId;
+            document.getElementById('approveStudentName').textContent = studentName;
+            showModal('approveModal');
+        }
+        function closeApproveModal() {
+            hideModal('approveModal');
+        }
+
+        // Modal Reject
+        function openRejectModal(requestId) {
+            document.getElementById('rejectRequestId').value = requestId;
+            document.getElementById('rejectNote').value = '';
+            document.getElementById('rejectNoteError').classList.add('hidden');
+            showModal('rejectModal');
+        }
+        function closeRejectModal() {
+            hideModal('rejectModal');
+        }
+        function validateRejectForm() {
+            var note = document.getElementById('rejectNote').value.trim();
+            if (note === "") {
+                document.getElementById('rejectNoteError').classList.remove('hidden');
                 return false;
             }
-            reason = reason.trim();
-            if (reason === "") {
-                alert("@Localizer["msg_alert_reject_reason_required"]");
-                return false;
-            }
-            form.querySelector('input[name="note"]').value = reason;
             return true;
         }
 
-        function confirmUnlink(form) {
-            return confirm("@Html.Raw(Localizer["msg_confirm_unlink"])");
+        // Modal Unlink
+        function openUnlinkModal(studentId, studentName) {
+            document.getElementById('unlinkStudentId').value = studentId;
+            document.getElementById('unlinkNote').value = '';
+            document.getElementById('unlinkNoteError').classList.add('hidden');
+            showModal('unlinkModal');
+        }
+        function closeUnlinkModal() {
+            hideModal('unlinkModal');
+        }
+        function validateUnlinkForm() {
+            var note = document.getElementById('unlinkNote').value.trim();
+            if (note === "") {
+                document.getElementById('unlinkNoteError').classList.remove('hidden');
+                return false;
+            }
+            return true;
         }
     </script>
 }
+
+

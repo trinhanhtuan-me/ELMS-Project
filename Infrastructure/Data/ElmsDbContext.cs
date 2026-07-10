@@ -41,6 +41,8 @@ public partial class ElmsDbContext : DbContext
 
     public virtual DbSet<FlashcardSet> FlashcardSets { get; set; }
 
+    public virtual DbSet<Fido2Credential> Fido2Credentials { get; set; }
+
     public virtual DbSet<InstructorProfile> InstructorProfiles { get; set; }
 
     public virtual DbSet<Lesson> Lessons { get; set; }
@@ -931,6 +933,19 @@ public partial class ElmsDbContext : DbContext
                         j.IndexerProperty<Guid>("UserId").HasColumnName("user_id");
                         j.IndexerProperty<int>("RoleId").HasColumnName("role_id");
                     });
+        });
+
+        modelBuilder.Entity<Fido2Credential>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.DescriptorId).IsRequired();
+            entity.Property(e => e.PublicKey).IsRequired();
+            entity.Property(e => e.UserHandle).IsRequired();
+
+            entity.HasOne(d => d.User).WithMany(p => p.Passkeys)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Fido2Credential_User");
         });
 
         modelBuilder.Entity<Mail>(entity =>

@@ -1,6 +1,7 @@
 using Application.Common.Interfaces;
 using Application.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Persistence.Repositories.Manager;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,7 @@ namespace Infrastructure.Persistence.Repositories.Common
             services.AddScoped<IManagerCourseRepository, ManagerCourseRepository>();
             services.AddScoped<IManagerCategoryRepository, ManagerCategoryRepository>();
             services.AddScoped<IManagerFlashcardRepository, ManagerFlashcardRepository>();
+            services.AddScoped<IManagerRevenueRepository, ManagerRevenueRepository>();
             return services;
         }
     }

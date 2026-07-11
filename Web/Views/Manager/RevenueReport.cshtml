@@ -1,0 +1,239 @@
+﻿@using Application.Dtos.Manager
+@{
+    ViewData["Title"] = "Revenue Report";
+    var reports = ViewData["reports"] as List<RevenueReportVm> ?? new List<RevenueReportVm>();
+    var reportType = ViewData["reportType"] as string ?? "month";
+    var selectedYear = ViewData["selectedYear"] as int? ?? DateTime.Now.Year;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/manager-dashboard.css" asp-append-version="true" />
+}
+
+<main class="main-content">
+    <div class="container" style="max-width: 1200px; margin: 0 auto;">
+
+        <div class="page-header" style="margin-bottom: 20px;">
+            <div>
+                <h2 style="color: var(--brand); font-size: 1.8rem;">Revenue Report</h2>
+                <p style="color: var(--muted);">Track course sales and total revenue by month or year</p>
+            </div>
+        </div>
+
+        <form method="get" action="/manager/revenue-report" class="filter-panel" style="background: #fff; padding: 20px; border-radius: var(--radius); box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 24px;">
+            <div class="filter-grid" style="display: flex; gap: 20px; align-items: flex-end;">
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">View Type</label>
+                    <select name="type" id="timeType" class="form-control" style="padding: 10px; border-radius: 6px; border: 1px solid #ccc; min-width: 150px;" onchange="this.form.submit()">
+                        @if (reportType == "month")
+                        {
+                            <option value="month" selected>By Month</option>
+                            <option value="year">By Year</option>
+                        }
+                        else
+                        {
+                            <option value="month">By Month</option>
+                            <option value="year" selected>By Year</option>
+                        }
+                    </select>
+                </div>
+
+                @if (reportType == "month")
+                {
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">Year</label>
+                        <input type="number" name="year" value="@selectedYear" min="2000" max="2100" class="form-control" style="padding: 10px; border-radius: 6px; border: 1px solid #ccc; width: 100px;" />
+                    </div>
+                }
+
+                <div class="filter-actions" style="display: flex; align-items: center; gap: 12px;">
+                    <button class="btn btn-primary" type="submit" style="background: var(--brand); color: white; padding: 10px 16px;">
+                        <i class="fas fa-sync"></i> Update
+                    </button>
+
+                    <a href="/manager/revenue-export?type=@reportType&year=@selectedYear"
+                       class="btn btn-outline" style="background: white; color: var(--brand); border: 1px solid var(--brand); padding: 10px 16px; text-decoration: none;">
+                        <i class="fa fa-file-csv"></i> Export CSV
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        <div class="chart-toggle" style="margin-bottom: 16px; display: flex; gap: 10px;">
+            <button id="btnCourses" onclick="showChart('courses')" style="background: var(--brand); color: white; padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold;">
+                <i class="fas fa-book-open"></i> Courses Sold
+            </button>
+            <button id="btnRevenue" onclick="showChart('revenue')" style="background: #e5e7eb; color: #374151; padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold;">
+                <i class="fas fa-dollar-sign"></i> Revenue
+            </button>
+        </div>
+
+        <div class="card" style="padding: 20px;">
+            <div id="chartCoursesContainer" class="chart-container" style="height: 450px; width: 100%;">
+                <canvas id="chartCourses"></canvas>
+            </div>
+
+            <div id="chartRevenueContainer" class="chart-container" style="height: 450px; width: 100%; display: none;">
+                <canvas id="chartRevenue"></canvas>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <script>
+        const reportType = '@reportType';
+
+        const reportsData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(reports.Select(r => new
+        {
+            label = r.Label,
+            courseIdSold = r.CoursesSold,
+            totalRevenue = r.TotalRevenue
+        })));
+
+        const labels = reportsData.map(r => r.label);
+        const dataCourses = reportsData.map(r => r.courseIdSold);
+        const dataRevenue = reportsData.map(r => r.totalRevenue);
+
+        const baseOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: {
+        datalabels: {
+        anchor: 'end',
+        align: 'top',
+        color: '#333',
+        font: { weight: 'bold' },
+        formatter: v => v.toLocaleString('vi-VN')
+        },
+        legend: { display: false },
+        },
+        scales: {
+        y: {
+        beginAtZero: true,
+        ticks: {
+        callback: v => v.toLocaleString('vi-VN')
+        },
+        grid: { color: '#e5e7eb' }
+        },
+        x: {
+        grid: { display: false }
+        }
+        }
+        };
+
+        const ctxCourses = document.getElementById('chartCourses').getContext('2d');
+        new Chart(ctxCourses, {
+        type: 'bar',
+        data: {
+        labels,
+        datasets: [{
+        label: 'Courses Sold',
+        data: dataCourses,
+        backgroundColor: 'rgba(16,185,129,0.7)',
+        borderRadius: 6
+        }]
+        },
+        options: {
+        ...baseOptions,
+        scales: {
+        ...baseOptions.scales,
+        y: {
+        ...baseOptions.scales.y,
+        suggestedMax: Math.max(...dataCourses, 0) * 1.2,
+        ticks: {
+        callback: v => Math.round(v).toString()
+        }
+        }
+        },
+        plugins: {
+        ...baseOptions.plugins,
+        datalabels: {
+        ...baseOptions.plugins.datalabels,
+        formatter: v => Math.round(v).toString()
+        },
+        title: {
+        display: true,
+        text: reportType === 'year'
+        ? 'Courses Sold by Year'
+        : 'Courses Sold by Month',
+        font: { size: 18 }
+        }
+        }
+        }
+        });
+
+        const ctxRevenue = document.getElementById('chartRevenue').getContext('2d');
+        new Chart(ctxRevenue, {
+        type: 'bar',
+        data: {
+        labels,
+        datasets: [{
+        label: 'Revenue (VND)',
+        data: dataRevenue,
+        backgroundColor: 'rgba(79,70,229,0.7)',
+        borderRadius: 6
+        }]
+        },
+        options: {
+        ...baseOptions,
+        scales: {
+        ...baseOptions.scales,
+        y: {
+        ...baseOptions.scales.y,
+        suggestedMax: Math.max(...dataRevenue, 0) * 1.2,
+        ticks: {
+        callback: v => v.toLocaleString('vi-VN') + ' ₫'
+        }
+        }
+        },
+        plugins: {
+        ...baseOptions.plugins,
+        title: {
+        display: true,
+        text: reportType === 'year'
+        ? 'Revenue by Year'
+        : 'Revenue by Month',
+        font: { size: 18 }
+        },
+        datalabels: {
+        ...baseOptions.plugins.datalabels,
+        formatter: v => v.toLocaleString('vi-VN') + ' ₫'
+        }
+        }
+        }
+        });
+
+        function showChart(type) {
+        const c = document.getElementById('chartCoursesContainer');
+        const r = document.getElementById('chartRevenueContainer');
+
+        const btnC = document.getElementById('btnCourses');
+        const btnR = document.getElementById('btnRevenue');
+
+        if (type === 'courses') {
+        c.style.display = 'block';
+        r.style.display = 'none';
+
+        btnC.style.background = 'var(--brand)';
+        btnC.style.color = 'white';
+
+        btnR.style.background = '#e5e7eb';
+        btnR.style.color = '#374151';
+        } else {
+        c.style.display = 'none';
+        r.style.display = 'block';
+
+        btnR.style.background = 'var(--brand)';
+        btnR.style.color = 'white';
+
+        btnC.style.background = '#e5e7eb';
+        btnC.style.color = '#374151';
+        }
+        }
+    </script>
+}

@@ -20,6 +20,8 @@ namespace Application
             services.AddScoped<IManagerCategoryService, ManagerCategoryService>();
             services.AddScoped<IManagerProfileService, ManagerProfileService>();
             services.AddScoped<IManagerFlashcardService, ManagerFlashcardService>();
+            services.AddScoped<IManagerRevenueService, ManagerRevenueService>();
+
             return services;
         }
     }

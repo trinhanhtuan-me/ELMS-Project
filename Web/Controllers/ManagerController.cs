@@ -10,7 +10,7 @@ namespace Web.Controllers
 {
     // [Authorize(Roles = "Manager")] 
     [Route("manager")]
-    public class ManagerController(IManagerDashboardService _dashboardService , IManagerCourseService _managerCourseService, IManagerCategoryService _categoryService, IManagerProfileService _profileService, IManagerFlashcardService _flashcardService) : Controller
+    public class ManagerController(IManagerDashboardService _dashboardService , IManagerCourseService _managerCourseService, IManagerCategoryService _categoryService, IManagerProfileService _profileService, IManagerFlashcardService _flashcardService  ,IManagerRevenueService _revenueService) : Controller
     {
         [HttpGet("dashboard")]
         public async Task<IActionResult> Dashboard()
@@ -355,6 +355,65 @@ namespace Web.Controllers
             }
 
             return RedirectToAction("FlashcardManagement");
+        }
+
+        [HttpGet("revenue-report")]
+        public async Task<IActionResult> RevenueReport([FromQuery] string type = "month", [FromQuery] int? year = null)
+        {
+            var currentYear = DateTime.Now.Year;
+            var targetYear = year ?? currentYear;
+
+            try
+            {
+                if (type == "year")
+                {
+                    var yearlyReports = await _revenueService.GetYearlyReportAsync();
+                    ViewData["reports"] = yearlyReports;
+                    ViewData["reportType"] = "year";
+                }
+                else
+                {
+                    var monthlyReports = await _revenueService.GetMonthlyReportAsync(targetYear);
+                    ViewData["reports"] = monthlyReports;
+                    ViewData["reportType"] = "month";
+                    ViewData["selectedYear"] = targetYear;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorToast"] = "Error loading report data: " + ex.Message;
+            }
+
+            return View();
+        }
+
+        [HttpGet("revenue-export")]
+        public async Task<IActionResult> RevenueExport([FromQuery] string type = "month", [FromQuery] int? year = null)
+        {
+            try
+            {
+                var targetYear = year ?? DateTime.Now.Year;
+                List<RevenueReportVm> reports;
+
+                if (type == "year")
+                {
+                    reports = await _revenueService.GetYearlyReportAsync();
+                }
+                else
+                {
+                    reports = await _revenueService.GetMonthlyReportAsync(targetYear);
+                }
+
+                var csvBytes = _revenueService.GenerateCsvBytes(reports, type);
+                var fileName = $"RevenueReport_{type}_{targetYear}.csv";
+
+                return File(csvBytes, "text/csv", fileName);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorToast"] = "Error exporting revenue report: " + ex.Message;
+                return RedirectToAction(nameof(RevenueReport));
+            }
         }
 
 

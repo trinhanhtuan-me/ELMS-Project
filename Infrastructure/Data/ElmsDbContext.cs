@@ -75,7 +75,6 @@ public partial class ElmsDbContext : DbContext
 
     public virtual DbSet<ParentProfile> ParentProfiles { get; set; }
 
-    public virtual DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
     public virtual DbSet<Payment> Payments { get; set; }
 
@@ -659,22 +658,6 @@ public partial class ElmsDbContext : DbContext
                 .HasConstraintName("FK__ParentProfil__Id__0697FACD");
         });
 
-        modelBuilder.Entity<PasswordResetToken>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Password__3214EC07BFB33313");
-
-            entity.HasIndex(e => e.Token, "UQ__Password__1EB4F8175944EB96").IsUnique();
-
-            entity.Property(e => e.Id).HasDefaultValueSql("(newsequentialid())");
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysdatetime())");
-            entity.Property(e => e.Token)
-                .HasMaxLength(255)
-                .IsUnicode(false);
-
-            entity.HasOne(d => d.User).WithMany(p => p.PasswordResetTokens)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__PasswordR__UserI__28ED12D1");
-        });
 
         modelBuilder.Entity<Payment>(entity =>
         {

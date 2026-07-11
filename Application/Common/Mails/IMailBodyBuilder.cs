@@ -9,5 +9,7 @@ namespace Application.Common.Mails
     public interface IMailBodyBuilder
     {
         Task<string> BuildOtpRegistrationEmail(string userName, string otpCode);
+        Task<string> BuildOtpForgotPassword(string userName, string otpCode);
+
     }
 }

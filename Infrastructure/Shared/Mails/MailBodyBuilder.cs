@@ -35,5 +35,30 @@ namespace Infrastructure.Shared.Mails
             return finalHtml;
         }
 
+        public async Task<string> BuildOtpForgotPassword(string userName, string otpCode)
+        {
+            var templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+                "Shared", "Mails", "Templates", "ForgotPassword.html");
+
+            var templateContent = await _cache.GetOrSetAsync<string>(
+                key: "ForgotPasswordTemplate",
+                factory: async (ctx, _) =>
+                {
+                    if (!File.Exists(templatePath))
+                    {
+                        throw new FileNotFoundException($"Không tìm thấy file tại {templatePath}");
+                    }
+                    return await File.ReadAllTextAsync(templatePath);
+                },
+                options: new FusionCacheEntryOptions().SetSkipDistributedCache(true, true)
+                );
+
+            var finalHtml = templateContent!
+                    .Replace("{{Username}}", userName)
+                    .Replace("{{OtpCode}}", otpCode);
+
+            return finalHtml;
+        }
+
     }
 }

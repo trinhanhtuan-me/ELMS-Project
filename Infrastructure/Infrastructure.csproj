@@ -33,6 +33,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="Shared\Mails\Templates\ForgotPassword.html">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="Shared\Mails\Templates\OtpRegistration.html">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>

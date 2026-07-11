@@ -45,8 +45,6 @@ public class User : AuditableEntity<Guid>
 
     public virtual ParentProfile? ParentProfile { get; set; }
 
-    public virtual ICollection<PasswordResetToken> PasswordResetTokens { get; set; } = new List<PasswordResetToken>();
-
     public virtual StudentProfile? StudentProfile { get; set; }
 
     public virtual ICollection<PRole> Roles { get; set; } = new List<PRole>();

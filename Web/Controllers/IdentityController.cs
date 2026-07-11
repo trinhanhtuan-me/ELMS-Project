@@ -115,7 +115,7 @@ namespace Web.Controllers
 
             try
             {
-                await _identity.VerifyEmailAsync(request);
+                await _identity.VerifyAccountAsync(request);
                 TempData["SuccessToast"] = "Account verified successfully! You can now sign in.";
                 return RedirectToAction("Login");
 
@@ -132,7 +132,7 @@ namespace Web.Controllers
         {
             try
             {
-                await _identity.ResendOtpAsync(email);
+                await _identity.ResendRegisterOtpAsync(email);
 
                 TempData["SuccessMessage"] = "A new OTP has been sent to your email.";
 
@@ -234,6 +234,83 @@ namespace Web.Controllers
             catch (BusinessRuleException ex)
             {
                 return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(request);
+            }
+
+            try
+            {
+                await _identity.ForgotPasswordAsync(request);
+                TempData["SuccessToast"] = "Please check your email for the OTP code.";
+                return RedirectToAction("VerifyForgotPassword", new { Email = request.Email });
+            }
+            catch (BusinessRuleException ex)
+            {
+                TempData["ErrorToast"] = ex.Message;
+                return RedirectToAction("ForgotPassword");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult VerifyForgotPassword(string email)
+        {
+            var model = new VerifyForgotPasswordRequest { Email = email };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> VerifyForgotPassword(VerifyForgotPasswordRequest request)
+        {
+            if (!ModelState.IsValid) return View(request);
+
+            try
+            {
+                await _identity.VerifyForgotPasswordAsync(request);
+                return RedirectToAction("ResetPassword",
+                    new { email = request.Email, otp = request.Code });
+            }
+            catch (BusinessRuleException ex)
+            {
+                TempData["ErrorToast"] = ex.Message;
+                return View(request);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string email, string otp)
+        {
+            var model = new ResetPasswordRequest { Email = email, Code = otp };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+        {
+            if (!ModelState.IsValid) return View(request);
+            try
+            {
+                await _identity.ResetPassword(request);
+
+                TempData["SuccessToast"] = "Your password has been reset successfully. Please login.";
+                return RedirectToAction("Login");
+            }
+            catch (BusinessRuleException ex)
+            {
+                TempData["ErrorToast"] = ex.Message;
+                return View(request);
             }
         }
     }

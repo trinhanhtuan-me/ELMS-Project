@@ -3,6 +3,7 @@ using Application.Dtos.Manager;
 using Application.Exceptions;
 using Application.Interfaces;
 using Application.Utils;
+using Domain.Entities;
 using System;
 using System.Threading.Tasks;
 
@@ -11,17 +12,24 @@ namespace Application.UseCases
     public interface IManagerProfileService
     {
         Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordRequest request);
+        Task<ManagerProfileVm> GetProfileAsync(Guid userId);
+        Task<bool> UpdateProfileAsync(ManagerProfileVm request);
     }
 
     public class ManagerProfileService : IManagerProfileService
     {
         private readonly IUserRepository _userRepo;
         private readonly IUnitOfWork _uow;
+        private readonly IManagerProfileRepository _profileRepo;
+        private readonly IPhotoService _photoService;
 
-        public ManagerProfileService(IUserRepository userRepo, IUnitOfWork uow)
+        public ManagerProfileService(IUserRepository userRepo, IUnitOfWork uow,
+                                     IManagerProfileRepository profileRepo, IPhotoService photoService)
         {
             _userRepo = userRepo;
             _uow = uow;
+            _profileRepo = profileRepo;
+            _photoService = photoService;
         }
 
         public async Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordRequest request)
@@ -48,5 +56,47 @@ namespace Application.UseCases
             await _uow.SaveChangeAsync();
             return true;
         }
+        public async Task<ManagerProfileVm> GetProfileAsync(Guid userId)
+        {
+            var user = await _profileRepo.GetManagerWithProfileAsync(userId);
+            if (user == null) throw new BusinessRuleException("User not found!");
+            return new ManagerProfileVm
+            {
+                UserId = user.Id,
+                FullName = user.FullName ?? "",
+                Email = user.Email ?? "",
+                DateOfBirth = user.DateOfBirth,
+                AvatarUrl = user.Avatar,
+                Position = user.ManagerProfile?.Position,
+                Specialization = user.ManagerProfile?.Specialization
+            };
+        }
+        public async Task<bool> UpdateProfileAsync(ManagerProfileVm request)
+        {
+            var user = await _profileRepo.GetManagerWithProfileAsync(request.UserId);
+            if (user == null) throw new BusinessRuleException("User not found!");
+
+            user.FullName = request.FullName;
+            user.Email = request.Email;
+            user.DateOfBirth = request.DateOfBirth;
+
+            if (request.AvatarFile != null)
+            {
+                var url = await _photoService.AddPhotoAsync(request.AvatarFile);
+                if (!string.IsNullOrEmpty(url))
+                {
+                    user.Avatar = url; 
+                }
+            }
+
+            var profile = user.ManagerProfile ?? new ManagerProfile { Id = user.Id };
+            profile.Position = request.Position;
+            profile.Specialization = request.Specialization;
+
+            await _profileRepo.UpdateManagerProfileAsync(user, profile);
+            await _uow.SaveChangeAsync();
+            return true;
+        }
+
     }
 }

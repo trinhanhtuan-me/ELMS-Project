@@ -1,16 +1,34 @@
-﻿@{
-    // Lấy đường dẫn hiện tại để check xem menu nào đang được chọn (đổi màu active)
-    var currentPath = Context.Request.Path.Value?.ToLower() ?? "";
+﻿@using System.Security.Claims
+@using Application.UseCases
+@inject IManagerProfileService ProfileService
 
-    // Xử lý logic avatar và tên người dùng (lấy từ Claims hoặc gán mặc định)
-    var profilePicture = User.FindFirst("Avatar")?.Value;
+@{
+    var currentPath = Context.Request.Path.Value?.ToLower() ?? "";
+    var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    string profilePicture = null;
+    string fullName = User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "Manager";
+
+    if (!string.IsNullOrEmpty(userIdString) && Guid.TryParse(userIdString, out Guid userId))
+    {
+        try
+        {
+            var profile = await ProfileService.GetProfileAsync(userId);
+            profilePicture = profile.AvatarUrl;
+            if (!string.IsNullOrEmpty(profile.FullName))
+            {
+                fullName = profile.FullName;
+            }
+        }
+        catch
+        {
+        }
+    }
     if (string.IsNullOrEmpty(profilePicture))
     {
-        profilePicture = Url.Content("~/Images/views-manager/Icon/default.png");
+        profilePicture = $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(fullName)}&background=4f46e5&color=fff&size=100";
     }
-    var fullName = User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "Manager";
 }
-
 <aside class="sidebar">
     <div class="sidebar-header">
         <a href="@Url.Action("Dashboard", "Manager")" class="logo">
@@ -53,12 +71,12 @@
 
     <div class="sidebar-user">
         <!-- In Avatar và Tên ra -->
-        <img src="@profilePicture" alt="Avatar" class="user-avatar">
+        <img src="@profilePicture" alt="Avatar" class="user-avatar" style="object-fit: cover;">
         <span>@fullName</span>
 
         <div class="sidebar-dropdown">
-            <a href="@Url.Action("Profile", "Manager")">
-                <i class="fas fa-user"></i> Hồ sơ cá nhân
+            <a href="@Url.Action("ManagerProfile", "Manager")">
+                <i class="fas fa-user"></i> Manager Profle
             </a>
             <a href="@Url.Action("ChangePassword", "Manager")">
                 <i class="fas fa-key"></i> Change Password

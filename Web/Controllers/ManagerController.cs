@@ -416,7 +416,56 @@ namespace Web.Controllers
             }
         }
 
+        [HttpGet("profile")]
+        public async Task<IActionResult> ManagerProfile()
+        {
+            try
+            {
+                var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out Guid userId))
+                {
+                    return RedirectToAction("Login", "Identity");
+                }
+                var profile = await _profileService.GetProfileAsync(userId);
 
+                return View(profile);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorToast"] = "Error loading profile: " + ex.Message;
+                return RedirectToAction(nameof(Dashboard));
+            }
+        }
+
+        [HttpPost("profile")]
+        public async Task<IActionResult> ManagerProfile([FromForm] ManagerProfileVm model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var firstError = ModelState.Values.SelectMany(v => v.Errors).FirstOrDefault()?.ErrorMessage;
+                TempData["ErrorToast"] = firstError;
+                return View(model);
+            }
+            try
+            {
+                var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out Guid userId))
+                {
+                    return RedirectToAction("Login", "Identity");
+                }
+
+                model.UserId = userId; 
+                await _profileService.UpdateProfileAsync(model);
+
+                TempData["SuccessToast"] = "Profile updated successfully!";
+                return RedirectToAction(nameof(ManagerProfile)); 
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorToast"] = "Error updating profile: " + ex.Message;
+                return View(model);
+            }
+        }
 
 
 

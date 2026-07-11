@@ -25,6 +25,7 @@ namespace Infrastructure.Persistence.Repositories.Common
             services.AddScoped<IManagerCategoryRepository, ManagerCategoryRepository>();
             services.AddScoped<IManagerFlashcardRepository, ManagerFlashcardRepository>();
             services.AddScoped<IManagerRevenueRepository, ManagerRevenueRepository>();
+            services.AddScoped<IManagerProfileRepository, ManagerProfileRepository>();
             return services;
         }
     }

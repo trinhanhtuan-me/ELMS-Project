@@ -1,5 +1,6 @@
 using Infrastructure.Data;
 using Infrastructure.Persistence.Repositories.Common;
+using Infrastructure.Services;
 using Infrastructure.Shared.Mails;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +17,8 @@ namespace Infrastructure
             services.AddRepositories(configuration);
             services.AddCacheService(configuration);
             services.AddMailService(configuration);
+
+            services.AddPhotoService();
             return services;
         }
 

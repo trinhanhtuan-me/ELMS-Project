@@ -623,6 +623,7 @@ public partial class ElmsDbContext : DbContext
         modelBuilder.Entity<ParentLinkRequest>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__ParentLi__3214EC0720C12F86");
+            entity.HasIndex(e => new { e.StudentId, e.ParentId }).IsUnique();
 
             entity.Property(e => e.Id).HasDefaultValueSql("(newsequentialid())");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysdatetime())");

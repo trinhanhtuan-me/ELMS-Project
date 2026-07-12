@@ -1,4 +1,3 @@
-using Application.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
@@ -8,6 +7,12 @@ using System.Text.Json;
 
 namespace Web.Services
 {
+    public interface ILocalizationService
+    {
+        string GetString(string key);
+        string this[string key] { get; }
+    }
+
     public class LocalizationService : ILocalizationService
     {
         private readonly string _resourcesPath;

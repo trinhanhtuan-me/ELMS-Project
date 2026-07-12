@@ -24,9 +24,9 @@
                     </a>
                 </div>
                 
-                <span class="text-sm text-slate-500">@Localizer["parent_role_title"]</span>
-                <div class="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 font-semibold border border-slate-200">
-                    P
+                <span class="text-sm text-slate-500">@Localizer["parent_role_title"]@(User.Identity?.IsAuthenticated == true && !string.IsNullOrEmpty(User.Identity.Name) ? $" - {User.Identity.Name}" : "")</span>
+                <div class="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 font-semibold border border-slate-200" title="@(User.Identity?.Name)">
+                    @(User.Identity?.IsAuthenticated == true && !string.IsNullOrEmpty(User.Identity.Name) ? User.Identity.Name.Substring(0, 1).ToUpper() : "P")
                 </div>
             </div>
         </div>

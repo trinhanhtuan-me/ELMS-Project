@@ -9,8 +9,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 namespace Application.UseCases;
+
+public interface IParentLinkService
+{
+    Task<PaginatedList<ParentLinkRequestResponseDto>> GetRequestsForParentAsync(Guid parentId, string statusFilter, int pageNumber, int pageSize);
+    Task<bool> ApproveRequestAsync(Guid parentId, ApproveLinkRequestDto dto);
+    Task<bool> RejectRequestAsync(Guid parentId, RejectLinkRequestDto dto);
+    Task<bool> UnlinkStudentAsync(Guid parentId, Guid studentId, string? note);
+}
 
 public class ParentLinkService : IParentLinkService
 {

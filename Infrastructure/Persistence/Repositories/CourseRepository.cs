@@ -1,6 +1,10 @@
 using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Persistence.Repositories
@@ -19,10 +23,39 @@ namespace Infrastructure.Persistence.Repositories
             await _context.Courses.AddAsync(course);
         }
 
-        public async Task<System.Collections.Generic.List<Course>> GetByInstructorIdAsync(System.Guid instructorId)
+        public async Task<List<Course>> GetByInstructorIdAsync(Guid instructorId)
         {
-            return await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync(
-                System.Linq.Queryable.Where(_context.Courses, c => c.CreatedBy == instructorId && !c.IsDeleted));
+            return await _context.Courses
+                .Where(c => c.CreatedBy == instructorId && !c.IsDeleted)
+                .ToListAsync();
+        }
+
+        public async Task<Course?> GetByIdAsync(Guid id)
+        {
+            return await _context.Courses
+                .Where(c => c.Id == id && !c.IsDeleted)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<Course?> GetWithModulesByIdAsync(Guid id, Guid instructorId)
+        {
+            var course = await _context.Courses
+         .Include(c => c.Modules)
+         .Where(c => c.Id == id && c.CreatedBy == instructorId && !c.IsDeleted)
+         .FirstOrDefaultAsync();
+
+            if (course != null && course.Modules != null)
+            {
+                
+                course.Modules = course.Modules.OrderBy(m => m.OrderIndex).ToList();
+            }
+
+            return course;
+        }
+
+        public void Update(Course course)
+        {
+            _context.Courses.Update(course);
         }
     }
 }

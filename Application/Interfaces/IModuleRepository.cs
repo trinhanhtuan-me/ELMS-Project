@@ -1,0 +1,17 @@
+using Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Application.Interfaces
+{
+    public interface IModuleRepository
+    {
+        Task<List<Module>> GetByCourseIdAsync(Guid courseId);
+        Task<Module?> GetByIdAsync(Guid id);
+        Task AddAsync(Module module);
+        void Update(Module module);
+        void Delete(Module module);
+        Task<int> GetMaxOrderIndexAsync(Guid courseId);
+    }
+}

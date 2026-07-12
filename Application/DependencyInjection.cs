@@ -16,6 +16,8 @@ namespace Application
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IFunctionService, FunctionService>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<IModuleService, ModuleService>();
+            services.AddScoped<ICategoryService,CategoryService>();
             return services;
         }
     }

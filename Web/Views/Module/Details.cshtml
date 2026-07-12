@@ -1,0 +1,342 @@
+@model Application.Dtos.Course.CourseDetailResponse
+@using Domain.Entities
+@{
+    ViewData["Title"] = "Nội dung Khóa học";
+    var modules = Model.Modules?.ToList() ?? new List<Module>();
+ 
+}
+
+
+@* @section Styles { *@
+    <style>
+        .course-header-banner {
+            background: linear-gradient(135deg, #6b73ff 0%, #000dff 100%);
+            border-radius: 12px;
+            padding: 24px;
+            color: white;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .course-header-icon {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        .course-header-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        .course-title-banner {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .course-meta {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .sidebar-menu {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .sidebar-title {
+            font-weight: 700;
+            color: #2b3674;
+            margin-bottom: 16px;
+            padding: 0 8px;
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #707eae;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 4px;
+            transition: all 0.2s;
+        }
+        .menu-item:hover, .menu-item.active {
+            background-color: #f4f7fe;
+            color: #4318ff;
+        }
+        .menu-item i {
+            font-size: 1.1rem;
+        }
+        
+        .content-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        
+        .module-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e0e5f2;
+        }
+        .module-list-title {
+            color: #4318ff;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .module-item {
+            background: #f8f9fa;
+            border: 1px solid #e0e5f2;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .module-info h6 {
+            color: #2b3674;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .module-desc {
+            color: #707eae;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        .module-order {
+            font-size: 0.8rem;
+            color: #a3aed1;
+        }
+        
+        .module-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            border: 1px solid #e0e5f2;
+            background: #fff;
+            color: #707eae;
+            transition: all 0.2s;
+        }
+        .btn-icon:hover {
+            background: #f4f7fe;
+            color: #4318ff;
+            border-color: #4318ff;
+        }
+        .btn-add-lesson {
+            background: #f4f7fe;
+            color: #4318ff;
+            border-color: #f4f7fe;
+        }
+        
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 8px;
+        }
+        .dropdown-item {
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            color: #2b3674;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .dropdown-item:hover {
+            background: #f4f7fe;
+            color: #4318ff;
+        }
+    </style>
+@* } *@
+
+<div class="mb-4">
+    <h3 style="color: #2b3674; font-weight: 700;">Nội dung Khóa học</h3>
+    <p class="text-muted">Khóa học: @Model.Title</p>
+</div>
+
+<!-- Header Banner -->
+<div class="course-header-banner">
+    <div class="course-header-icon">
+        @if (!string.IsNullOrEmpty(Model.Thumbnail))
+        {
+            <img src="@Model.Thumbnail" alt="Thumbnail" />
+        }
+        else
+        {
+            <i class="fa fa-book"></i>
+        }
+    </div>
+    <div>
+        <div class="course-title-banner">@Model.Title</div>
+        <div class="course-title-banner" style="font-size: 1rem; opacity: 0.9; margin-bottom: 4px;">Description: @Model.Description</div>
+        <div class="course-meta">
+            <i class="fa fa-th-list"></i> @modules.Count modules
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-3">
+        <div class="sidebar-menu">
+            <div class="sidebar-title">Menu Khóa học</div>
+            <a href="#" class="menu-item active">
+                <i class="fa fa-play-circle"></i> Nội dung khóa học
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fa fa-question-circle"></i> Câu hỏi
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="col-md-9">
+        <div class="content-card">
+            <div class="module-list-header">
+                <h4 class="module-list-title"><i class="fa fa-list-ul"></i> Danh sách Modules</h4>
+                <button class="btn btn-primary-blue" onclick="openModuleModal()">
+                    <i class="fa fa-plus"></i> Tạo Module
+                </button>
+            </div>
+
+            @if (!modules.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="fa fa-folder-open-o" style="font-size: 3rem; color: #a3aed1; margin-bottom: 16px;"></i>
+                    <p class="text-muted">Chưa có Module nào. Nhấn "Tạo Module" để bắt đầu.</p>
+                </div>
+            }
+            else
+            {
+                foreach (var module in modules)
+                {
+                    <div class="module-item">
+                        <div class="module-info">
+                            <h6>Module @module.OrderIndex: @module.Title</h6>
+                            @if(!string.IsNullOrEmpty(module.Description))
+                            {
+                                <p class="module-desc">@module.Description</p>
+                            }
+                            <div class="module-order"><i class="fa fa-sort"></i> Thứ tự: @module.OrderIndex</div>
+                        </div>
+                        <div class="module-actions">
+                            <button class="btn-icon" title="Sửa Module" onclick="editModule('@module.Id', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(module.Title))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(module.Description ?? ""))')">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <form asp-controller="Module" asp-action="Delete" asp-route-id="@module.Id" asp-route-courseId="@Model.Id" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa module này?');" style="display:inline;">
+                                <button type="submit" class="btn-icon text-danger" title="Xóa Module">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </form>
+                            
+                            <div class="dropdown">
+                                <button class="btn-icon btn-add-lesson" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Thêm bài học">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#"><i class="fa fa-video-camera"></i> Bài học video</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fa fa-file-text-o"></i> Bài học reading</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fa fa-comments-o"></i> Bài thảo luận</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fa fa-question-circle"></i> Bài quiz</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fa fa-tasks"></i> Bài assign</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal Module -->
+<div class="modal fade" id="moduleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
+            <div class="modal-header border-0 pb-0" style="background-color: #ffffff;">
+                <div>
+                    <h5 class="modal-title fw-bold mb-1" id="moduleModalTitle" style="color: #2b3674; font-size: 1.25rem;">Tạo Module mới</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form id="moduleForm" method="post" action="/Module/Create">
+                <input type="hidden" name="CourseId" value="@Model.Id" />
+                <input type="hidden" name="Id" id="moduleId" />
+                
+                <div class="modal-body p-4">
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small" style="color: #2b3674;">Tên Module <span class="text-danger">*</span></label>
+                        <input name="Title" id="moduleTitle" type="text" class="form-control" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" required placeholder="Ví dụ: Giới thiệu khóa học" />
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold small" style="color: #2b3674;">Mô tả</label>
+                        <textarea name="Description" id="moduleDescription" class="form-control" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" rows="3" placeholder="Mô tả ngắn..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="modal-footer border-0 px-4 pb-4 pt-0">
+                    <button type="button" class="btn btn-light px-4" style="border-radius: 8px; font-weight: 500; border: 1px solid #e0e5f2;" data-bs-dismiss="modal">Hủy bỏ</button>
+                    <button type="submit" class="btn-primary-blue px-4 ms-2">
+                        Lưu thông tin
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openModuleModal() {
+            document.getElementById('moduleModalTitle').innerText = 'Tạo Module mới';
+            document.getElementById('moduleForm').action = '/Module/Create';
+            document.getElementById('moduleId').value = '';
+            document.getElementById('moduleTitle').value = '';
+            document.getElementById('moduleDescription').value = '';
+            
+            var modal = new bootstrap.Modal(document.getElementById('moduleModal'));
+            modal.show();
+        }
+
+        function editModule(id, title, description) {
+            document.getElementById('moduleModalTitle').innerText = 'Sửa Module';
+            document.getElementById('moduleForm').action = '/Module/Edit';
+            document.getElementById('moduleId').value = id;
+            document.getElementById('moduleTitle').value = title;
+            document.getElementById('moduleDescription').value = description;
+            
+            var modal = new bootstrap.Modal(document.getElementById('moduleModal'));
+            modal.show();
+        }
+    </script>
+}

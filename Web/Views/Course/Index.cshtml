@@ -1,4 +1,4 @@
-@model IEnumerable<Domain.Entities.Course>
+@model IEnumerable<Application.Dtos.Course.CourseManagementResponse>
 @{
     ViewData["Title"] = "Quản lý khóa học";
 }
@@ -9,7 +9,7 @@
 
 <div class="page-header">
     <h1 class="page-title">Quản lý khóa học</h1>
-    <button class="btn btn-primary-blue" data-bs-toggle="modal" data-bs-target="#createCourseModal">
+    <button class="btn btn-primary-blue" onclick="openCreateModal()">
         + Thêm khóa học mới
     </button>
 </div>
@@ -71,7 +71,7 @@
 
                         <!-- Cột 2: Tên & Cấp độ -->
                         <td>
-                            <div class="course-title">@course.Title</div>
+                            <a href="/Course/Details/@course.Id" class="course-title text-decoration-none" style="color: #2b3674;">@course.Title</a>
                             <div class="course-subtitle">
                                 <i class="fa fa-check-circle" style="color: #5b72ff;"></i> @course.Level
                             </div>
@@ -94,12 +94,26 @@
                         
                         <!-- Cột 5: Thao tác (Sửa/Xóa) -->
                         <td class="text-end">
-                            <button class="action-btn" title="Sửa khóa học">
-                                <i class="fa fa-pencil"></i>
-                            </button>
-                            <button class="action-btn text-danger" title="Xóa khóa học">
-                                <i class="fa fa-trash"></i>
-                            </button>
+                            @if (course.Status != Domain.Enums.CourseStatus.Submitted)
+                            {
+                                <button class="action-btn" title="Sửa khóa học" onclick="openEditModal('@course.Id', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Title))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Language))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Level))', '@course.CategoryId', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Description ?? ""))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Thumbnail ?? ""))')">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <form asp-action="Submit" asp-route-id="@course.Id" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn nộp khóa học này? Khi đã nộp, bạn sẽ không thể chỉnh sửa hoặc xóa nữa.');">
+                                    <button type="submit" class="action-btn text-success" title="Nộp khóa học" style="border:none; background:transparent;">
+                                        <i class="fa fa-paper-plane"></i>
+                                    </button>
+                                </form>
+                                <form asp-action="Delete" asp-route-id="@course.Id" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa khóa học này không?');">
+                                    <button type="submit" class="action-btn text-danger" title="Xóa khóa học" style="border:none; background:transparent;">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark"><i class="fa fa-clock-o"></i> Chờ duyệt</span>
+                            }
                         </td>
                     </tr>
                 }
@@ -123,37 +137,42 @@
     </div>
 </div>
 
-<!-- Modal Create Course -->
-<div class="modal fade" id="createCourseModal" tabindex="-1" aria-hidden="true">
+<!-- Modal Form Course -->
+<div class="modal fade" id="courseFormModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
             <div class="modal-header border-0 pb-0" style="background-color: #ffffff;">
                 <div>
-                    <h5 class="modal-title fw-bold mb-1" style="color: #2b3674; font-size: 1.25rem;">Tạo khóa học mới</h5>
-                    <p class="text-muted small mb-0">Điền thông tin cơ bản để bắt đầu khóa học của bạn.</p>
+                    <h5 class="modal-title fw-bold mb-1" id="formTitle" style="color: #2b3674; font-size: 1.25rem;">Tạo/Sửa khóa học</h5>
+                    <p class="text-muted small mb-0">Điền thông tin cơ bản cho khóa học của bạn.</p>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="align-self: flex-start; margin-top: 0.5rem;"></button>
             </div>
             
-            <form asp-controller="Course" asp-action="Create" method="post" enctype="multipart/form-data">
+            <form id="courseForm" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="Id" id="courseId" />
                 <div class="modal-body p-4">
                     
                     <!-- 1. Ảnh đại diện -->
                     <div class="mb-4">
-                        <label class="form-label fw-semibold small" style="color: #2b3674;">Ảnh đại diện (Thumbnail) <span class="text-danger">*</span></label>
-                        <input type="file" name="ThumbnailFile" class="form-control" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" accept="image/*" required />
+                        <label class="form-label fw-semibold small" style="color: #2b3674;">Ảnh đại diện (Thumbnail)</label>
+                        <div class="mb-2">
+                            <img id="thumbnailPreview" src="" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; display: none;" />
+                        </div>
+                        <input type="file" name="ThumbnailFile" class="form-control" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" accept="image/*" />
+                        <small class="text-muted" id="thumbnailHelp">Để trống nếu không muốn thay đổi ảnh khi sửa.</small>
                     </div>
 
                     <!-- 2. Tên khóa học -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold small" style="color: #2b3674;">Tên khóa học <span class="text-danger">*</span></label>
-                        <input name="Title" type="text" class="form-control" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" required placeholder="Ví dụ: Lập trình C# cơ bản" />
+                        <input name="Title" id="courseTitle" type="text" class="form-control" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" required placeholder="Ví dụ: Lập trình C# cơ bản" />
                     </div>
 
                     <!-- 3. Ngôn ngữ -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold small" style="color: #2b3674;">Ngôn ngữ <span class="text-danger">*</span></label>
-                        <select name="Language" class="form-select" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" required>
+                        <select name="Language" id="courseLanguage" class="form-select" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" required>
                             <option value="">-- Chọn ngôn ngữ --</option>
                             <option value="English">English</option>
                             <option value="Vietnamese">Vietnamese</option>
@@ -163,7 +182,7 @@
                     <!-- 4. Cấp độ -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold small" style="color: #2b3674;">Cấp độ <span class="text-danger">*</span></label>
-                        <select name="Level" class="form-select" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" required>
+                        <select name="Level" id="courseLevel" class="form-select" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" required>
                             <option value="">-- Chọn cấp độ --</option>
                             <option value="Beginner">Người mới bắt đầu</option>
                             <option value="Intermediate">Trung bình</option>
@@ -174,7 +193,7 @@
                     <!-- 5. Danh mục -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold small" style="color: #2b3674;">Danh mục <span class="text-danger">*</span></label>
-                        <select name="CategoryId" class="form-select" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" required>
+                        <select name="CategoryId" id="courseCategoryId" class="form-select" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" required>
                             <option value="">-- Chọn danh mục --</option>
                             @if (ViewBag.Categories != null)
                             {
@@ -189,17 +208,61 @@
                     <!-- 6. Mô tả -->
                     <div class="mb-2">
                         <label class="form-label fw-semibold small" style="color: #2b3674;">Mô tả ngắn gọn</label>
-                        <textarea name="Description" class="form-control" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" rows="3" placeholder="Giới thiệu nhanh về khóa học này..."></textarea>
+                        <textarea name="Description" id="courseDescription" class="form-control" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" rows="3" placeholder="Giới thiệu nhanh về khóa học này..."></textarea>
                     </div>
                 </div>
                 
                 <div class="modal-footer border-0 px-4 pb-4 pt-0">
                     <button type="button" class="btn btn-light px-4" style="border-radius: 8px; font-weight: 500; border: 1px solid #e0e5f2;" data-bs-dismiss="modal">Hủy bỏ</button>
                     <button type="submit" class="btn-primary-blue px-4 ms-2">
-                        Lưu khóa học
+                        Lưu thông tin
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function openCreateModal() {
+            document.getElementById('formTitle').innerText = 'Tạo khóa học mới';
+            document.getElementById('courseForm').action = '/Course/Create';
+            document.getElementById('courseId').value = '';
+            document.getElementById('courseTitle').value = '';
+            document.getElementById('courseLanguage').value = '';
+            document.getElementById('courseLevel').value = '';
+            document.getElementById('courseCategoryId').value = '';
+            document.getElementById('courseDescription').value = '';
+            
+            document.getElementById('thumbnailPreview').style.display = 'none';
+            document.getElementById('thumbnailPreview').src = '';
+            document.getElementById('thumbnailHelp').style.display = 'none';
+
+            var modal = new bootstrap.Modal(document.getElementById('courseFormModal'));
+            modal.show();
+        }
+
+        function openEditModal(id, title, language, level, categoryId, description, thumbnailUrl) {
+            document.getElementById('formTitle').innerText = 'Sửa khóa học';
+            document.getElementById('courseForm').action = '/Course/Edit';
+            document.getElementById('courseId').value = id;
+            document.getElementById('courseTitle').value = title;
+            document.getElementById('courseLanguage').value = language;
+            document.getElementById('courseLevel').value = level;
+            document.getElementById('courseCategoryId').value = categoryId;
+            document.getElementById('courseDescription').value = description;
+
+            if (thumbnailUrl && thumbnailUrl !== '') {
+                document.getElementById('thumbnailPreview').src = thumbnailUrl;
+                document.getElementById('thumbnailPreview').style.display = 'block';
+            } else {
+                document.getElementById('thumbnailPreview').style.display = 'none';
+            }
+            document.getElementById('thumbnailHelp').style.display = 'block';
+
+            var modal = new bootstrap.Modal(document.getElementById('courseFormModal'));
+            modal.show();
+        }
+    </script>
+}

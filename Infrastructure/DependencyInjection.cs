@@ -20,6 +20,7 @@ namespace Infrastructure
             services.AddRepositories(configuration);
             services.AddCacheService(configuration);
             services.AddMailService(configuration);
+            services.AddScoped<Application.Interfaces.IFileStorageService, Infrastructure.Shared.CloudinaryStorageService>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddFido2Security(configuration);
             return services;
@@ -31,6 +32,7 @@ namespace Infrastructure
             var redisConnection = configuration.GetConnectionString("Redis");
             services.AddStackExchangeRedisCache(option =>
             {
+                option.Configuration =  redisConnection;
                 option.Configuration = redisConnection;
                 option.InstanceName = "ELMS_";
             });

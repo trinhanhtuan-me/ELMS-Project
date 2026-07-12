@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Instructor Portal</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <i class="fa fa-paper-plane"></i> INSTRUCTOR
+            </div>
+            
+            <div class="sidebar-profile">
+                <!-- Avatar ngẫu nhiên -->
+                <img src="https://i.pravatar.cc/150?img=11" alt="User Avatar">
+                <p class="name">John Doe <i class="fa fa-angle-down"></i></p>
+                <p class="email">instructor@email.com</p>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li><a href="#"><i class="fa fa-pie-chart fa-fw"></i> Dashboard</a></li>
+                <!-- Mục đang chọn -->
+                <li class="active"><a href="#"><i class="fa fa-folder-open-o fa-fw"></i> Quản lý khóa học</a></li>
+                <li><a href="#"><i class="fa fa-users fa-fw"></i> Học viên</a></li>
+                <li><a href="#"><i class="fa fa-money fa-fw"></i> Doanh thu</a></li>
+                <li><a href="#"><i class="fa fa-cog fa-fw"></i> Cài đặt</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Global Toast Container (Copy từ Layout gốc) -->
+    <div class="toast-container position-fixed top-0 end-0 p-4" style="z-index: 1055;">
+        @if (TempData["SuccessToast"] != null)
+        {
+            <div id="successToast" class="toast custom-toast custom-toast-success" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex align-items-center w-100">
+                    <div class="custom-toast-icon"><i class="fa fa-check"></i></div>
+                    <div class="custom-toast-content">
+                        <div class="custom-toast-title">Successful!</div>
+                        <div class="custom-toast-message">@TempData["SuccessToast"]</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        }
+
+        @if (TempData["ErrorToast"] != null)
+        {
+            <div id="errorToast" class="toast custom-toast custom-toast-error" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex align-items-center w-100">
+                    <div class="custom-toast-icon"><i class="fa fa-exclamation"></i></div>
+                    <div class="custom-toast-content">
+                        <div class="custom-toast-title">Error!</div>
+                        <div class="custom-toast-message">@TempData["ErrorToast"]</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        }
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var successToast = document.getElementById('successToast');
+            if (successToast) {
+                var toast = new bootstrap.Toast(successToast, { delay: 5000 });
+                toast.show();
+            }
+            var errorToast = document.getElementById('errorToast');
+            if (errorToast) {
+                var toast = new bootstrap.Toast(errorToast, { delay: 5000 });
+                toast.show();
+            }
+        });
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

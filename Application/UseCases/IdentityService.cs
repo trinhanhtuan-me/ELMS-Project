@@ -1,6 +1,7 @@
 using Application.Common.Interfaces;
 using Application.Common.Mails;
 using Application.Dtos.Identity;
+using Application.Dtos.SecurityManagement;
 using Application.Exceptions;
 using Application.Interfaces;
 using Application.Utils;
@@ -23,8 +24,7 @@ namespace Application.UseCases
         Task ForgotPasswordAsync(ForgotPasswordRequest request);
         Task VerifyForgotPasswordAsync(VerifyForgotPasswordRequest request);
         Task ResetPassword(ResetPasswordRequest request);
-
-
+        Task ChangePassword(Guid Id, ChangePasswordRequest request);
     }
 
     public class IdentityService : IIdentityService
@@ -241,6 +241,27 @@ namespace Application.UseCases
             user.LastUpdatedBy = user.Id.ToString();
 
             findOtp.IsDeleted = true;
+
+            await _uow.SaveChangeAsync();
+        }
+
+        public async Task ChangePassword(Guid Id, ChangePasswordRequest request)
+        {
+            var user = await _user.FindByIdAsync(Id);
+            if (user == null) throw new BusinessRuleException("Can not find user to change password");
+
+            if (request.NewPassword != request.ConfirmPassword)
+                throw new BusinessRuleException("Confirm password does not match");
+
+            var hashPassword = user.Password;
+            if (hashPassword == null) throw new BusinessRuleException("Can not change password for this user");
+            var verifyPassword = PasswordHasher.VerifyPassword(request.CurrentPassword, hashPassword);
+            if (!verifyPassword) throw new BusinessRuleException("Current password is incorrect");
+
+            var newHashPassword = PasswordHasher.HashPassword(request.NewPassword);
+            user.Password = newHashPassword;
+            user.LastUpdatedAt = DateTime.UtcNow;
+            user.LastUpdatedBy = user.Id.ToString();
 
             await _uow.SaveChangeAsync();
         }

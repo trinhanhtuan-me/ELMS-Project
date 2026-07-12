@@ -10,18 +10,18 @@
                 <div class="card-body p-4">
                     <h5 class="card-title fw-bold mb-4">Change Password</h5>
 
-                    <form id="changePasswordForm">
+                    <form asp-controller="SecurityManagement" asp-action="ChangePassword" method="post">
                         <div class="mb-3">
                             <label class="form-label text-muted small">Current Password</label>
-                            <input type="password" class="form-control" placeholder="Current Password" required>
+                            <input name="CurrentPassword" type="password" class="form-control" placeholder="Current Password" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-muted small">New Password</label>
-                            <input type="password" class="form-control" placeholder="New Password" required>
+                            <input name="NewPassword" type="password" class="form-control" placeholder="New Password" required>
                         </div>
                         <div class="mb-4">
                             <label class="form-label text-muted small">Confirm New Password</label>
-                            <input type="password" class="form-control" placeholder="Confirm New Password" required>
+                            <input name="ConfirmPassword" type="password" class="form-control" placeholder="Confirm New Password" required>
                         </div>
 
                         <button type="submit" class="btn btn-primary px-4">Update Password</button>

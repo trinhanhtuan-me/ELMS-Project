@@ -463,6 +463,58 @@ namespace Infrastructure.Migrations
                     b.ToTable("Enrollments");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Fido2Credential", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AaGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CredType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("DescriptorId")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastUpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("PublicKey")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<DateTime>("RegDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("SignatureCounter")
+                        .HasColumnType("bigint");
+
+                    b.Property<byte[]>("UserHandle")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Fido2Credentials");
+                });
+
             modelBuilder.Entity("Domain.Entities.Flashcard", b =>
                 {
                     b.Property<Guid>("Id")
@@ -607,9 +659,9 @@ namespace Infrastructure.Migrations
                         {
                             Id = new Guid("44444444-4444-4444-4444-444444444444"),
                             Bio = "Experienced Teacher",
-                            CreatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(1188),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Expertise = "Software Engineering",
-                            LastUpdatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(1189),
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Qualifications = "PhD",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
@@ -784,8 +836,8 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("55555555-5555-5555-5555-555555555555"),
-                            CreatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(1246),
-                            LastUpdatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(1247),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Position = "Academic Head",
                             Specialization = "Operations",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -1302,58 +1354,11 @@ namespace Infrastructure.Migrations
                         {
                             Id = new Guid("33333333-3333-3333-3333-333333333333"),
                             Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(1124),
-                            LastUpdatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(1125),
+                            CreatedAt = new DateTime(2026, 7, 11, 23, 53, 9, 560, DateTimeKind.Local).AddTicks(2339),
+                            LastUpdatedAt = new DateTime(2026, 7, 11, 23, 53, 9, 560, DateTimeKind.Local).AddTicks(2340),
                             Occupation = "Engineer",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
-                });
-
-            modelBuilder.Entity("Domain.Entities.PasswordResetToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("(newsequentialid())");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("(sysdatetime())");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LastUpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<DateTime?>("UsedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id")
-                        .HasName("PK__Password__3214EC07BFB33313");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex(new[] { "Token" }, "UQ__Password__1EB4F8175944EB96")
-                        .IsUnique();
-
-                    b.ToTable("PasswordResetTokens");
                 });
 
             modelBuilder.Entity("Domain.Entities.Payment", b =>
@@ -1710,10 +1715,10 @@ namespace Infrastructure.Migrations
                         {
                             Id = new Guid("22222222-2222-2222-2222-222222222222"),
                             Address = "Hoa Lac",
-                            CreatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(1051),
+                            CreatedAt = new DateTime(2026, 7, 11, 23, 53, 9, 560, DateTimeKind.Local).AddTicks(2275),
                             GradeLevel = "University",
                             Institution = "FPT University",
-                            LastUpdatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(1053),
+                            LastUpdatedAt = new DateTime(2026, 7, 11, 23, 53, 9, 560, DateTimeKind.Local).AddTicks(2275),
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -2570,12 +2575,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            CreatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(759),
+                            CreatedAt = new DateTime(2026, 7, 11, 23, 53, 9, 560, DateTimeKind.Local).AddTicks(2118),
                             Email = "admin@elms.com",
                             FullName = "System Admin",
                             IsActive = true,
                             IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(773),
+                            LastUpdatedAt = new DateTime(2026, 7, 11, 23, 53, 9, 560, DateTimeKind.Local).AddTicks(2131),
                             Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "admin"
@@ -2583,12 +2588,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            CreatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(860),
+                            CreatedAt = new DateTime(2026, 7, 11, 23, 53, 9, 560, DateTimeKind.Local).AddTicks(2171),
                             Email = "student@elms.com",
                             FullName = "Sample Student",
                             IsActive = true,
                             IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(860),
+                            LastUpdatedAt = new DateTime(2026, 7, 11, 23, 53, 9, 560, DateTimeKind.Local).AddTicks(2172),
                             Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "student"
@@ -2596,12 +2601,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-333333333333"),
-                            CreatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(865),
+                            CreatedAt = new DateTime(2026, 7, 11, 23, 53, 9, 560, DateTimeKind.Local).AddTicks(2175),
                             Email = "parent@elms.com",
                             FullName = "Sample Parent",
                             IsActive = true,
                             IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(865),
+                            LastUpdatedAt = new DateTime(2026, 7, 11, 23, 53, 9, 560, DateTimeKind.Local).AddTicks(2175),
                             Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "parent"
@@ -2609,12 +2614,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("44444444-4444-4444-4444-444444444444"),
-                            CreatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(869),
+                            CreatedAt = new DateTime(2026, 7, 11, 23, 53, 9, 560, DateTimeKind.Local).AddTicks(2180),
                             Email = "teacher@elms.com",
                             FullName = "Sample Teacher",
                             IsActive = true,
                             IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(869),
+                            LastUpdatedAt = new DateTime(2026, 7, 11, 23, 53, 9, 560, DateTimeKind.Local).AddTicks(2180),
                             Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "teacher"
@@ -2622,12 +2627,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("55555555-5555-5555-5555-555555555555"),
-                            CreatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(872),
+                            CreatedAt = new DateTime(2026, 7, 11, 23, 53, 9, 560, DateTimeKind.Local).AddTicks(2193),
                             Email = "manager@elms.com",
                             FullName = "Sample Manager",
                             IsActive = true,
                             IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 6, 29, 10, 34, 34, 627, DateTimeKind.Local).AddTicks(873),
+                            LastUpdatedAt = new DateTime(2026, 7, 11, 23, 53, 9, 560, DateTimeKind.Local).AddTicks(2193),
                             Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "manager"
@@ -2894,6 +2899,18 @@ namespace Infrastructure.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Fido2Credential", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("Passkeys")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Fido2Credential_User");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.Flashcard", b =>
                 {
                     b.HasOne("Domain.Entities.FlashcardSet", "Set")
@@ -3101,18 +3118,6 @@ namespace Infrastructure.Migrations
                         .HasConstraintName("FK__ParentProfil__Id__0697FACD");
 
                     b.Navigation("IdNavigation");
-                });
-
-            modelBuilder.Entity("Domain.Entities.PasswordResetToken", b =>
-                {
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithMany("PasswordResetTokens")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK__PasswordR__UserI__28ED12D1");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.Payment", b =>
@@ -3493,7 +3498,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("ParentProfile");
 
-                    b.Navigation("PasswordResetTokens");
+                    b.Navigation("Passkeys");
 
                     b.Navigation("StudentProfile");
                 });

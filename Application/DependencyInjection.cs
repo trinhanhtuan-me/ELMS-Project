@@ -1,4 +1,5 @@
 using System.Reflection;
+using Application.Common.Cache;
 using Application.UseCases;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,8 @@ namespace Application
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IModuleService, ModuleService>();
             services.AddScoped<ICategoryService,CategoryService>();
+            services.AddScoped<IParentLinkService, ParentLinkService>();
+            services.AddScoped<IPasskeyService, PasskeyService>();
             return services;
         }
     }

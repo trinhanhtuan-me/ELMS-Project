@@ -17,9 +17,14 @@ namespace Infrastructure.Persistence.Repositories
             await _context.Users.AddAsync(user);
         }
 
+        public async Task<User?> FindByIdAsync(Guid id)
+        {
+            return await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public async Task<User?> FindUserByEmailOrUsernameAsync(string username, string email)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email || u.Username == username);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email || u.Username == username && !u.IsDeleted);
         }
 
         public async Task<User?> FindUserLoginAsync(string identifier)

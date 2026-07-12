@@ -17,6 +17,7 @@ namespace WebMVC.MIddlewares
                 httpContext.Request.Path,
                 exception.Message
                 );
+            
 
             httpContext.Response.Redirect("/Error/500");
             return true;

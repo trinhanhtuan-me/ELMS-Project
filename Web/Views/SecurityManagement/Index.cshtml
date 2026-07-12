@@ -1,0 +1,177 @@
+﻿@{
+    ViewData["Title"] = "Security Management";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Change Password Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-4">Change Password</h5>
+
+                    <form asp-controller="SecurityManagement" asp-action="ChangePassword" method="post">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Current Password</label>
+                            <input name="CurrentPassword" type="password" class="form-control" placeholder="Current Password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">New Password</label>
+                            <input name="NewPassword" type="password" class="form-control" placeholder="New Password" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-muted small">Confirm New Password</label>
+                            <input name="ConfirmPassword" type="password" class="form-control" placeholder="Confirm New Password" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary px-4">Update Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Passkey Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-3">Enable Passkey (Passwordless Login)</h5>
+
+                    <p class="card-text text-muted">
+                        Passkey is a modern security technology that allows you to log in quickly and securely using your
+                        <strong>Fingerprint, FaceID, or Device PIN</strong>.
+                    </p>
+
+                    <p class="card-text text-muted mb-4">
+                        This action will fully protect your account against phishing and password theft tactics.
+                        If you want to enable this feature, please click the button below.
+                    </p>
+
+                    @if (ViewBag.HasPasskey == true)
+                    {
+                        <div class="alert alert-success py-2 mb-3">
+                            <i class="bi bi-shield-check me-2"></i> Your account is currently protected by Passkey.
+                        </div>
+                        <div class="mt-auto">
+                            <button id="btn-register-passkey" type="button" class="btn btn-outline-success px-4">
+                                <i class="bi bi-plus-circle me-2"></i> Add Passkey for this device
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mt-auto">
+                            <button id="btn-register-passkey" type="button" class="btn btn-success px-4">
+                                <i class="bi bi-fingerprint me-2"></i> Register Passkey
+                            </button>
+                        </div>
+                    }
+
+                    <div id="passkey-message" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+@section Scripts {
+    <script>
+        // Giải thích: C# nói tiếng Base64Url, còn Trình duyệt nói tiếng nhị phân ArrayBuffer.
+
+        function coerceToArrayBuffer(base64String) {
+            let base64 = base64String.replace(/-/g, "+").replace(/_/g, "/");
+            let padding = base64.length % 4;
+            if (padding) {
+                if (padding === 1) base64 += "===";
+                else if (padding === 2) base64 += "==";
+                else if (padding === 3) base64 += "=";
+            }
+            const str = window.atob(base64);
+            const bytes = new Uint8Array(str.length);
+            for (let i = 0; i < str.length; i++) {
+                bytes[i] = str.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function coerceToBase64Url(buffer) {
+            const bytes = new Uint8Array(buffer);
+            let str = "";
+            for (const byte of bytes) {
+                str += String.fromCharCode(byte);
+            }
+            const base64 = window.btoa(str);
+            return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+        }
+
+
+        document.getElementById('btn-register-passkey').addEventListener('click', async () => {
+            const messageDiv = document.getElementById('passkey-message');
+            messageDiv.innerHTML = '<span class="text-info"><i class="bi bi-hourglass-split"></i> Processing... Please check your device screen.</span>';
+
+            // Lấy Email của người dùng hiện tại đang đăng nhập bằng Razor
+            const userIdentifier = '@User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value' || '@User.Identity?.Name';
+
+            try {
+                // MakeCredentialOptions
+                const optionsResponse = await fetch('/Identity/MakeCredentialOptions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identifier: userIdentifier })
+                });
+
+                if (!optionsResponse.ok) {
+                    const err = await optionsResponse.json();
+                    throw new Error(err.error || "Could not get options from server.");
+                }
+
+                const options = await optionsResponse.json();
+
+                // CHUYỂN ĐỔI DỮ LIỆU TỪ C# SANG NHỊ PHÂN CHO TRÌNH DUYỆT HIỂU
+                options.challenge = coerceToArrayBuffer(options.challenge);
+                options.user.id = coerceToArrayBuffer(options.user.id);
+                if (options.excludeCredentials) {
+                    for (let cred of options.excludeCredentials) {
+                        cred.id = coerceToArrayBuffer(cred.id);
+                    }
+                }
+
+                //Popup vân tay/FaceID của Windows/iOS lên!
+                const newCredential = await navigator.credentials.create({ publicKey: options });
+
+                // CHUYỂN ĐỔI CHỮ KÝ VỪA QUÉT TỪ NHỊ PHÂN VỀ LẠI BASE64URL ĐỂ GỬI LÊN C#
+                const attestationResponse = {
+                    id: newCredential.id,
+                    rawId: coerceToBase64Url(newCredential.rawId),
+                    type: newCredential.type,
+                    extensions: newCredential.getClientExtensionResults(),
+                    response: {
+                        attestationObject: coerceToBase64Url(newCredential.response.attestationObject),
+                        clientDataJSON: coerceToBase64Url(newCredential.response.clientDataJSON)
+                    }
+                };
+
+                //MakeCredential
+                const registerResponse = await fetch('/Identity/MakeCredential', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        identifier: userIdentifier,
+                        attesion: attestationResponse
+                    })
+                });
+
+                if (!registerResponse.ok) {
+                    const err = await registerResponse.json();
+                    throw new Error(err.error || "Failed to save passkey on server.");
+                }
+
+                // THÀNH CÔNG
+                messageDiv.innerHTML = '<span class="text-success fw-bold"><i class="bi bi-check-circle-fill"></i> Passkey registered successfully!</span>';
+
+            } catch (error) {
+                console.error(error);
+                messageDiv.innerHTML = `<span class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill"></i> Error: ${error.message}</span>`;
+            }
+        });
+    </script>
+}

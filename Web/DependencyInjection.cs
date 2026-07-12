@@ -24,6 +24,8 @@ namespace WebMVC
                     options.AccessDeniedPath = "/Error/403";
                 });
 
+            services.AddSingleton<Web.Services.ILocalizationService, Web.Services.LocalizationService>();
+
             return services;
         }
 

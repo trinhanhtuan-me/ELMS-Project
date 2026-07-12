@@ -1,0 +1,96 @@
+<!-- ========================================== -->
+<!--             CUSTOM TAILWIND MODALS         -->
+<!-- ========================================== -->
+
+<!-- 1. Modal xác nhận đồng ý liên kết -->
+<div id="approveModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 ease-out">
+    <div class="modal-card bg-white rounded-2xl border border-slate-200 shadow-xl max-w-md w-full p-6 mx-4 transform scale-95 opacity-0 transition-all duration-300 ease-out">
+        <h3 class="text-lg font-bold text-slate-850 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-circle-check text-emerald-600"></i>
+            @Localizer["confirm_approve_title"]
+        </h3>
+        <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+            @Localizer["confirm_approve_text"] <strong id="approveStudentName" class="text-slate-800 font-semibold"></strong>?
+        </p>
+        <form asp-action="Approve" asp-controller="ParentLink" method="post">
+            <input type="hidden" name="requestId" id="approveRequestId" />
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="closeApproveModal()" class="px-4 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100 rounded-lg transition-colors">
+                    @Localizer["btn_cancel"]
+                </button>
+                <button type="submit" class="px-4 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm transition-colors">
+                    @Localizer["btn_approve"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 2. Modal từ chối liên kết -->
+<div id="rejectModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 ease-out">
+    <div class="modal-card bg-white rounded-2xl border border-slate-200 shadow-xl max-w-md w-full p-6 mx-4 transform scale-95 opacity-0 transition-all duration-300 ease-out">
+        <h3 class="text-lg font-bold text-slate-850 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-circle-xmark text-rose-600"></i>
+            @Localizer["reject_warning_title"]
+        </h3>
+        <form asp-action="Reject" asp-controller="ParentLink" method="post" onsubmit="return validateRejectForm();">
+            <input type="hidden" name="requestId" id="rejectRequestId" />
+            <div class="mb-5">
+                <label for="rejectNote" class="block text-sm font-semibold text-slate-700 mb-2">
+                    @Localizer["msg_prompt_reject_reason"]
+                </label>
+                <textarea name="note" id="rejectNote" rows="3" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-slate-400" placeholder="..." required></textarea>
+                <span id="rejectNoteError" class="text-xs text-rose-600 mt-1.5 hidden block">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+                    @Localizer["msg_alert_reject_reason_required"]
+                </span>
+            </div>
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="closeRejectModal()" class="px-4 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100 rounded-lg transition-colors">
+                    @Localizer["btn_cancel"]
+                </button>
+                <button type="submit" class="px-4 py-2 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg shadow-sm transition-colors">
+                    @Localizer["btn_reject"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 3. Modal hủy liên kết -->
+<div id="unlinkModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 ease-out">
+    <div class="modal-card bg-white rounded-2xl border border-slate-200 shadow-xl max-w-md w-full p-6 mx-4 transform scale-95 opacity-0 transition-all duration-300 ease-out">
+        <h3 class="text-lg font-bold text-slate-850 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-link-slash text-rose-600"></i>
+            @Localizer["unlink_warning_title"]
+        </h3>
+        
+        <!-- Warning Banner -->
+        <div class="mb-4 p-3.5 bg-rose-50 border border-rose-100 rounded-xl text-rose-800 text-xs flex gap-2.5 items-start leading-relaxed">
+            <i class="fa-solid fa-triangle-exclamation text-rose-500 text-sm mt-0.5 shrink-0"></i>
+            <span>@Localizer["unlink_warning_text"]</span>
+        </div>
+        
+        <form asp-action="Unlink" asp-controller="ParentLink" method="post" onsubmit="return validateUnlinkForm();">
+            <input type="hidden" name="studentId" id="unlinkStudentId" />
+            <div class="mb-5">
+                <label for="unlinkNote" class="block text-sm font-semibold text-slate-700 mb-2">
+                    @Localizer["msg_prompt_unlink_reason"]
+                </label>
+                <textarea name="note" id="unlinkNote" rows="3" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-slate-400" placeholder="..." required></textarea>
+                <span id="unlinkNoteError" class="text-xs text-rose-600 mt-1.5 hidden block">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+                    @Localizer["msg_alert_unlink_reason_required"]
+                </span>
+            </div>
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="closeUnlinkModal()" class="px-4 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100 rounded-lg transition-colors">
+                    @Localizer["btn_cancel"]
+                </button>
+                <button type="submit" class="px-4 py-2 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg shadow-sm transition-colors">
+                    @Localizer["btn_unlink"]
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

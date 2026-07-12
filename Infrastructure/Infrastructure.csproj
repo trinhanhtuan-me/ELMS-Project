@@ -7,6 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Fido2" Version="3.0.1" />
 		<PackageReference Include="MailKit" Version="4.17.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.27">
 			<PrivateAssets>all</PrivateAssets>
@@ -32,6 +33,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="Shared\Mails\Templates\ForgotPassword.html">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="Shared\Mails\Templates\OtpRegistration.html">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>

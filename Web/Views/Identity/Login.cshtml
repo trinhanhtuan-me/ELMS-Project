@@ -14,7 +14,7 @@
                     <!-- Username -->
                     <div class="mb-3">
                         <label asp-for="Identifier" class="form-label fw-medium">Username</label>
-                        <input asp-for="Identifier" class="form-control bg-light" placeholder="student_alice" required />
+                        <input asp-for="Identifier" class="form-control bg-light" placeholder="Enter your username or email" required />
                         <span asp-validation-for="Identifier" class="text-danger small"></span>
                     </div>
 
@@ -33,7 +33,7 @@
                                 Remember me
                             </label>
                         </div>
-                        <a href="#" class="text-decoration-none small">Forgot password?</a>
+                        <a asp-controller="Identity" asp-action="ForgotPassword" class="text-decoration-none small">Forgot password?</a>
                     </div>
 
                     <!-- Sign In Button -->
@@ -72,12 +72,130 @@
                     <span class="text-dark fw-medium">Sign in with Google</span>
                 </button>
 
+                <!-- Nút Đăng nhập bằng Vân tay / Passkey -->
+                <button id="btn-login-passkey" type="button" class="btn btn-outline-secondary w-100 py-2 mb-4 rounded-3 d-flex justify-content-center align-items-center gap-2">
+                    <i class="bi bi-key-fill text-dark" style="font-size: 1.2rem;"></i>
+                    <span class="text-dark fw-medium">Sign in with Passkey</span>
+                </button>
+
+                <!-- Khu vực báo lỗi nếu quét vân tay sai -->
+                <div id="passkey-login-message" class="text-center mb-3"></div>
+
                 <!-- Sign Up Link -->
                 <div class="text-center small">
                     <span class="text-muted">Don't have an account?</span>
                     <a href="/Identity/Register" class="text-decoration-none fw-medium">Sign up</a>
                 </div>
+
+                
+
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function coerceToArrayBuffer(base64String) {
+            let base64 = base64String.replace(/-/g, "+").replace(/_/g, "/");
+            let padding = base64.length % 4;
+            if (padding) {
+                if (padding === 1) base64 += "===";
+                else if (padding === 2) base64 += "==";
+                else if (padding === 3) base64 += "=";
+            }
+            const str = window.atob(base64);
+            const bytes = new Uint8Array(str.length);
+            for (let i = 0; i < str.length; i++) {
+                bytes[i] = str.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function coerceToBase64Url(buffer) {
+            const bytes = new Uint8Array(buffer);
+            let str = "";
+            for (const byte of bytes) {
+                str += String.fromCharCode(byte);
+            }
+            const base64 = window.btoa(str);
+            return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+        }
+
+        //ASSERTION
+        document.getElementById('btn-login-passkey').addEventListener('click', async () => {
+            const msgDiv = document.getElementById('passkey-login-message');
+
+            const identifierInput = document.getElementById('Identifier').value;
+
+            if (!identifierInput) {
+                msgDiv.innerHTML = '<span class="text-danger fw-bold">Please enter your username or email first!</span>';
+                return;
+            }
+
+            msgDiv.innerHTML = '<span class="text-info"><i class="bi bi-hourglass-split"></i> Waiting for verification...</span>';
+
+            try {
+                //MakeAssertionOptions
+                const optionsResponse = await fetch('/Identity/MakeAssertionOptions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identifier: identifierInput })
+                });
+
+                if (!optionsResponse.ok) {
+                    const err = await optionsResponse.json();
+                    throw new Error(err.error || "Account has no passkey or error getting options.");
+                }
+
+                const options = await optionsResponse.json();
+
+                options.challenge = coerceToArrayBuffer(options.challenge);
+                if (options.allowCredentials) {
+                    for (let cred of options.allowCredentials) {
+                        cred.id = coerceToArrayBuffer(cred.id);
+                    }
+                }
+
+                //dùng hàm .GET thay vì .CREATE
+                const assertion = await navigator.credentials.get({ publicKey: options });
+
+                const assertionResponse = {
+                    id: assertion.id,
+                    rawId: coerceToBase64Url(assertion.rawId),
+                    type: assertion.type,
+                    extensions: assertion.getClientExtensionResults(),
+                    response: {
+                        authenticatorData: coerceToBase64Url(assertion.response.authenticatorData),
+                        clientDataJSON: coerceToBase64Url(assertion.response.clientDataJSON),
+                        signature: coerceToBase64Url(assertion.response.signature),
+                        userHandle: assertion.response.userHandle ? coerceToBase64Url(assertion.response.userHandle) : null
+                    }
+                };
+
+                const loginResponse = await fetch('/Identity/MakeAssertion', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        identifier: identifierInput,
+                        assertion: assertionResponse //khớp DTO của C#
+                    })
+                });
+
+                if (!loginResponse.ok) {
+                    const err = await loginResponse.json();
+                    throw new Error(err.error || "Passkey verification failed.");
+                }
+
+                const result = await loginResponse.json();
+
+                msgDiv.innerHTML = '<span class="text-success fw-bold"><i class="bi bi-check-circle-fill"></i> Login successful! Redirecting...</span>';
+                window.location.href = result.redirectUrl || '/';
+
+            } catch (error) {
+                console.error(error);
+                msgDiv.innerHTML = `<span class="text-danger fw-bold"><i class="bi bi-x-circle-fill"></i> Error: ${error.message}</span>`;
+            }
+        });
+    </script>
+}

@@ -41,6 +41,8 @@ public partial class ElmsDbContext : DbContext
 
     public virtual DbSet<FlashcardSet> FlashcardSets { get; set; }
 
+    public virtual DbSet<Fido2Credential> Fido2Credentials { get; set; }
+
     public virtual DbSet<InstructorProfile> InstructorProfiles { get; set; }
 
     public virtual DbSet<Lesson> Lessons { get; set; }
@@ -73,7 +75,6 @@ public partial class ElmsDbContext : DbContext
 
     public virtual DbSet<ParentProfile> ParentProfiles { get; set; }
 
-    public virtual DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
     public virtual DbSet<Payment> Payments { get; set; }
 
@@ -658,22 +659,6 @@ public partial class ElmsDbContext : DbContext
                 .HasConstraintName("FK__ParentProfil__Id__0697FACD");
         });
 
-        modelBuilder.Entity<PasswordResetToken>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Password__3214EC07BFB33313");
-
-            entity.HasIndex(e => e.Token, "UQ__Password__1EB4F8175944EB96").IsUnique();
-
-            entity.Property(e => e.Id).HasDefaultValueSql("(newsequentialid())");
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysdatetime())");
-            entity.Property(e => e.Token)
-                .HasMaxLength(255)
-                .IsUnicode(false);
-
-            entity.HasOne(d => d.User).WithMany(p => p.PasswordResetTokens)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__PasswordR__UserI__28ED12D1");
-        });
 
         modelBuilder.Entity<Payment>(entity =>
         {
@@ -934,6 +919,19 @@ public partial class ElmsDbContext : DbContext
                     });
         });
 
+        modelBuilder.Entity<Fido2Credential>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.DescriptorId).IsRequired();
+            entity.Property(e => e.PublicKey).IsRequired();
+            entity.Property(e => e.UserHandle).IsRequired();
+
+            entity.HasOne(d => d.User).WithMany(p => p.Passkeys)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Fido2Credential_User");
+        });
+
         modelBuilder.Entity<Mail>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -995,10 +993,23 @@ public partial class ElmsDbContext : DbContext
             new ParentProfile { Id = parentId, Occupation = "Engineer", Address = "Hanoi" }
         );
         modelBuilder.Entity<InstructorProfile>().HasData(
-            new InstructorProfile { Id = teacherId, Bio = "Experienced Teacher", Expertise = "Software Engineering", Qualifications = "PhD" }
+            new InstructorProfile { 
+                Id = teacherId, 
+                Bio = "Experienced Teacher", 
+                Expertise = "Software Engineering", 
+                Qualifications = "PhD",
+                CreatedAt = new DateTime(2024, 1, 1),
+                LastUpdatedAt = new DateTime(2024, 1, 1)
+            }
         );
         modelBuilder.Entity<ManagerProfile>().HasData(
-            new ManagerProfile { Id = managerId, Position = "Academic Head", Specialization = "Operations" }
+            new ManagerProfile { 
+                Id = managerId, 
+                Position = "Academic Head", 
+                Specialization = "Operations",
+                CreatedAt = new DateTime(2024, 1, 1),
+                LastUpdatedAt = new DateTime(2024, 1, 1)
+            }
         );
 
         // Data Seeding for SystemKey

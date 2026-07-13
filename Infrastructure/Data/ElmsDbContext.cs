@@ -966,6 +966,7 @@ public partial class ElmsDbContext : DbContext
         var parentId = Guid.Parse("33333333-3333-3333-3333-333333333333");
         var teacherId = Guid.Parse("44444444-4444-4444-4444-444444444444");
         var managerId = Guid.Parse("55555555-5555-5555-5555-555555555555");
+        var multiRoleId = Guid.Parse("66666666-6666-6666-6666-666666666666");
         var defaultPasswordHash = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy"; // 123456aA@
 
         modelBuilder.Entity<User>().HasData(
@@ -973,7 +974,8 @@ public partial class ElmsDbContext : DbContext
             new User { Id = studentId, Username = "student", Email = "student@elms.com", FullName = "Sample Student", Password = defaultPasswordHash, IsActive = true, IsDeleted = false },
             new User { Id = parentId, Username = "parent", Email = "parent@elms.com", FullName = "Sample Parent", Password = defaultPasswordHash, IsActive = true, IsDeleted = false },
             new User { Id = teacherId, Username = "teacher", Email = "teacher@elms.com", FullName = "Sample Teacher", Password = defaultPasswordHash, IsActive = true, IsDeleted = false },
-            new User { Id = managerId, Username = "manager", Email = "manager@elms.com", FullName = "Sample Manager", Password = defaultPasswordHash, IsActive = true, IsDeleted = false }
+            new User { Id = managerId, Username = "manager", Email = "manager@elms.com", FullName = "Sample Manager", Password = defaultPasswordHash, IsActive = true, IsDeleted = false },
+            new User { Id = multiRoleId, Username = "multirole", Email = "multi@elms.com", FullName = "Vừa Phụ Huynh Vừa Giáo Viên", Password = defaultPasswordHash, IsActive = true, IsDeleted = false }
         );
 
         // Data Seeding for Many-to-Many PUserRole Join Table
@@ -982,7 +984,9 @@ public partial class ElmsDbContext : DbContext
             new { UserId = studentId, RoleId = 2 },
             new { UserId = parentId, RoleId = 3 },
             new { UserId = teacherId, RoleId = 4 },
-            new { UserId = managerId, RoleId = 5 }
+            new { UserId = managerId, RoleId = 5 },
+            new { UserId = multiRoleId, RoleId = 3 }, // Cấp quyền Parent
+            new { UserId = multiRoleId, RoleId = 4 }  // Cấp quyền Teacher
         );
 
         // Data Seeding for User Profiles

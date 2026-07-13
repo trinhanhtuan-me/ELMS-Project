@@ -40,7 +40,8 @@ namespace Web.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-
+            if (User.Identity != null && User.Identity.IsAuthenticated) 
+                return RedirectToAction("Index", "Home");
             return View();
         }
 
@@ -80,6 +81,20 @@ namespace Web.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimIdentity), authProperties);
+
+                if (user.Roles != null && user.Roles.Count == 1)
+                {
+                    var roleName = user.Roles.First().Name;
+                    if (roleName.ToLower().Contains("student")) return RedirectToAction("Index", "Home");
+                    if (roleName.ToLower().Contains("instructor")) return RedirectToAction("Index", "???");
+                    if (roleName.ToLower().Contains("manager")) return RedirectToAction("Index", "???");
+                    if (roleName.ToLower().Contains("parent")) return RedirectToAction("Index", "???");
+                    if (roleName.ToLower().Contains("admin")) return RedirectToAction("Index", "???");
+                }
+                else if (user.Roles != null && user.Roles.Count > 1)
+                {
+                    return RedirectToAction("SelectRole", "Identity");
+                }
 
                 return RedirectToAction("Index", "Home");
             }
@@ -312,6 +327,17 @@ namespace Web.Controllers
                 TempData["ErrorToast"] = ex.Message;
                 return View(request);
             }
+        }
+
+        [HttpGet]
+        public IActionResult SelectRole()
+        {
+            var role = User.Claims.Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value).ToList();
+
+            if (role.Count < 1) return RedirectToAction("Index", "Home");
+
+            return View(role);
         }
     }
 }

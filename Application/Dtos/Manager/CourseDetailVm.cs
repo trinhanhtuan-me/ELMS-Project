@@ -76,6 +76,9 @@ namespace Application.Dtos.Manager
 
         // Discussion ---
         public string? DiscussionDescription { get; set; }
+
+        // Danh sách các câu trả lời
+        public List<DiscussionReplyVm> DiscussionReplies { get; set; } = new();
     }
 
     // Câu hỏi (dành cho Lesson hoặc Quiz)
@@ -95,4 +98,13 @@ namespace Application.Dtos.Manager
         public string Content { get; set; } = string.Empty;
         public bool IsCorrect { get; set; }
     }
+
+    public class DiscussionReplyVm
+    {
+        public Guid ReplyId { get; set; }
+        public string Content { get; set; } = string.Empty;
+        public string AuthorName { get; set; } = string.Empty;
+        public DateTime? CreatedAt { get; set; }
+    }
+
 }

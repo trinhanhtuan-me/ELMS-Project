@@ -23,7 +23,7 @@ public class PhotoService : IPhotoService
         _cloudinary = new Cloudinary(acc);
     }
 
-    public async Task<string?> AddPhotoAsync(IFormFile file)
+   public async Task<string?> AddPhotoAsync(IFormFile file, string folderName = "elms-avatars")
     {
         if (file == null || file.Length == 0) return null;
 
@@ -34,9 +34,8 @@ public class PhotoService : IPhotoService
             var uploadParams = new ImageUploadParams
             {
                 File = new FileDescription(file.FileName, stream),
-                // Tự động cắt ảnh thành hình vuông
                 Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face"),
-                Folder = "elms-avatars" 
+                Folder = folderName 
             };
             uploadResult = await _cloudinary.UploadAsync(uploadParams);
         }
@@ -46,4 +45,5 @@ public class PhotoService : IPhotoService
 
         return uploadResult.SecureUrl.ToString();
     }
+
 }

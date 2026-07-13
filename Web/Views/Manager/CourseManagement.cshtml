@@ -45,11 +45,14 @@
 @section Scripts {
     <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js"></script>
     <script>
-        // Khai báo mảng chứa ID chuẩn bị từ chối
         let pendingRejectIds = [];
         const courseFormatter = (cell) => {
         const data = cell.getData();
-        const img = data.thumbnail ? `/${data.thumbnail}` : '/Images/views-manager/Icon/logo.png';
+
+        let img = '/Images/views-manager/Icon/logo.png';
+        if (data.thumbnail) {
+        img = data.thumbnail.startsWith('http') ? data.thumbnail : `/${data.thumbnail}`;
+        }
         return `<div class="flex-cell">
         <img src="${img}" class="thumb" onerror="this.src='/Images/views-manager/Icon/ELMS.png'">
         <div class="text-info">
@@ -61,7 +64,11 @@
 
         const teacherFormatter = (cell) => {
         const data = cell.getData();
-        const img = data.teacherAvatar ? `/${data.teacherAvatar}` : '/Images/views-manager/Icon/default.png';
+
+        let img = '/Images/views-manager/Icon/default.png';
+        if (data.teacherAvatar) {
+        img = data.teacherAvatar.startsWith('http') ? data.teacherAvatar : `/${data.teacherAvatar}`;
+        }
         return `<div class="flex-cell">
         <img src="${img}" class="ava" onerror="this.src='/Images/views-manager/Icon/default.png'">
         <div class="text-info">
@@ -157,10 +164,7 @@
         {title: "Actions", formatter: actionFormatter, width: 180, headerSort: false, align: "center"}
         ]
         });
-        // ============================================
-        // CÁC HÀM XỬ LÝ SỰ KIỆN NÚT BẤM VÀ GỌI API
-        // ============================================
-
+        // CÁC HÀM XỬ LÝ SỰ KIỆN NÚT BẤM VÀ GỌI AP
         // --- 1. XỬ LÝ APPROVE (DUYỆT) ---
         function approveSingle(courseId) {
             callApproveApi([courseId]); 
@@ -201,7 +205,7 @@
             
             pendingRejectIds = selectedData.map(d => d.courseId);
             document.getElementById('rejectCount').innerText = `Rejecting ${pendingRejectIds.length} courses.`;
-            document.getElementById('rejectReason').value = "";
+            document.getElementById('rejectReason').value = " courseFormatter";
             document.getElementById('rejectModal').style.display = 'flex';
         });
 

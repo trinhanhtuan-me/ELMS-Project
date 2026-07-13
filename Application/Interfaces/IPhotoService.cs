@@ -5,5 +5,5 @@ namespace Application.Interfaces;
 
 public interface IPhotoService
 {
-    Task<string?> AddPhotoAsync(IFormFile file);
+    Task<string?> AddPhotoAsync(IFormFile file, string folderName = "elms-avatars");
 }

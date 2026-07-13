@@ -199,6 +199,41 @@
                                             </div>
                                         }
 
+                                        else if (i.ItemType == "discussion")
+                                        {
+                                            <div class="discussion-detail">
+                                                @if (!string.IsNullOrEmpty(i.DiscussionDescription))
+                                                {
+                                                    <div class="text-content"><h5>Chủ đề thảo luận:</h5> @Html.Raw(i.DiscussionDescription)</div>
+                                                }
+                                                else
+                                                {
+                                                    <p style="color: #6c757d; font-style: italic;">Chưa có chủ đề thảo luận nào.</p>
+                                                }
+
+                                                @if (i.DiscussionReplies != null && i.DiscussionReplies.Any())
+                                                {
+                                                    <div class="discussion-replies" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ccc;">
+                                                        <h6 style="margin-bottom: 10px;">Các bình luận (@i.DiscussionReplies.Count):</h6>
+                                                        @foreach (var reply in i.DiscussionReplies)
+                                                        {
+                                                            <div class="reply-item" style="margin-bottom: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 6px;">
+                                                                <div style="font-size: 0.9em; color: #4f46e5; margin-bottom: 5px;">
+                                                                    <strong><i class="fa fa-user-circle"></i> @reply.AuthorName</strong>
+                                                                    <span style="color: #999; margin-left: 10px; font-size: 0.8em;">
+                                                                        <i class="fa fa-clock"></i> @(reply.CreatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")
+                                                                    </span>
+                                                                </div>
+                                                                <div class="reply-content">@Html.Raw(reply.Content)</div>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+
+
+
                                         @if (i.Questions != null && i.Questions.Any())
                                         {
                                             <div class="lesson-questions">

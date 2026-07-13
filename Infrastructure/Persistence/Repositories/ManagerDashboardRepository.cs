@@ -269,7 +269,15 @@ namespace Infrastructure.Persistence.Repositories
 
                             // discussion 
                             DiscussionDescription = i.Discussion != null ? i.Discussion.Description : null,
-
+                            
+                            DiscussionReplies = i.Discussion != null ? i.Discussion.DiscussionReplies.Select(dr => new DiscussionReplyVm
+                            {
+                                ReplyId = dr.Id,
+                                Content = dr.Content,
+                                AuthorName = dr.Author != null ? dr.Author.FullName : "None",
+                                CreatedAt = dr.CreatedAt
+                            }).OrderBy(dr => dr.CreatedAt).ToList() : new List<DiscussionReplyVm>(),
+                            
                             // key
                             Questions = i.Lesson != null ? i.Lesson.LessonQuestions.Select(lq => new QuestionDetailVm
                             {

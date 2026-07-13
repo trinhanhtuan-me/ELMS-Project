@@ -16,7 +16,7 @@ namespace Application.UseCases
         Task<bool> DeleteCategoryAsync(int id);
     }
 
-    public class ManagerCategoryService(IManagerCategoryRepository _repo, IUnitOfWork _unitOfWork) : IManagerCategoryService
+    public class ManagerCategoryService(IManagerCategoryRepository _repo, IUnitOfWork _unitOfWork, IPhotoService _photoService) : IManagerCategoryService
     {
         public async Task<List<CategoryVm>> GetAllCategoriesAsync()
         {
@@ -25,7 +25,6 @@ namespace Application.UseCases
 
         public async Task<bool> SaveCategoryAsync(CategorySaveRequest request)
         {
-        
             if (await _repo.IsDuplicateNameAsync(request.Name, request.Id))
             {
                 throw new BusinessRuleException("Duplicate name category!");
@@ -35,20 +34,11 @@ namespace Application.UseCases
 
             if (request.PictureFile != null && request.PictureFile.Length > 0)
             {
-                var fileName = $"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}_{request.PictureFile.FileName}";
-
-                var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "thumbnail", "category");
-                if (!Directory.Exists(uploadDir))
+                var uploadedUrl = await _photoService.AddPhotoAsync(request.PictureFile, "elms-avaCourse");
+                if (!string.IsNullOrEmpty(uploadedUrl))
                 {
-                    Directory.CreateDirectory(uploadDir);
+                    picturePath = uploadedUrl;
                 }
-                var filePath = Path.Combine(uploadDir, fileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await request.PictureFile.CopyToAsync(stream);
-                }
-
-                picturePath = $"/Images/thumbnail/category/{fileName}";
             }
 
             var isTracked = await _repo.SaveCategoryAsync(request, picturePath);
@@ -61,6 +51,7 @@ namespace Application.UseCases
 
             throw new BusinessRuleException("Not Found Category!");
         }
+
         public async Task<bool> DeleteCategoryAsync(int id)
         {
             if (await _repo.HasCoursesAsync(id))

@@ -102,9 +102,15 @@
         width: 350,
         headerFilter: "input",
         headerFilterPlaceholder: "Search category...",
+
         formatter: function(cell) {
         let data = cell.getData();
-        let img = data.picture ? data.picture : '/Images/views-manager/Icon/logo.png';
+        let img = '/Images/views-manager/Icon/logo.png';
+        if (data.picture) {
+        img = data.picture.startsWith('http') || data.picture.startsWith('/')
+        ? data.picture
+        : `/${data.picture}`;
+        }
 
         return `<div class="flex-cell">
         <img src="${img}" class="thumb" onerror="this.src='/Images/views-manager/Icon/ELMS.png'">
@@ -114,6 +120,7 @@
         </div>`;
         }
         },
+
 
         {
         title: "Description",

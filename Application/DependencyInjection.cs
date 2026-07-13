@@ -21,6 +21,13 @@ namespace Application
             services.AddScoped<ICategoryService,CategoryService>();
             services.AddScoped<IParentLinkService, ParentLinkService>();
             services.AddScoped<IPasskeyService, PasskeyService>();
+            services.AddScoped<IManagerDashboardService , ManagerDashboardService>();
+            services.AddScoped<IManagerCourseService, ManagerCourseService>();
+            services.AddScoped<IManagerCategoryService, ManagerCategoryService>();
+            services.AddScoped<IManagerProfileService, ManagerProfileService>();
+            services.AddScoped<IManagerFlashcardService, ManagerFlashcardService>();
+            services.AddScoped<IManagerRevenueService, ManagerRevenueService>();
+
             return services;
         }
     }

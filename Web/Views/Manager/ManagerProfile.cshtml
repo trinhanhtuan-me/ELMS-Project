@@ -1,0 +1,120 @@
+@using Application.Dtos.Manager
+@model ManagerProfileVm
+
+@{
+    ViewData["Title"] = "Hồ sơ Quản lý";
+    var defaultAvatar = $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(Model.FullName ?? "M")}&background=4f46e5&color=fff&size=200&font-size=0.4";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/manager-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/manager-style.css" asp-append-version="true" />
+  
+    <link rel="stylesheet" href="~/css/manager-profile.css" asp-append-version="true" />
+}
+
+<main class="main-content">
+    <div class="settings-container">
+        <h1 style="font-size: 1.8rem; color: #111827; margin-bottom: 5px;">Hồ sơ Quản lý</h1>
+        <p style="color: #6b7280; margin-bottom: 25px;">Cập nhật thông tin cá nhân và nghề nghiệp của bạn.</p>
+
+        @if (TempData["SuccessToast"] != null)
+        {
+            <div style="color: #065f46; margin-bottom: 20px; font-weight: bold; background: #d1fae5; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #10b981;">
+                <i class="fas fa-check-circle"></i> @TempData["SuccessToast"]
+            </div>
+        }
+        @if (TempData["ErrorToast"] != null)
+        {
+            <div style="color: #991b1b; margin-bottom: 20px; font-weight: bold; background: #fee2e2; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #ef4444;">
+                <i class="fas fa-exclamation-triangle"></i> @TempData["ErrorToast"]
+            </div>
+        }
+
+        <div class="settings-card">
+            <section class="profile-card">
+                <div class="avatar">
+                    <img src="@(string.IsNullOrEmpty(Model.AvatarUrl) ? defaultAvatar : Model.AvatarUrl)"
+                         alt="Avatar" class="avatar-img" id="avatarPreview">
+                </div>
+                <h3>@Model.FullName</h3>
+                <p class="role">@(string.IsNullOrEmpty(Model.Position) ? "Chưa cập nhật chức vụ" : Model.Position)</p>
+
+                <a href="/manager/change-password" class="btn btn-outline" style="width: 100%; text-align: center; margin-top: 10px;">
+                    <i class="fas fa-key"></i> Đổi mật khẩu
+                </a>
+            </section>
+
+            <section class="form-card">
+                <form action="/manager/profile" method="post" enctype="multipart/form-data">
+                    
+                    <div id="uploadFormGroup" style="display:none; margin-bottom: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+                        <label style="margin-top: 0 !important;">Thay ảnh đại diện</label>
+                        <p style="font-size: 0.85em; color: #64748b; margin-bottom: 10px;">Định dạng: JPG, PNG. Khuyên dùng ảnh vuông.</p>
+                        <input type="file" name="AvatarFile" accept="image/*" id="avatarInput" onchange="previewImage(event)" style="display:none;">
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('avatarInput').click()">
+                            <i class="fas fa-upload"></i> Chọn ảnh từ máy tính
+                        </button>
+                    </div>
+
+                    <label>Họ tên</label>
+                    <input type="text" name="FullName" value="@Model.FullName" readonly required>
+                    @Html.ValidationMessageFor(m => m.FullName, "", new { @style = "color: #ef4444; font-size: 0.85em; display: block;" })
+
+                    <label>Email</label>
+                    <input type="email" name="Email" value="@Model.Email" readonly required>
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @style = "color: #ef4444; font-size: 0.85em; display: block;" })
+
+                    <label>Ngày sinh</label>
+                    <input type="date" name="DateOfBirth" 
+                           value="@(Model.DateOfBirth?.ToString("yyyy-MM-dd"))" 
+                           max="@DateTime.Now.ToString("yyyy-MM-dd")" readonly>
+                    @Html.ValidationMessageFor(m => m.DateOfBirth, "", new { @style = "color: #ef4444; font-size: 0.85em; display: block;" })
+
+                    <label>Chức vụ</label>
+                    <input type="text" name="Position" value="@Model.Position" readonly>
+                    @Html.ValidationMessageFor(m => m.Position, "", new { @style = "color: #ef4444; font-size: 0.85em; display: block;" })
+
+                    <label>Chuyên môn</label>
+                    <input type="text" name="Specialization" value="@Model.Specialization" readonly>
+                    @Html.ValidationMessageFor(m => m.Specialization, "", new { @style = "color: #ef4444; font-size: 0.85em; display: block;" })
+
+                    <div class="form-actions">
+                        <button type="button" id="editBtn" class="btn btn-primary" onclick="enableEdit()">
+                            <i class="fas fa-edit"></i> Thay đổi thông tin
+                        </button>
+                        <div id="saveCancelGroup" style="display: none; gap: 10px;">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu thay đổi</button>
+                            <button type="button" class="btn btn-secondary" onclick="cancelEdit()"><i class="fas fa-times"></i> Hủy</button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        function enableEdit() {
+            document.querySelectorAll('.form-card input:not([type="file"])').forEach(el => el.removeAttribute('readonly'));
+            
+            document.getElementById("editBtn").style.display = "none";
+            document.getElementById("saveCancelGroup").style.display = "flex";
+            
+            document.getElementById("uploadFormGroup").style.display = "block";
+        }
+
+        function cancelEdit() {
+            window.location.reload(); 
+        }
+
+        function previewImage(event) {
+            const preview = document.getElementById('avatarPreview');
+            if (event.target.files && event.target.files[0]) {
+                preview.src = URL.createObjectURL(event.target.files[0]);
+            }
+        }
+    </script>
+}

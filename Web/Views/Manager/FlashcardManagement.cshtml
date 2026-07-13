@@ -1,0 +1,92 @@
+@model IEnumerable<Application.Dtos.Manager.FlashcardSetVm>
+@{
+    ViewData["Title"] = "Quản lý Flashcard Sets - Manager Dashboard";
+    var keyword = ViewData["keyword"] as string;
+    var sortType = ViewData["sortType"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/manager-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="~/css/manager-flashcard.css" asp-append-version="true" />
+}
+
+
+<main class="main-content">
+<div class="header">
+    <h2 style="color: var(--brand); font-size: 1.6rem; margin-bottom: 1.5rem;">Flashcard Sets Manager</h2>
+</div>
+
+<form class="filter-bar" method="get" action="/manager/flashcards" style="display: inline-flex; justify-content: flex-start; align-items: center; margin-bottom: 1.5rem; width: 100%;">
+    <div class="search-box">
+        <input type="text" name="keyword" placeholder="Tìm kiếm flashcard set..." value="@keyword"
+               style="padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); width: 250px; margin-right: 1rem;">
+    </div>
+    <select class="sort-select" name="sort" onchange="this.form.submit()"
+            style="padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius);">
+        <option value="newest" selected="@(sortType == "newest")">Mới nhất</option>
+        <option value="oldest" selected="@(sortType == "oldest")">Cũ nhất</option>
+        <option value="az" selected="@(sortType == "az")">A → Z</option>
+        <option value="za" selected="@(sortType == "za")">Z → A</option>
+    </select>
+</form>
+
+<div class="deck-grid">
+    @foreach (var set in Model)
+    {
+        <div class="deck-card">
+            <h3 class="deck-title">@set.Title</h3>
+            <p>@set.Description</p>
+            <p class="deck-meta">@set.TermCount thẻ • by @set.AuthorUsername</p>
+
+            <div style="margin-bottom: 0.6rem;">
+                @if (set.Status == "public")
+                {
+                    <span class="badge badge-public"><i class="fa fa-globe"></i> Public</span>
+                }
+                else if (set.Status == "inactive")
+                {
+                    <span class="badge badge-inactive"><i class="fa fa-eye-slash"></i> Inactive</span>
+                }
+                else
+                {
+                    <span class="badge badge-private"><i class="fa fa-lock"></i> Private</span>
+                }
+            </div>
+
+            <div class="deck-actions">
+                <a href="/manager/flashcards/detail?setId=@set.Id" class="btn btn-view">
+                    <i class="fas fa-eye"></i>
+                </a>
+
+                @if (set.Status == "public")
+                {
+                    <form action="/manager/flashcards/toggle-status" method="post" style="display:inline;">
+                        <input type="hidden" name="action" value="hide">
+                        <input type="hidden" name="setId" value="@set.Id">
+                        <button type="submit" class="btn btn-hide" title="Ẩn bộ này">
+                            <i class="fa fa-eye-slash"></i>
+                        </button>
+                    </form>
+                }
+                else if (set.Status == "inactive")
+                {
+                    <form action="/manager/flashcards/toggle-status" method="post" style="display:inline;">
+                        <input type="hidden" name="action" value="activate">
+                        <input type="hidden" name="setId" value="@set.Id">
+                        <button type="submit" class="btn btn-show" title="Hiển thị lại">
+                            <i class="fa fa-rotate-right"></i>
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <p style="color: gray; margin-top: 2rem;">Không có flashcard set nào được tìm thấy.</p>
+    }
+</div>
+</main>

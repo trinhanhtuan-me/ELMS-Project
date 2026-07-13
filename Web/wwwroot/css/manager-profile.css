@@ -1,0 +1,95 @@
+/* ================================
+   MANAGER PROFILE STYLE (PREMIUM)
+================================ */
+
+.settings-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.settings-card {
+    display: flex !important;
+    gap: 40px !important;
+    background: #fff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+.profile-card {
+    flex: 0 0 250px !important;
+    text-align: center;
+    border-right: 1px solid #f0f0f0 !important;
+    padding-right: 40px !important;
+}
+.avatar {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    width: auto !important;
+    height: auto !important;
+    background: transparent !important;
+}
+.avatar-img {
+    width: 160px !important;
+    height: 160px !important;
+    object-fit: cover;
+    border-radius: 50% !important;
+    border: 5px solid #fff !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    transition: transform 0.3s ease;
+}
+.avatar-img:hover {
+    transform: scale(1.05);
+}
+.profile-card h3 {
+    margin-top: 15px; 
+    color: #111827; 
+    font-size: 1.4em;
+    font-weight: 600;
+}
+.profile-card .role {
+    color: #6b7280;
+    font-size: 1em;
+    margin-bottom: 25px;
+    font-weight: 500;
+}
+.form-card {
+    flex: 1;
+}
+.form-card form {
+    display: block !important;
+}
+.form-card label {
+    display: block !important;
+    margin-bottom: 8px !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    margin-top: 20px !important;
+}
+.form-card input {
+    display: block !important;
+    width: 100% !important;
+    padding: 12px 16px !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    font-size: 1em !important;
+    transition: all 0.3s ease !important;
+    background-color: #fff !important;
+}
+.form-card input:not([readonly]):focus {
+    border-color: #4f46e5 !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+    outline: none !important;
+}
+.form-card input[readonly] {
+    background-color: #f3f4f6 !important;
+    color: #6b7280 !important;
+    cursor: not-allowed !important;
+    border-color: #e5e7eb !important;
+}
+.form-actions {
+    margin-top: 30px; 
+    display: flex; 
+    gap: 10px;
+}

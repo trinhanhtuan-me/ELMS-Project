@@ -1,0 +1,89 @@
+﻿@using System.Security.Claims
+@using Application.UseCases
+@inject IManagerProfileService ProfileService
+
+@{
+    var currentPath = Context.Request.Path.Value?.ToLower() ?? "";
+    var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    string profilePicture = null;
+    string fullName = User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "Manager";
+
+    if (!string.IsNullOrEmpty(userIdString) && Guid.TryParse(userIdString, out Guid userId))
+    {
+        try
+        {
+            var profile = await ProfileService.GetProfileAsync(userId);
+            profilePicture = profile.AvatarUrl;
+            if (!string.IsNullOrEmpty(profile.FullName))
+            {
+                fullName = profile.FullName;
+            }
+        }
+        catch
+        {
+        }
+    }
+    if (string.IsNullOrEmpty(profilePicture))
+    {
+        profilePicture = $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(fullName)}&background=4f46e5&color=fff&size=100";
+    }
+}
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <a href="@Url.Action("Dashboard", "Manager")" class="logo">
+            <img src="~/Images/views-manager/Icon/ELMS.png" alt="Logo">
+        </a>
+    </div>
+
+    <nav class="sidebar-nav">
+        
+        <a href="@Url.Action("Dashboard", "Manager")"
+           class="@(currentPath.EndsWith("/manager/dashboard") ? "active" : "")">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+
+        <a href="@Url.Action("CourseManagement", "Manager")"
+           class="@(currentPath.Contains("/course-management") ? "active" : "")">
+            <i class="fas fa-book"></i> Course Management
+        </a>
+
+        <a href="@Url.Action("CoursePublish", "Manager")"
+           class="@(currentPath.Contains("/course-publish") ? "active" : "")">
+            <i class="fas fa-calendar-days"></i> Course Public Schedule
+        </a>
+
+        <a href="@Url.Action("CategoryManagement", "Manager")"
+           class="@(currentPath.Contains("/category-management") ? "active" : "")">
+            <i class="fa fa-layer-group"></i> Category Manager
+        </a>
+
+        <a href="@Url.Action("RevenueReport", "Manager")"
+           class="@(currentPath.Contains("/revenue-report") ? "active" : "")">
+            <i class="fas fa-chart-bar"></i> Revenue Report
+        </a>
+
+        <a href="@Url.Action("FlashcardManagement", "Manager")"
+           class="@(currentPath.Contains("/flashcards") ? "active" : "")">
+            <i class="fa fa-clone"></i> Flashcard Manager
+        </a>
+    </nav>
+
+    <div class="sidebar-user">
+        <!-- In Avatar và Tên ra -->
+        <img src="@profilePicture" alt="Avatar" class="user-avatar" style="object-fit: cover;">
+        <span>@fullName</span>
+
+        <div class="sidebar-dropdown">
+            <a href="@Url.Action("ManagerProfile", "Manager")">
+                <i class="fas fa-user"></i> Manager Profle
+            </a>
+            <a href="@Url.Action("ChangePassword", "Manager")">
+                <i class="fas fa-key"></i> Change Password
+            </a>
+            <a href="@Url.Action("Logout", "Identity")">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+</aside>

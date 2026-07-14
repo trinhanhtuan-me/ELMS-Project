@@ -34,7 +34,7 @@ namespace Application.UseCases
 
         public async Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordRequest request)
         {
-            var user = await _userRepo.FindUserByIdAsync(userId);
+            var user = await _userRepo.FindByIdAsync(userId);
             if (user == null)
                 throw new BusinessRuleException("System error: User account not found!");
 

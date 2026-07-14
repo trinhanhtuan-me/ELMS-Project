@@ -1,0 +1,53 @@
+﻿@using Application.Dtos.Manager
+@model FlashcardSetVm
+@{
+    ViewData["Title"] = "Flashcard Set Details";
+    var cards = ViewData["Cards"] as IEnumerable<FlashcardVm>;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/manager-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/manager-flashcard.css" asp-append-version="true" />
+}
+
+<main>
+    <div class="header">
+        <h2 style="color: var(--brand); font-size: 1.6rem;"><i class="fa fa-layer-group"></i> @Model.Title</h2>
+        <a href="/manager/flashcards" class="btn btn-back">
+            <i class="fa fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+
+    <p style="color:var(--muted); margin-bottom:20px; font-size: 1.05rem;">
+        <strong>Description:</strong> @(string.IsNullOrEmpty(Model.Description) ? "No description available" : Model.Description) <br>
+        <strong>Author:</strong> @Model.AuthorUsername &nbsp;|&nbsp; <strong>Total Cards:</strong> @Model.TermCount
+    </p>
+
+    <div class="flashcard-list">
+        @if (cards != null && cards.Any())
+        {
+            @foreach (var card in cards)
+            {
+                <div class="flashcard-item">
+                    <div class="flashcard-content">
+                        <div class="term-box">
+                            <div class="term-title">Front (Term)</div>
+                            <div>@card.FrontText</div>
+                        </div>
+                        <div class="definition-box">
+                            <div class="definition-title">Back (Definition)</div>
+                            <div>@card.BackText</div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p style="color: gray; font-style: italic; background: #fff; padding: 1.5rem; border-radius: 12px; border: 1px dashed #ccc;">
+                This set currently has no flashcards.
+            </p>
+        }
+    </div>
+</main>

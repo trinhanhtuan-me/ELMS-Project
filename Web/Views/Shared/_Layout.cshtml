@@ -8,9 +8,24 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebMVC.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+        .hover-text-white:hover {
+            color: #ffffff !important;
+        }
+        .hover-text-primary:hover {
+            color: #0d6efd !important;
+        }
+        .search-box:focus-within {
+            border-color: #86b7fe !important;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1) !important;
+        }
+    </style>
 </head>
-<body>
-    <header>
+<body class="d-flex flex-column min-vh-100">
+    @* <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebMVC</a>
@@ -35,75 +50,177 @@
                     </ul>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+        </nav> *@
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - WebMVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    @* Header here *@
+    <header class="bg-white border-bottom sticky-top">
+        <div class="container-fluid px-lg-5 px-3">
+            <nav class="navbar navbar-expand-lg navbar-light py-2">
+                <!-- Logo -->
+                <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="/">
+                    <i class="fa fa-graduation-cap fs-3 text-primary"></i>
+                    <span class="fs-4 text-dark" style="letter-spacing: -0.5px;">EnglishLMS</span>
+                </a>
+
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarMain">
+                    <!-- Navigation Links -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 fw-medium" style="font-size: 0.95rem;">
+                        <li class="nav-item"><a class="nav-link text-dark px-3" href="#">Explore</a></li>
+                        <li class="nav-item"><a class="nav-link text-dark px-3" href="#">My Courses</a></li>
+                        <li class="nav-item"><a class="nav-link text-dark px-3" href="#">Flashcards</a></li>
+                    </ul>
+
+                    <!-- Search Bar -->
+                    <form class="d-flex mx-auto d-none d-lg-block" style="width: 450px;">
+                        <div class="input-group transition-all search-box" style="border-radius: 50px; border: 1px solid #ced4da; overflow: hidden; background-color: #f8f9fa;">
+                            <input type="text" class="form-control border-0 shadow-none bg-transparent ps-4 py-2" placeholder="Search for favorite courses..." style="font-size: 0.95rem;">
+                            <span class="input-group-text bg-transparent border-0 pe-4" style="cursor: pointer;">
+                                <i class="fa fa-search text-muted"></i>
+                            </span>
+                        </div>
+                    </form>
+
+                    <!-- Right Actions -->
+                    <div class="d-flex align-items-center ms-auto gap-4 mt-3 mt-lg-0">
+                        <!-- Wishlist Icon -->
+                        <a href="#" class="text-dark text-decoration-none fs-5 hover-text-primary transition-all">
+                            <i class="fa fa-heart-o"></i>
+                        </a>
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <!-- Avatar Dropdown for Logged In Users -->
+                            <div class="dropdown">
+                                <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="" alt="Avatar" width="40" height="40" class="rounded-circle shadow-sm">
+                                </a>
+                                <ul class="dropdown-menu text-small shadow border-0 mt-2 dropdown-menu-end">
+                                    <li><a class="dropdown-item py-2" href="#"><i class="fa fa-user-circle-o me-2 text-muted"></i>Profile</a></li>
+                                    <li><a class="dropdown-item py-2" href="/SecurityManagement/Index"><i class="fa fa-shield me-2 text-muted"></i>Security Management</a></li>
+                                    <li><a class="dropdown-item py-2" href="/Identity/SelectRole"><i class="fa fa-exchange me-2 text-muted"></i>Switch Workspace</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item py-2 text-danger fw-medium" href="/Identity/Logout"><i class="fa fa-sign-out me-2"></i>Log out</a></li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <!-- Login / Register Buttons -->
+                            <div class="d-flex gap-2">
+                                <a href="/Identity/Login" class="btn fw-medium rounded-pill px-4" style="color: #495057; border: 1px solid #ced4da;">Log in</a>
+                                <a href="/Identity/Register" class="btn btn-dark fw-medium rounded-pill px-4">Sign up</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </nav>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    </header>
 
-    <!-- Global Toast Container -->
-    <div class="toast-container position-fixed top-0 end-0 p-4" style="z-index: 1055;">
-        @if (TempData["SuccessToast"] != null)
-        {
-            <div id="successToast" class="toast custom-toast custom-toast-success" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex align-items-center w-100">
-                    <div class="custom-toast-icon">
-                        <i class="fa fa-check"></i>
-                    </div>
-                    <div class="custom-toast-content">
-                        <div class="custom-toast-title">Successful!</div>
-                        <div class="custom-toast-message">@TempData["SuccessToast"]</div>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+<div class="container flex-grow-1">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
+
+<footer class="text-white pt-5 pb-3 mt-5" style="background-color: #1c1d1f;">
+    <div class="container py-4">
+        <div class="row mb-4">
+            <!-- Brand Info -->
+            <div class="col-lg-5 col-md-6 mb-4 mb-lg-0 pe-lg-5">
+                <h4 class="fw-bold mb-3 fs-5">EnglishLMS</h4>
+                <p class="text-secondary" style="font-size: 0.95rem; line-height: 1.6;">
+                    An online English learning platform that helps students learn with joy, understand quickly, and become more confident every day.
+                </p>
+            </div>
+            <!-- Quick Links -->
+            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                <h5 class="fw-bold mb-4 fs-6 text-uppercase" style="letter-spacing: 0.5px;">Quick Links</h5>
+                <ul class="list-unstyled d-flex flex-column gap-3 mb-0" style="font-size: 0.95rem;">
+                    <li><a href="#" class="text-secondary text-decoration-none hover-text-white transition-all">Home</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none hover-text-white transition-all">Courses</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none hover-text-white transition-all">About Us</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none hover-text-white transition-all">Contact Us</a></li>
+                </ul>
+            </div>
+            <!-- Social Links -->
+            <div class="col-lg-3 col-md-12">
+                <h5 class="fw-bold mb-4 fs-6 text-uppercase" style="letter-spacing: 0.5px;">Connect</h5>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-secondary fs-4 hover-text-white transition-all"><i class="fa fa-facebook-square"></i></a>
+                    <a href="#" class="text-secondary fs-4 hover-text-white transition-all"><i class="fa fa-youtube-play"></i></a>
+                    <a href="#" class="text-secondary fs-4 hover-text-white transition-all"><i class="fa fa-envelope"></i></a>
                 </div>
             </div>
-        }
-
-        @if (TempData["ErrorToast"] != null)
-        {
-            <div id="errorToast" class="toast custom-toast custom-toast-error" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex align-items-center w-100">
-                    <div class="custom-toast-icon">
-                        <i class="fa fa-exclamation"></i>
-                    </div>
-                    <div class="custom-toast-content">
-                        <div class="custom-toast-title">Error!</div>
-                        <div class="custom-toast-message">@TempData["ErrorToast"]</div>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            </div>
-        }
+        </div>
+        <hr class="border-secondary mb-4 opacity-25" />
+        <!-- Copyright -->
+        <div class="text-center text-secondary" style="font-size: 0.85rem;">
+            &copy; 2025 EnglishLMS. All rights reserved.
+        </div>
     </div>
+</footer>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-        var successToast = document.getElementById('successToast');
-        if (successToast) {
-        // Thêm { delay: 5000 } để tự tắt sau 5s
-        var toast = new bootstrap.Toast(successToast, { delay: 5000 });
-        toast.show();
-        }
-        var errorToast = document.getElementById('errorToast');
-        if (errorToast) {
-        // Thêm { delay: 5000 } để tự tắt sau 5s
-        var toast = new bootstrap.Toast(errorToast, { delay: 5000 });
-        toast.show();
-        }
-        });
-    </script>
+<!-- Global Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-4" style="z-index: 1055;">
+    @if (TempData["SuccessToast"] != null)
+    {
+        <div id="successToast" class="toast custom-toast custom-toast-success" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex align-items-center w-100">
+                <div class="custom-toast-icon">
+                    <i class="fa fa-check"></i>
+                </div>
+                <div class="custom-toast-content">
+                    <div class="custom-toast-title">Successful!</div>
+                    <div class="custom-toast-message">@TempData["SuccessToast"]</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    }
 
-    @await RenderSectionAsync("Scripts", required: false)
+    @if (TempData["ErrorToast"] != null)
+    {
+        <div id="errorToast" class="toast custom-toast custom-toast-error" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex align-items-center w-100">
+                <div class="custom-toast-icon">
+                    <i class="fa fa-exclamation"></i>
+                </div>
+                <div class="custom-toast-content">
+                    <div class="custom-toast-title">Error!</div>
+                    <div class="custom-toast-message">@TempData["ErrorToast"]</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    }
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    var successToast = document.getElementById('successToast');
+    if (successToast) {
+    // Thêm { delay: 5000 } để tự tắt sau 5s
+    var toast = new bootstrap.Toast(successToast, { delay: 5000 });
+    toast.show();
+    }
+    var errorToast = document.getElementById('errorToast');
+    if (errorToast) {
+    // Thêm { delay: 5000 } để tự tắt sau 5s
+    var toast = new bootstrap.Toast(errorToast, { delay: 5000 });
+    toast.show();
+    }
+    });
+</script>
+
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

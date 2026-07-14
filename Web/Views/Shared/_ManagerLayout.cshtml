@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+
+    @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> 
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />  *@
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+
+    <div class="manager-layout-container" style="display: flex; min-height: 100vh;">
+        <partial name="_ManagerSidebar" />
+
+        <div class="manager-main-content" style="flex: 1;">
+            @RenderBody()
+        </div>
+
+    </div>
+
+    <div class="toast-container position-fixed top-0 end-0 p-4" style="z-index: 1055;">
+        @if (TempData["SuccessToast"] != null)
+        {
+            <div id="successToast" class="toast custom-toast custom-toast-success" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex align-items-center w-100">
+                    <div class="custom-toast-icon">
+                        <i class="fa fa-check"></i>
+                    </div>
+                    <div class="custom-toast-content">
+                        <div class="custom-toast-title">Successful!</div>
+                        <div class="custom-toast-message">@TempData["SuccessToast"]</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        }
+
+        @if (TempData["ErrorToast"] != null)
+        {
+            <div id="errorToast" class="toast custom-toast custom-toast-error" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex align-items-center w-100">
+                    <div class="custom-toast-icon">
+                        <i class="fa fa-exclamation"></i>
+                    </div>
+                    <div class="custom-toast-content">
+                        <div class="custom-toast-title">Error!</div>
+                        <div class="custom-toast-message">@TempData["ErrorToast"]</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        }
+    </div>
+
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        var successToast = document.getElementById('successToast');
+        if (successToast) {
+        var toast = new bootstrap.Toast(successToast, { delay: 5000 });
+        toast.show();
+        }
+        var errorToast = document.getElementById('errorToast');
+        if (errorToast) {
+        var toast = new bootstrap.Toast(errorToast, { delay: 5000 });
+        toast.show();
+        }
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

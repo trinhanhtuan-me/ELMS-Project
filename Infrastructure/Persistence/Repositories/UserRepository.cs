@@ -32,5 +32,11 @@ namespace Infrastructure.Persistence.Repositories
             return await _context.Users.Include(u => u.Roles)
                 .FirstOrDefaultAsync(u => (u.Username == identifier || u.Email == identifier) && !u.IsDeleted);
         }
+
+        public async Task<User?> FindUserByIdAsync(Guid id)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
+        }
+
     }
 }

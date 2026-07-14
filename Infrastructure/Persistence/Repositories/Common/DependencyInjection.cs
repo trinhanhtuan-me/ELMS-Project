@@ -1,6 +1,7 @@
 using Application.Common.Interfaces;
 using Application.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Persistence.Repositories.Manager;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,14 @@ namespace Infrastructure.Persistence.Repositories.Common
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IMailRepository, MailRepository>();
             services.AddScoped<IOtpRepository, OtpRepository>();
+
+            services.AddScoped<IManagerDashboardRepository, ManagerDashboardRepository>();
+            services.AddScoped<IManagerCourseRepository, ManagerCourseRepository>();
+            services.AddScoped<IManagerCategoryRepository, ManagerCategoryRepository>();
+            services.AddScoped<IManagerFlashcardRepository, ManagerFlashcardRepository>();
+            services.AddScoped<IManagerRevenueRepository, ManagerRevenueRepository>();
+            services.AddScoped<IManagerProfileRepository, ManagerProfileRepository>();
+
             services.AddScoped<ICourseRepository, CourseRepository>();
             services.AddScoped<IModuleRepository, ModuleRepository>();
             services.AddScoped<ICategoryRepository,CategoryRepository>();

@@ -21,6 +21,10 @@ builder.Services.AddProblemDetails();
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddWebMvcServices();
+
+// Đăng ký cloudinary
+builder.Services.Configure<Application.Settings.CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+
 var app = builder.Build();
 
 app.UseExceptionHandler();

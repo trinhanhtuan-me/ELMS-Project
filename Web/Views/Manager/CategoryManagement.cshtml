@@ -1,0 +1,268 @@
+﻿@{
+    ViewData["Title"] = "Category Management - Manager Dashboard";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/manager-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator_semanticui.min.css" rel="stylesheet">
+
+    <!-- FILE CỦA CATEGORY (CHỨA MODAL) -->
+    <link rel="stylesheet" href="~/css/category-management.css" asp-append-version="true" />
+
+    <!-- THÊM DÒNG NÀY ĐỂ ĂN KÉ CSS BO TRÒN TỪ COURSE -->
+    <link rel="stylesheet" href="~/css/course-management.css" asp-append-version="true" />
+}
+
+
+<main class="main-content">
+    <div class="container">
+        <div class="table-header" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 class="table-title" style="margin-bottom: 4px;">Category Management</h2>
+                <p class="page-subtitle" style="color: #6b7280; font-size: 14px;">Manage learning categories and topics</p>
+            </div>
+
+            <div class="bulk-actions">
+                <button type="button" class="btn btn-primary" onclick="openModal()"><i class="fa fa-plus"></i> Add New Category</button>
+            </div>
+        </div>
+
+        <!-- Bảng Tabulator -->
+        <div id="category-table"></div>
+    </div>
+</main>
+
+<!-- Modal Thêm/Sửa Category -->
+<div class="modal-overlay" id="categoryModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle" style="margin-top: 0;">Add Category</h3>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        <form id="categoryForm">
+            <!-- trường ẩn quan trọng -->
+            <input type="hidden" name="Id" id="categoryId" />
+            <input type="hidden" name="PictureOld" id="pictureOld" />
+
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" name="Name" id="categoryName" required maxlength="100" placeholder="Enter category name..." />
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="Description" id="categoryDesc" rows="3" maxlength="255" placeholder="Enter description..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Picture</label>
+                <input type="file" name="PictureFile" id="pictureFile" accept="image/*" onchange="previewImage(this)" />
+                <img id="imgPreview" class="img-preview" />
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button type="button" class="btn btn-outline" style="padding: 10px 20px; border-radius: 6px; cursor: pointer; border: 1px solid #d1d5db; background: transparent;" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Category</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Xác nhận Xóa -->
+<div class="modal-overlay" id="deleteConfirmModal">
+    <div class="modal-content" style="width: 400px; text-align: center;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #dc3545; margin-bottom: 16px;"></i>
+        <h3 style="margin-top: 0;">Delete Category?</h3>
+        <p style="color: #6b7280; margin-bottom: 24px;">Are you sure you want to delete this category? This action cannot be undone.</p>
+        <div style="display: flex; justify-content: center; gap: 12px;">
+            <button type="button" class="btn btn-outline" style="padding: 10px 20px; border-radius: 6px; cursor: pointer; border: 1px solid #d1d5db; background: transparent;" onclick="closeDeleteModal()">Cancel</button>
+            <button type="button" class="btn btn-danger" id="btnConfirmDelete" style="padding: 10px 20px; border-radius: 6px; cursor: pointer; background: #dc3545; color: white; border: none;">Yes, Delete</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Tabulator JS -->
+    <script src="https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js"></script>
+    <script>
+        // Khởi tạo bảng Tabulator
+        var table = new Tabulator("#category-table", {
+        layout: "fitColumns",
+        ajaxURL: "/manager/api/categories",
+        pagination: "local",
+        paginationSize: 10,
+        paginationSizeSelector: [10, 20, 50],
+        rowHeight: 64, 
+
+        columns: [
+        {
+        title: "Category",
+        field: "name",
+        width: 350,
+        headerFilter: "input",
+        headerFilterPlaceholder: "Search category...",
+
+        formatter: function(cell) {
+        let data = cell.getData();
+        let img = '/Images/views-manager/Icon/logo.png';
+        if (data.picture) {
+        img = data.picture.startsWith('http') || data.picture.startsWith('/')
+        ? data.picture
+        : `/${data.picture}`;
+        }
+
+        return `<div class="flex-cell">
+        <img src="${img}" class="thumb" onerror="this.src='/Images/views-manager/Icon/ELMS.png'">
+        <div class="text-info">
+        <strong>${data.name}</strong>
+        </div>
+        </div>`;
+        }
+        },
+
+
+        {
+        title: "Description",
+        field: "description",
+        formatter: function(cell) {
+        let desc = cell.getValue();
+        return `<span style="color: #6b7280; font-size: 14px;">${desc ? desc : 'No description provided'}</span>`;
+        }
+        },
+
+        {
+        title: "Action",
+        width: 180,
+        align: "center",
+        headerSort: false,
+        formatter: function(cell) {
+        return `<div style="display: flex; justify-content: center; gap: 8px;">
+        <button class="btn btn-xs btn-edit" style="background-color: #f59e0b; color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer;" title="Edit">
+        <i class="fas fa-pen"></i> 
+        </button>
+        <button class="btn btn-xs btn-delete" style="background-color: #dc3545; color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer;" title="Delete">
+        <i class="fas fa-trash"></i> 
+        </button>
+        </div>`;
+        },
+
+        cellClick: function(e, cell) {
+
+        // Bắt sự kiện bấm nút Edit hay Delete
+        if(e.target.closest('.btn-edit')) {
+        editCategory(cell.getRow().getData());
+        } else if(e.target.closest('.btn-delete')) {
+        deleteCategory(cell.getRow().getData().categoryId);
+        }
+        }
+        }
+        ],
+
+        });
+
+        // Các hàm xử lý Modal
+        const modal = document.getElementById('categoryModal');
+        const form = document.getElementById('categoryForm');
+        const imgPreview = document.getElementById('imgPreview');
+
+        function openModal() {
+        form.reset();
+        document.getElementById('categoryId').value = '';
+        document.getElementById('pictureOld').value = '';
+        imgPreview.style.display = 'none';
+        imgPreview.src = '';
+        document.getElementById('modalTitle').innerText = 'Add Category';
+        modal.classList.add('active');
+        }
+
+        function closeModal() {
+        modal.classList.remove('active');
+        }
+
+        // Bơm dữ liệu từ Tabulator vào form khi bấm Edit
+        function editCategory(data) {
+        document.getElementById('categoryId').value = data.categoryId;
+        document.getElementById('categoryName').value = data.name;
+        document.getElementById('categoryDesc').value = data.description || '';
+        document.getElementById('pictureOld').value = data.picture || '';
+
+        if (data.picture) {
+        imgPreview.src = data.picture;
+        imgPreview.style.display = 'block';
+        } else {
+        imgPreview.style.display = 'none';
+        }
+
+        document.getElementById('modalTitle').innerText = 'Edit Category';
+        modal.classList.add('active');
+        }
+
+        function previewImage(input) {
+        if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+        imgPreview.src = e.target.result;
+        imgPreview.style.display = 'block';
+        }
+        reader.readAsDataURL(input.files[0]);
+        }
+        }
+
+        /// DELETE
+        // Biến lưu trữ ID cần xóa
+        let categoryIdToDelete = null;
+        const deleteModal = document.getElementById('deleteConfirmModal');
+
+        // bật model
+        function deleteCategory(id) {
+        categoryIdToDelete = id;
+        deleteModal.classList.add('active');
+        }
+
+        // Tắt Modal
+        function closeDeleteModal() {
+        deleteModal.classList.remove('active');
+        categoryIdToDelete = null;
+        }
+
+        // Bắt sự kiện bấm nút "Yes, Delete"
+        document.getElementById('btnConfirmDelete').addEventListener('click', function() {
+        if (!categoryIdToDelete) return;
+
+        // Tắt nút để chống click 2 lần
+        const btn = this;
+        btn.innerText = "Deleting...";
+        btn.disabled = true;
+        fetch(`/manager/api/categories/delete/${categoryIdToDelete}`, { method: 'POST' })
+        .then(res => {
+        window.location.reload();
+        })
+        .catch(err => {
+        window.location.reload();
+        });
+        });
+
+
+        // Bắt sự kiện ấn Lưu (Save)
+        form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(form);
+
+        // Đổi text nút Save để báo hiệu đang xử lý
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Processing...";
+        try {
+        await fetch('/manager/api/categories/save', {
+        method: 'POST',
+        body: formData
+        });
+
+        window.location.reload();
+        } catch (error) {
+        window.location.reload();
+        }
+        });
+    </script>
+}

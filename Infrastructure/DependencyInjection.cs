@@ -2,7 +2,6 @@ using Application.Common.Cache;
 using Fido2NetLib;
 using Infrastructure.Data;
 using Infrastructure.Persistence.Repositories.Common;
-using Infrastructure.Services;
 using Infrastructure.Shared.Cache;
 using Infrastructure.Shared.Mails;
 using Infrastructure.Shared.Storage;
@@ -12,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using ZiggyCreatures.Caching.Fusion;
 using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
-using Infrastructure.Services;
 using Application.Interfaces;
 namespace Infrastructure
 {
@@ -24,7 +22,6 @@ namespace Infrastructure
             services.AddRepositories(configuration);
             services.AddCacheService(configuration);
             services.AddMailService(configuration);
-            services.AddPhotoService();
             services.AddScoped<IFileStorageService, CloudinaryStorageService>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddFido2Security(configuration);

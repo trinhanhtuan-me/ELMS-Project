@@ -21,15 +21,16 @@ namespace Application.UseCases
         private readonly IUserRepository _userRepo;
         private readonly IUnitOfWork _uow;
         private readonly IManagerProfileRepository _profileRepo;
-        private readonly IPhotoService _photoService;
+        private readonly IFileStorageService _fileStorageService;
 
         public ManagerProfileService(IUserRepository userRepo, IUnitOfWork uow,
-                                     IManagerProfileRepository profileRepo, IPhotoService photoService)
+                                     IManagerProfileRepository profileRepo, IFileStorageService fileStorageService)
         {
             _userRepo = userRepo;
             _uow = uow;
             _profileRepo = profileRepo;
-            _photoService = photoService;
+            _fileStorageService = fileStorageService;
+
         }
 
         public async Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordRequest request)
@@ -82,10 +83,12 @@ namespace Application.UseCases
 
             if (request.AvatarFile != null)
             {
-                var url = await _photoService.AddPhotoAsync(request.AvatarFile);
+             
+                var url = await _fileStorageService.SaveFileAsync(request.AvatarFile, "elms-avatars");
+
                 if (!string.IsNullOrEmpty(url))
                 {
-                    user.Avatar = url; 
+                    user.Avatar = url;
                 }
             }
 

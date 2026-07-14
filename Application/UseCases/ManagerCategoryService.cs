@@ -16,7 +16,7 @@ namespace Application.UseCases
         Task<bool> DeleteCategoryAsync(int id);
     }
 
-    public class ManagerCategoryService(IManagerCategoryRepository _repo, IUnitOfWork _unitOfWork, IPhotoService _photoService) : IManagerCategoryService
+    public class ManagerCategoryService(IManagerCategoryRepository _repo, IUnitOfWork _unitOfWork, IFileStorageService _fileStorageService) : IManagerCategoryService
     {
         public async Task<List<CategoryVm>> GetAllCategoriesAsync()
         {
@@ -34,7 +34,9 @@ namespace Application.UseCases
 
             if (request.PictureFile != null && request.PictureFile.Length > 0)
             {
-                var uploadedUrl = await _photoService.AddPhotoAsync(request.PictureFile, "elms-avaCourse");
+         
+                var uploadedUrl = await _fileStorageService.SaveFileAsync(request.PictureFile, "elms-avaCourse");
+
                 if (!string.IsNullOrEmpty(uploadedUrl))
                 {
                     picturePath = uploadedUrl;

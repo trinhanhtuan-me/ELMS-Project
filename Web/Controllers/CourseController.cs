@@ -57,7 +57,7 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CourseUpsertRequest request, IFormFile? thumbnailFile)
+        public async Task<IActionResult> Create([FromForm] CourseUpsertRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -74,15 +74,7 @@ namespace Web.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                Stream? fileStream = null;
-                string? fileName = null;
-                if (thumbnailFile != null && thumbnailFile.Length > 0)
-                {
-                    fileStream = thumbnailFile.OpenReadStream();
-                    fileName = thumbnailFile.FileName;
-                }
-
-                await _courseService.CreateCourseAsync(request, fileStream, fileName, createdBy);
+                await _courseService.CreateCourseAsync(request, createdBy);
                 TempData["SuccessToast"] = "Course created successfully!";
                 return RedirectToAction(nameof(Index));
             }
@@ -94,7 +86,7 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(CourseUpsertRequest request, IFormFile? thumbnailFile)
+        public async Task<IActionResult> Edit([FromForm] CourseUpsertRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -107,15 +99,7 @@ namespace Web.Controllers
                 var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!Guid.TryParse(userIdStr, out Guid instructorId)) return RedirectToAction(nameof(Index));
 
-                Stream? fileStream = null;
-                string? fileName = null;
-                if (thumbnailFile != null && thumbnailFile.Length > 0)
-                {
-                    fileStream = thumbnailFile.OpenReadStream();
-                    fileName = thumbnailFile.FileName;
-                }
-
-                var success = await _courseService.UpdateCourseAsync(request, fileStream, fileName, instructorId);
+                var success = await _courseService.UpdateCourseAsync(request, instructorId);
                 if (success) TempData["SuccessToast"] = "Course updated successfully!";
                 else TempData["ErrorToast"] = "Failed to update course.";
 

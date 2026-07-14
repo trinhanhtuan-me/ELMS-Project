@@ -5,12 +5,15 @@ using Infrastructure.Persistence.Repositories.Common;
 using Infrastructure.Services;
 using Infrastructure.Shared.Cache;
 using Infrastructure.Shared.Mails;
+using Infrastructure.Shared.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using ZiggyCreatures.Caching.Fusion;
 using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
+using Infrastructure.Services;
+using Application.Interfaces;
 namespace Infrastructure
 {
     public static class DependencyInjection
@@ -22,9 +25,10 @@ namespace Infrastructure
             services.AddCacheService(configuration);
             services.AddMailService(configuration);
             services.AddPhotoService();
-            services.AddScoped<Application.Interfaces.IFileStorageService, Infrastructure.Shared.CloudinaryStorageService>();
+            services.AddScoped<IFileStorageService, CloudinaryStorageService>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddFido2Security(configuration);
+
             return services;
         }
 

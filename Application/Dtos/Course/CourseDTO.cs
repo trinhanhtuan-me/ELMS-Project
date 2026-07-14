@@ -1,21 +1,32 @@
-using Domain.Enums;
 using Domain.Entities;
+using Domain.Enums;
 using FluentValidation;
-using ModuleEntity = Domain.Entities.Module;
+using Microsoft.AspNetCore.Http;
 using System;
+using ModuleEntity = Domain.Entities.Module;
 
 namespace Application.Dtos.Course
 {
-    public sealed record CourseUpsertRequest(
-         Guid? Id,
-         string Title,
-         string? Description,
-         string Language,
-         string Level,
-         int CategoryId
-     );
+    public class CourseUpsertRequest
+    {
+        public Guid? Id { get; set; }
 
-   
+        public string Title { get; set; } = null!;
+
+        public string? Description { get; set; }
+
+        public string Language { get; set; } = null!;
+
+        public string Level { get; set; } = null!;
+
+        public int CategoryId { get; set; }
+
+        public string? ThumbnailUrl { get; set; }
+
+        public IFormFile? ThumbnailFile { get; set; }
+    }
+
+
     public sealed record CourseManagementResponse(
         Guid Id,
         string Title,

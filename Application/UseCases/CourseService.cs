@@ -12,9 +12,9 @@ namespace Application.UseCases
 {
     public interface ICourseService
     {
-        Task<bool> CreateCourseAsync(CourseUpsertRequest request, Stream? thumbnailStream, string? originalFileName, Guid createdBy);
+        Task<bool> CreateCourseAsync(CourseUpsertRequest request, Guid createdBy);
         Task<List<CourseManagementResponse>> GetCoursesByInstructorAsync(Guid instructorId);
-        Task<bool> UpdateCourseAsync(CourseUpsertRequest request, Stream? thumbnailStream, string? originalFileName, Guid instructorId);
+        Task<bool> UpdateCourseAsync(CourseUpsertRequest request, Guid instructorId);
         Task<bool> SoftDeleteCourseAsync(Guid id, Guid instructorId);
         Task<CourseDetailResponse?> GetCourseDetailsAsync(Guid id, Guid instructorId);
         Task<bool> SubmitCourseAsync(Guid id, Guid instructorId);
@@ -33,14 +33,14 @@ namespace Application.UseCases
             _fileStorageService = fileStorageService;
         }
 
-        public async Task<bool> CreateCourseAsync(CourseUpsertRequest request, Stream? thumbnailStream, string? originalFileName, Guid createdBy)
+        public async Task<bool> CreateCourseAsync(CourseUpsertRequest request, Guid createdBy)
         {
             string? thumbnailUrl = null;
-            if (thumbnailStream != null && !string.IsNullOrEmpty(originalFileName))
+            if (request.ThumbnailFile != null && request.ThumbnailFile.Length > 0)
             {
-                thumbnailUrl = await _fileStorageService.SaveFileAsync(thumbnailStream, originalFileName, "thumbnail/course");
+               
+                thumbnailUrl = await _fileStorageService.SaveFileAsync(request.ThumbnailFile, "thumbnail/course");
             }
-
             var course = new Course
             {
                 Title = request.Title,
@@ -76,15 +76,19 @@ namespace Application.UseCases
             )).ToList();
         }
 
-        public async Task<bool> UpdateCourseAsync(CourseUpsertRequest request, Stream? thumbnailStream, string? originalFileName, Guid instructorId)
+        public async Task<bool> UpdateCourseAsync(CourseUpsertRequest request, Guid instructorId)
         {
             if (request.Id == null) return false;
             var course = await _courseRepository.GetByIdAsync(request.Id.Value);
             if (course == null || course.CreatedBy != instructorId) return false;
 
-            if (thumbnailStream != null && !string.IsNullOrEmpty(originalFileName))
+            if (request.ThumbnailFile != null && request.ThumbnailFile.Length > 0)
             {
-                course.Thumbnail = await _fileStorageService.SaveFileAsync(thumbnailStream, originalFileName, "thumbnail/course");
+                course.Thumbnail = await _fileStorageService.SaveFileAsync(request.ThumbnailFile, "thumbnail/course");
+            }
+            else
+            {
+                course.Thumbnail = request.ThumbnailUrl;
             }
 
             course.Title = request.Title;

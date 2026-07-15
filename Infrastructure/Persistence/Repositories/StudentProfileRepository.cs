@@ -1,6 +1,7 @@
 using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 
@@ -10,7 +11,9 @@ public class StudentProfileRepository(ElmsDbContext context) : IStudentProfileRe
 {
     public async Task<StudentProfile?> GetByIdAsync(Guid studentId)
     {
-        return await context.StudentProfiles.FindAsync(studentId);
+        return await context.StudentProfiles
+                    .Include(s => s.IdNavigation)
+                    .FirstOrDefaultAsync(s => s.Id == studentId);
     }
 
     public void Update(StudentProfile student)

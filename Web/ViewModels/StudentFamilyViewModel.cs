@@ -1,4 +1,5 @@
-﻿namespace Web.ViewModels
+using Domain.Enums;
+namespace Web.ViewModels
 {
     public class StudentFamilyViewModel
     {
@@ -11,12 +12,16 @@
         public Guid? ParentId { get; set; }
         public string? FilterStatus { get; set; }
         public string? SearchKeyword { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
+        public int TotalItems { get; set; }
         public List<CourseRequestItemViewModel> CourseRequests { get; set; } = new List<CourseRequestItemViewModel>();
     }
     public class CourseRequestItemViewModel
     {
         public Guid CourseRequestId { get; set; }
         public string CourseName { get; set; } = string.Empty;
-        public string Status { get; set; } = string.Empty;
+        public CourseRequestStatus Status { get; set; }
+        public string? Note { get; set; }
     }
 }

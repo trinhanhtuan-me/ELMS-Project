@@ -14,7 +14,7 @@ public class CourseRequest : AuditableEntity<Guid>
 
     public Guid CourseId { get; set; }
 
-    public Guid ParentId { get; set; }
+    public Guid? ParentId { get; set; }
 
     public CourseRequestStatus Status { get; set; }
 

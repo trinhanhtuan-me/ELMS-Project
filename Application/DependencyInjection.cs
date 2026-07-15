@@ -28,6 +28,8 @@ namespace Application
             services.AddScoped<IManagerFlashcardService, ManagerFlashcardService>();
             services.AddScoped<IManagerRevenueService, ManagerRevenueService>();
             services.AddScoped<IStudentFamilyService, StudentFamilyService>();
+            services.AddScoped<ICourseRequestService, CourseRequestService>();
+
             return services;
         }
     }

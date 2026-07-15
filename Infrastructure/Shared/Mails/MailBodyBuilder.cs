@@ -60,5 +60,29 @@ namespace Infrastructure.Shared.Mails
             return finalHtml;
         }
 
+        public async Task<string> BuildParentLink(string parentName, string studentName)
+        {
+            var templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+               "Shared", "Mails", "Templates", "ParentLinkRequest.html");
+
+            var templateContent = await _cache.GetOrSetAsync<string>(
+                key: "ParentLinkRequestTemplate",
+                factory: async (ctx, _) =>
+                {
+                    if (!File.Exists(templatePath))
+                    {
+                        throw new FileNotFoundException($"Không tìm thấy file tại {templatePath}");
+                    }
+                    return await File.ReadAllTextAsync(templatePath);
+                },
+                options: new FusionCacheEntryOptions().SetSkipDistributedCache(true, true)
+                );
+
+            var finalHtml = templateContent!
+                    .Replace("{{ParentName}}", parentName)
+                    .Replace("{{StudentName}}", studentName);
+
+            return finalHtml;
+        }
     }
 }

@@ -35,6 +35,7 @@ namespace Infrastructure.Persistence.Repositories.Common
             services.AddScoped<IStudentProfileRepository, StudentProfileRepository>();
             services.AddScoped<ICourseRequestRepository, CourseRequestRepository>();
             services.AddScoped<IPasskeyRepository, PasskeyRepository>();
+            services.AddScoped<IParentRepository, ParentRepository>();
             return services;
         }
     }

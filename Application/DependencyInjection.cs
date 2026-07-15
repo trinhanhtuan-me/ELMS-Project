@@ -27,7 +27,7 @@ namespace Application
             services.AddScoped<IManagerProfileService, ManagerProfileService>();
             services.AddScoped<IManagerFlashcardService, ManagerFlashcardService>();
             services.AddScoped<IManagerRevenueService, ManagerRevenueService>();
-
+            services.AddScoped<IStudentFamilyService, StudentFamilyService>();
             return services;
         }
     }

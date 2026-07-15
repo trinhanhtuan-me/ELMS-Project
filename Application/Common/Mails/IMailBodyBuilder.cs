@@ -10,6 +10,6 @@ namespace Application.Common.Mails
     {
         Task<string> BuildOtpRegistrationEmail(string userName, string otpCode);
         Task<string> BuildOtpForgotPassword(string userName, string otpCode);
-
+        Task<string> BuildParentLink(string parentName, string studentName);
     }
 }

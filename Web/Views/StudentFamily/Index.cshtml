@@ -1,0 +1,59 @@
+﻿@model Web.ViewModels.StudentFamilyViewModel
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white py-3">
+        <h6 class="mb-0 fw-bold">Parent Account Link</h6>
+    </div>
+    <div class="card-body">
+
+        <div class="mb-3">
+            <label class="form-label text-muted">Student Name</label>
+            <input type="text" class="form-control bg-light" value="@Model.StudentName" readonly />
+        </div>
+
+        @if (Model.ParentLinkStatus == "NotLinked")
+        {
+            <form asp-controller="StudentFamily" asp-action="SendRequest" method="post">
+                <div class="mb-3">
+                    <label class="form-label text-muted">Parent Email:</label>
+                    <input type="email" name="ParentEmail" class="form-control" placeholder="Enter parent's email here" required />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    Send Link Request
+                </button>
+            </form>
+        }
+        else if (Model.ParentLinkStatus == "Pending")
+        {
+            <form asp-controller="StudentFamily" asp-action="CancelRequest" method="post">
+                <input type="hidden" name="RequestId" value="@Model.ParentLinkRequestId" />
+                <div class="mb-3">
+                    <label class="form-label text-muted">Parent Email:</label>
+                    <input type="text" class="form-control bg-light" value="@Model.ParentEmail" readonly />
+                    <div class="text-warning mt-2 small fw-bold">
+                        <i class="bi bi-hourglass-split"></i> Waiting for parent's approval...
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-danger w-100">
+                    Cancel Request
+                </button>
+            </form>
+        }
+        else if (Model.ParentLinkStatus == "Linked")
+        {
+            <form asp-controller="StudentFamily" asp-action="Unlink" method="post">
+                <input type="hidden" name="ParentId" value="@Model.ParentId" />
+                <div class="mb-3">
+                    <label class="form-label text-muted">Parent Email:</label>
+                    <input type="text" class="form-control bg-light border-success" value="@Model.ParentEmail" readonly />
+                    <div class="text-success mt-2 small fw-bold">
+                        <i class="bi bi-check-circle-fill"></i> Successfully linked
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Are you sure you want to unlink this account?');">
+                    Unlink Account
+                </button>
+            </form>
+        }
+    </div>
+</div>

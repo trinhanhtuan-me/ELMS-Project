@@ -1,4 +1,4 @@
-﻿using Domain.Common;
+using Domain.Common;
 using System;
 using System.Collections.Generic;
 
@@ -6,7 +6,7 @@ namespace Domain.Entities;
 
 public class ManagerProfile : AuditableEntity<Guid>
 {
-    public ManagerProfile() { Id = Guid.NewGuid(); }
+    public ManagerProfile() { }
 
 
     public string? Position { get; set; }

@@ -41,4 +41,23 @@ public class ParentLinkRequestRepository(ElmsDbContext context) : IParentLinkReq
             .Where(r => r.ParentId == parentId && r.Status == status)
             .CountAsync();
     }
+
+    public async Task CreateAsync(ParentLinkRequest request)
+    {
+        await context.ParentLinkRequests.AddAsync(request);
+    }
+
+    public async Task<ParentLinkRequest?> FindByStudentAndParent(Guid studentId, Guid parentId)
+    {
+        return await context.ParentLinkRequests.FirstOrDefaultAsync(l => l.StudentId == studentId && l.ParentId == parentId);
+    }
+
+    public async Task<ParentLinkRequest?> FindByStudent(Guid studentId)
+    {
+        return await context.ParentLinkRequests
+         .Include(req => req.Parent)
+             .ThenInclude(p => p.IdNavigation)
+         .OrderByDescending(req => req.CreatedAt)
+         .FirstOrDefaultAsync(req => req.StudentId == studentId);
+    }
 }

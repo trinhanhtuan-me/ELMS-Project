@@ -151,6 +151,7 @@
             
             <form id="courseForm" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="Id" id="courseId" />
+                <input type="hidden" name="ThumbnailUrl" id="courseThumbnailUrl" />
                 <div class="modal-body p-4">
                     
                     <!-- 1. Ảnh đại diện -->
@@ -229,6 +230,7 @@
             document.getElementById('formTitle').innerText = 'Tạo khóa học mới';
             document.getElementById('courseForm').action = '/Course/Create';
             document.getElementById('courseId').value = '';
+            document.getElementById('courseThumbnailUrl').value = '';
             document.getElementById('courseTitle').value = '';
             document.getElementById('courseLanguage').value = '';
             document.getElementById('courseLevel').value = '';
@@ -247,6 +249,7 @@
             document.getElementById('formTitle').innerText = 'Sửa khóa học';
             document.getElementById('courseForm').action = '/Course/Edit';
             document.getElementById('courseId').value = id;
+            document.getElementById('courseThumbnailUrl').value = thumbnailUrl;
             document.getElementById('courseTitle').value = title;
             document.getElementById('courseLanguage').value = language;
             document.getElementById('courseLevel').value = level;

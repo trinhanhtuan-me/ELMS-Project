@@ -1,0 +1,237 @@
+@model Guid
+
+<div class="mt-12 border-t border-gray-200 pt-8" x-data="lessonQuestions('@Model')">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold text-gray-800 flex items-center">
+            <i class="fas fa-list-ul text-blue-500 mr-3"></i> Câu hỏi ôn tập (Quiz)
+        </h3>
+        <button type="button" @@click="openModal()" class="px-4 py-2 bg-blue-50 text-blue-600 font-medium rounded-lg hover:bg-blue-100 transition-colors flex items-center text-sm">
+            <i class="fas fa-plus mr-2"></i> Thêm câu hỏi
+        </button>
+    </div>
+
+    <!-- Question List -->
+    <div class="space-y-4">
+        <template x-if="questions.length === 0">
+            <div class="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                <p class="text-gray-500">Chưa có câu hỏi nào. Hãy thêm câu hỏi để ôn tập bài học này!</p>
+            </div>
+        </template>
+        
+        <template x-for="(q, index) in questions" :key="q.id">
+            <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="font-semibold text-gray-800 text-lg">Câu <span x-text="index + 1"></span>: <span x-text="q.content"></span></div>
+                    <div class="flex gap-2">
+                        <button type="button" @@click="editQuestion(q)" class="text-gray-400 hover:text-blue-500 transition-colors p-1" title="Sửa">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" @@click="deleteQuestion(q.id)" class="text-gray-400 hover:text-red-500 transition-colors p-1" title="Xóa">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="space-y-2 ml-4">
+                    <template x-for="opt in q.options" :key="opt.id">
+                        <div class="flex items-center gap-3 p-2 rounded-md" :class="opt.isCorrect ? 'bg-green-50 text-green-800' : 'text-gray-600'">
+                            <i class="fas" :class="opt.isCorrect ? 'fa-check-circle text-green-500' : 'fa-circle text-gray-300'"></i>
+                            <span x-text="opt.content" :class="opt.isCorrect ? 'font-medium' : ''"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <!-- Modal -->
+    <div x-show="isModalOpen" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div x-show="isModalOpen" x-transition.opacity class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @@click="closeModal()"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <!-- Modal panel -->
+            <div x-show="isModalOpen" x-transition class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h3 class="text-lg leading-6 font-bold text-gray-900 mb-4" id="modal-title" x-text="isEditMode ? 'Sửa câu hỏi' : 'Thêm câu hỏi mới'"></h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Nội dung câu hỏi <span class="text-red-500">*</span></label>
+                            <input type="text" x-model="formData.content" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Nhập câu hỏi...">
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="block text-sm font-semibold text-gray-700">Các lựa chọn đáp án <span class="text-red-500">*</span></label>
+                                <button type="button" @@click="addOption()" class="text-sm text-blue-600 hover:text-blue-800 font-medium">+ Thêm dòng</button>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <template x-for="(opt, idx) in formData.options" :key="idx">
+                                    <div class="flex items-center gap-2">
+                                        <input type="radio" name="correctOption" :value="idx" x-model="correctOptionIndex" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                        <input type="text" x-model="opt.content" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="Nhập đáp án...">
+                                        <button type="button" @@click="removeOption(idx)" class="text-red-400 hover:text-red-600" title="Xóa dòng" x-show="formData.options.length > 2">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2 italic">Tích vào ô tròn để chọn đáp án đúng.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 flex justify-end gap-2">
+                    <button type="button" @@click="closeModal()" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">Hủy</button>
+                    <button type="button" @@click="saveQuestion()" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('lessonQuestions', (lessonId) => ({
+            lessonId: lessonId,
+            questions: [],
+            isModalOpen: false,
+            isEditMode: false,
+            correctOptionIndex: 0,
+            formData: {
+                id: null,
+                content: '',
+                options: [
+                    { content: '', isCorrect: false },
+                    { content: '', isCorrect: false }
+                ]
+            },
+
+            async init() {
+                await this.loadQuestions();
+            },
+
+            async loadQuestions() {
+                try {
+                    const res = await fetch(`/api/LessonQuestion/lesson/${this.lessonId}`);
+                    if (res.ok) {
+                        this.questions = await res.json();
+                    }
+                } catch (err) {
+                    console.error("Failed to load questions", err);
+                }
+            },
+
+            openModal() {
+                this.isEditMode = false;
+                this.formData = {
+                    id: null,
+                    content: '',
+                    options: [
+                        { content: '', isCorrect: false },
+                        { content: '', isCorrect: false },
+                        { content: '', isCorrect: false },
+                        { content: '', isCorrect: false }
+                    ]
+                };
+                this.correctOptionIndex = 0;
+                this.isModalOpen = true;
+            },
+
+            closeModal() {
+                this.isModalOpen = false;
+            },
+
+            addOption() {
+                this.formData.options.push({ content: '', isCorrect: false });
+            },
+
+            removeOption(idx) {
+                if (this.formData.options.length > 2) {
+                    this.formData.options.splice(idx, 1);
+                    if (this.correctOptionIndex == idx) this.correctOptionIndex = 0;
+                    else if (this.correctOptionIndex > idx) this.correctOptionIndex--;
+                }
+            },
+
+            editQuestion(q) {
+                this.isEditMode = true;
+                // Deep copy
+                this.formData = JSON.parse(JSON.stringify(q));
+                // Find correct index
+                this.correctOptionIndex = this.formData.options.findIndex(o => o.isCorrect);
+                if (this.correctOptionIndex === -1) this.correctOptionIndex = 0;
+                this.isModalOpen = true;
+            },
+
+            async saveQuestion() {
+                if (!this.formData.content.trim()) {
+                    alert("Vui lòng nhập nội dung câu hỏi!");
+                    return;
+                }
+                
+                let emptyOpt = false;
+                this.formData.options.forEach((o, i) => {
+                    o.isCorrect = (i == this.correctOptionIndex);
+                    if (!o.content.trim()) emptyOpt = true;
+                });
+
+                if (emptyOpt) {
+                    alert("Vui lòng nhập đầy đủ nội dung các lựa chọn!");
+                    return;
+                }
+
+                const payload = {
+                    lessonId: this.lessonId,
+                    content: this.formData.content,
+                    options: this.formData.options
+                };
+
+                try {
+                    let url = '/api/LessonQuestion';
+                    let method = 'POST';
+                    if (this.isEditMode) {
+                        url += `/${this.formData.id}`;
+                        method = 'PUT';
+                        payload.id = this.formData.id;
+                    }
+
+                    const res = await fetch(url, {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (res.ok) {
+                        await this.loadQuestions();
+                        this.closeModal();
+                    } else {
+                        const error = await res.json();
+                        alert("Lỗi: " + (error.message || JSON.stringify(error)));
+                    }
+                } catch (err) {
+                    alert("Lỗi kết nối máy chủ");
+                }
+            },
+
+            async deleteQuestion(id) {
+                if (confirm('Bạn có chắc chắn muốn xóa câu hỏi này không?')) {
+                    try {
+                        const res = await fetch(`/api/LessonQuestion/${id}`, {
+                            method: 'DELETE'
+                        });
+                        if (res.ok) {
+                            await this.loadQuestions();
+                        }
+                    } catch (err) {
+                        alert("Lỗi kết nối máy chủ");
+                    }
+                }
+            }
+        }));
+    });
+</script>

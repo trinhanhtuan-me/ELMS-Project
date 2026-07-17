@@ -13,5 +13,6 @@ namespace Application.Interfaces
         void Update(Module module);
         void Delete(Module module);
         Task<int> GetMaxOrderIndexAsync(Guid courseId);
+        Task<List<Module>> GetByCourseIdWithItemsAsync(Guid courseId);
     }
 }

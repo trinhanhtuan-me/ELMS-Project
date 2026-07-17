@@ -1086,6 +1086,73 @@ public partial class ElmsDbContext : DbContext
             new SystemKey { Id = 66, ParentId = 63, CodeKey = "PAYMENT_STATUS_FAILED", CodeValue = 3, Description = "Failed", SortOrder = 3, IsDeleted = false }
         );
 
+        // Seed Course, Enrollments, and Reviews for testing Review
+        var seedCategoryId = 999;
+        var seedCourseId = Guid.Parse("88888888-8888-8888-8888-888888888888");
+
+        modelBuilder.Entity<Category>().HasData(
+            new Category { Id = seedCategoryId, Name = "English Grammar", Description = "Learn English Grammar", Picture = "grammar.jpg" }
+        );
+
+        modelBuilder.Entity<Course>().HasData(
+            new Course
+            {
+                Id = seedCourseId,
+                Title = "Tenses Made Easy",
+                CategoryId = seedCategoryId,
+                CreatedBy = teacherId,
+                Level = "Beginner",
+                Language = "English",
+                Status = Domain.Enums.CourseStatus.Publish,
+                Thumbnail = "tenses.jpg",
+                CreatedAt = new DateTime(2024, 1, 1),
+                UpdatedAt = new DateTime(2024, 1, 1)
+            }
+        );
+
+        var users = new List<User>();
+        var userRoles = new List<object>();
+        var profiles = new List<StudentProfile>();
+        var enrollments = new List<Enrollment>();
+        var reviews = new List<Review>();
+
+        var comments = new[]
+        {
+            "Cân bằng tốt giữa video, reading và drill; học không bị chán. Ước gì có thêm cheat sheet.",
+            "Trước đây mình hay rối Present Perfect, giờ đã hiểu logic since/for.",
+            "Bài luyện thi rất thực tế, mình nắm rõ hơn cách dùng các thì.",
+            "Giải thích ngắn gọn nhưng đi thẳng vào trọng tâm, kèm ví dụ dễ nhớ.",
+            "Khóa học khá khó, giảng viên nói hơi nhanh.",
+            "Khóa học tuyệt vời, nội dung dễ hiểu, bài tập đa dạng.",
+            "Rất hữu ích cho người mất gốc như mình.",
+            "Giáo viên vui tính, tài liệu đầy đủ.",
+            "Mini-test cuối mỗi mục phản hồi rõ ràng để biết mình đang thiếu chỗ nào.",
+            "Bài tập có độ khó tăng dần, tốc độ hợp lý, không bị nặng nề."
+        };
+        
+        var random = new Random(123); // Fixed seed for deterministic rating
+
+        for (int i = 1; i <= 20; i++)
+        {
+            var sId = Guid.Parse($"22222222-2222-2222-2222-0000000000{i:D2}");
+            users.Add(new User { Id = sId, Username = $"student{i}", Email = $"student{i}@elms.com", FullName = $"Test Student {i}", Password = defaultPasswordHash, IsActive = true, IsDeleted = false });
+            userRoles.Add(new { UserId = sId, RoleId = 2 });
+            profiles.Add(new StudentProfile { Id = sId, Institution = "FPT", GradeLevel = "University", Address = "Hanoi" });
+            
+            enrollments.Add(new Enrollment { Id = Guid.Parse($"99999999-9999-9999-9999-0000000000{i:D2}"), CourseId = seedCourseId, StudentId = sId, Status = Domain.Enums.EnrollmentStatus.Completed, EnrolledAt = new DateTime(2024, 1, 1), CompletedAt = new DateTime(2024, 1, 10) });
+
+            byte rating = (byte)random.Next(2, 6); // 2 to 5 stars
+            string comment = comments[random.Next(comments.Length)];
+
+            reviews.Add(new Review { Id = Guid.Parse($"10000000-0000-0000-0000-0000000000{i:D2}"), CourseId = seedCourseId, StudentId = sId, Rating = rating, Comment = comment, UpdatedAt = new DateTime(2024, 1, 15).AddHours(i), CreatedAt = new DateTime(2024, 1, 15).AddHours(i) });
+        }
+
+        modelBuilder.Entity<User>().HasData(users);
+        modelBuilder.Entity("PUserRole").HasData(userRoles);
+        modelBuilder.Entity<StudentProfile>().HasData(profiles);
+        modelBuilder.Entity<Enrollment>().HasData(enrollments);
+        modelBuilder.Entity<Review>().HasData(reviews);
+
         OnModelCreatingPartial(modelBuilder);
     }
 

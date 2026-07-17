@@ -16,7 +16,7 @@ namespace Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<List<Category>> GetAllAsync()
+        public async Task<List<Category>>   GetAllAsync()
         {
             return await _context.Categories.ToListAsync();
         }

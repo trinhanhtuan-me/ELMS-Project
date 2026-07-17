@@ -11,6 +11,7 @@ namespace Application.UseCases
     public interface IModuleService
     {
         Task<List<Module>> GetModulesByCourseAsync(Guid courseId);
+        Task<List<Module>> GetModulesWithItemsAsync(Guid courseId);
         Task<bool> CreateModuleAsync(ModuleRequest request, Guid userId);
         Task<bool> UpdateModuleAsync(ModuleRequest request, Guid userId);
         Task<bool> DeleteModuleAsync(Guid id, Guid userId);
@@ -32,6 +33,11 @@ namespace Application.UseCases
         public async Task<List<Module>> GetModulesByCourseAsync(Guid courseId)
         {
             return await _moduleRepository.GetByCourseIdAsync(courseId);
+        }
+
+        public async Task<List<Module>> GetModulesWithItemsAsync(Guid courseId)
+        {
+            return await _moduleRepository.GetByCourseIdWithItemsAsync(courseId);
         }
 
         public async Task<bool> CreateModuleAsync(ModuleRequest request, Guid userId)

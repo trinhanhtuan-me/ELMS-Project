@@ -18,10 +18,10 @@ namespace Application
             services.AddScoped<IFunctionService, FunctionService>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IModuleService, ModuleService>();
-            services.AddScoped<ICategoryService,CategoryService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IParentLinkService, ParentLinkService>();
             services.AddScoped<IPasskeyService, PasskeyService>();
-            services.AddScoped<IManagerDashboardService , ManagerDashboardService>();
+            services.AddScoped<IManagerDashboardService, ManagerDashboardService>();
             services.AddScoped<IManagerCourseService, ManagerCourseService>();
             services.AddScoped<IManagerCategoryService, ManagerCategoryService>();
             services.AddScoped<IManagerProfileService, ManagerProfileService>();
@@ -29,7 +29,7 @@ namespace Application
             services.AddScoped<IManagerRevenueService, ManagerRevenueService>();
             services.AddScoped<IStudentFamilyService, StudentFamilyService>();
             services.AddScoped<ICourseRequestService, CourseRequestService>();
-
+            services.AddScoped<ICourseReviewService, CourseReviewService>();
             return services;
         }
     }

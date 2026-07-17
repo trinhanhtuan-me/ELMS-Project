@@ -22,16 +22,18 @@ namespace Application
             services.AddScoped<IAssignmentService, AssignmentService>();
             services.AddScoped<IDiscussionService, DiscussionService>();
             services.AddScoped<ILessonQuestionService, LessonQuestionService>();
-            services.AddScoped<ICategoryService,CategoryService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IParentLinkService, ParentLinkService>();
             services.AddScoped<IPasskeyService, PasskeyService>();
-            services.AddScoped<IManagerDashboardService , ManagerDashboardService>();
+            services.AddScoped<IManagerDashboardService, ManagerDashboardService>();
             services.AddScoped<IManagerCourseService, ManagerCourseService>();
             services.AddScoped<IManagerCategoryService, ManagerCategoryService>();
             services.AddScoped<IManagerProfileService, ManagerProfileService>();
             services.AddScoped<IManagerFlashcardService, ManagerFlashcardService>();
             services.AddScoped<IManagerRevenueService, ManagerRevenueService>();
-
+            services.AddScoped<IStudentFamilyService, StudentFamilyService>();
+            services.AddScoped<ICourseRequestService, CourseRequestService>();
+            services.AddScoped<ICourseReviewService, CourseReviewService>();
             return services;
         }
     }

@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ElmsDbContext))]
-    partial class ElmsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260715034214_MakePrendIdNullableCourserequest")]
+    partial class MakePrendIdNullableCourserequest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -154,15 +157,6 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 999,
-                            Description = "Learn English Grammar",
-                            Name = "English Grammar",
-                            Picture = "grammar.jpg"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Course", b =>
@@ -238,23 +232,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("CreatedBy");
 
                     b.ToTable("Course", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CategoryId = 999,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = new Guid("44444444-4444-4444-4444-444444444444"),
-                            IsDeleted = false,
-                            Language = "English",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7937),
-                            Level = "Beginner",
-                            Status = (byte)5,
-                            Thumbnail = "tenses.jpg",
-                            Title = "Tenses Made Easy",
-                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.CourseManager", b =>
@@ -487,188 +464,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("StudentId");
 
                     b.ToTable("Enrollments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000001"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000001")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000002"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000002")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000003"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000003")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000004"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000004")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000005"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000005")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000006"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000006")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000007"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000007")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000008"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000008")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000009"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000009")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000010"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000010")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000011"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000011")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000012"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000012")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000013"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000013")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000014"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000014")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000015"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000015")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000016"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000016")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000017"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000017")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000018"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000018")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000019"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000019")
-                        },
-                        new
-                        {
-                            Id = new Guid("99999999-9999-9999-9999-000000000020"),
-                            CompletedAt = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            EnrolledAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000020")
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Fido2Credential", b =>
@@ -1563,8 +1358,8 @@ namespace Infrastructure.Migrations
                         {
                             Id = new Guid("33333333-3333-3333-3333-333333333333"),
                             Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7572),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7573),
+                            CreatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5629),
+                            LastUpdatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5630),
                             Occupation = "Engineer",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
@@ -1868,228 +1663,6 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Reviews");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000001"),
-                            Comment = "Bài tập có độ khó tăng dần, tốc độ hợp lý, không bị nặng nề.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 1, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8127),
-                            Rating = (byte)5,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000001"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 1, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000002"),
-                            Comment = "Mini-test cuối mỗi mục phản hồi rõ ràng để biết mình đang thiếu chỗ nào.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 2, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8158),
-                            Rating = (byte)4,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000002"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 2, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000003"),
-                            Comment = "Cân bằng tốt giữa video, reading và drill; học không bị chán. Ước gì có thêm cheat sheet.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 3, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8175),
-                            Rating = (byte)4,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000003"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 3, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000004"),
-                            Comment = "Trước đây mình hay rối Present Perfect, giờ đã hiểu logic since/for.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 4, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8194),
-                            Rating = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000004"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 4, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000005"),
-                            Comment = "Rất hữu ích cho người mất gốc như mình.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 5, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8222),
-                            Rating = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000005"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 5, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000006"),
-                            Comment = "Khóa học khá khó, giảng viên nói hơi nhanh.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 6, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8239),
-                            Rating = (byte)5,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000006"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 6, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000007"),
-                            Comment = "Khóa học khá khó, giảng viên nói hơi nhanh.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 7, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8258),
-                            Rating = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000007"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 7, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000008"),
-                            Comment = "Mini-test cuối mỗi mục phản hồi rõ ràng để biết mình đang thiếu chỗ nào.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8274),
-                            Rating = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000008"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 8, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000009"),
-                            Comment = "Bài luyện thi rất thực tế, mình nắm rõ hơn cách dùng các thì.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8305),
-                            Rating = (byte)4,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000009"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 9, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000010"),
-                            Comment = "Bài tập có độ khó tăng dần, tốc độ hợp lý, không bị nặng nề.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8325),
-                            Rating = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000010"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 10, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000011"),
-                            Comment = "Cân bằng tốt giữa video, reading và drill; học không bị chán. Ước gì có thêm cheat sheet.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 11, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8341),
-                            Rating = (byte)2,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000011"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 11, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000012"),
-                            Comment = "Cân bằng tốt giữa video, reading và drill; học không bị chán. Ước gì có thêm cheat sheet.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8359),
-                            Rating = (byte)5,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000012"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 12, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000013"),
-                            Comment = "Rất hữu ích cho người mất gốc như mình.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 13, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8375),
-                            Rating = (byte)5,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000013"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 13, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000014"),
-                            Comment = "Mini-test cuối mỗi mục phản hồi rõ ràng để biết mình đang thiếu chỗ nào.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8400),
-                            Rating = (byte)4,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000014"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 14, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000015"),
-                            Comment = "Trước đây mình hay rối Present Perfect, giờ đã hiểu logic since/for.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 15, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8418),
-                            Rating = (byte)4,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000015"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 15, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000016"),
-                            Comment = "Mini-test cuối mỗi mục phản hồi rõ ràng để biết mình đang thiếu chỗ nào.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 16, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8434),
-                            Rating = (byte)4,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000016"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 16, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000017"),
-                            Comment = "Cân bằng tốt giữa video, reading và drill; học không bị chán. Ước gì có thêm cheat sheet.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 17, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8455),
-                            Rating = (byte)5,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000017"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 17, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000018"),
-                            Comment = "Cân bằng tốt giữa video, reading và drill; học không bị chán. Ước gì có thêm cheat sheet.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 18, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8483),
-                            Rating = (byte)4,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000018"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 18, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000019"),
-                            Comment = "Bài luyện thi rất thực tế, mình nắm rõ hơn cách dùng các thì.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 19, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8499),
-                            Rating = (byte)5,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000019"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 19, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000020"),
-                            Comment = "Giáo viên vui tính, tài liệu đầy đủ.",
-                            CourseId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2024, 1, 15, 20, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8517),
-                            Rating = (byte)3,
-                            StudentId = new Guid("22222222-2222-2222-2222-000000000020"),
-                            UpdatedAt = new DateTime(2024, 1, 15, 20, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.StudentProfile", b =>
@@ -2146,210 +1719,10 @@ namespace Infrastructure.Migrations
                         {
                             Id = new Guid("22222222-2222-2222-2222-222222222222"),
                             Address = "Hoa Lac",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7530),
+                            CreatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5579),
                             GradeLevel = "University",
                             Institution = "FPT University",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7531),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000001"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8093),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8093),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000002"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8153),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8153),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000003"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8170),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8170),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000004"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8189),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8189),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000005"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8216),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8216),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000006"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8234),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8235),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000007"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8253),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8253),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000008"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8269),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8269),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000009"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8297),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8297),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000010"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8320),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8321),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000011"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8336),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8337),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000012"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8354),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8354),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000013"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8370),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8371),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000014"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8395),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8396),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000015"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8414),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8414),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000016"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8429),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8430),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000017"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8447),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8447),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000018"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8478),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8478),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000019"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8494),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8495),
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000020"),
-                            Address = "Hanoi",
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8512),
-                            GradeLevel = "University",
-                            Institution = "FPT",
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8513),
+                            LastUpdatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5580),
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -3206,12 +2579,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7289),
+                            CreatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5299),
                             Email = "admin@elms.com",
                             FullName = "System Admin",
                             IsActive = true,
                             IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7303),
+                            LastUpdatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5317),
                             Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "admin"
@@ -3219,12 +2592,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7404),
+                            CreatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5390),
                             Email = "student@elms.com",
                             FullName = "Sample Student",
                             IsActive = true,
                             IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7404),
+                            LastUpdatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5390),
                             Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "student"
@@ -3232,12 +2605,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-333333333333"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7408),
+                            CreatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5396),
                             Email = "parent@elms.com",
                             FullName = "Sample Parent",
                             IsActive = true,
                             IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7409),
+                            LastUpdatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5397),
                             Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "parent"
@@ -3245,12 +2618,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("44444444-4444-4444-4444-444444444444"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7411),
+                            CreatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5399),
                             Email = "teacher@elms.com",
                             FullName = "Sample Teacher",
                             IsActive = true,
                             IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7412),
+                            LastUpdatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5400),
                             Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "teacher"
@@ -3258,12 +2631,12 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("55555555-5555-5555-5555-555555555555"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7414),
+                            CreatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5403),
                             Email = "manager@elms.com",
                             FullName = "Sample Manager",
                             IsActive = true,
                             IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7415),
+                            LastUpdatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5404),
                             Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "manager"
@@ -3271,275 +2644,15 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("66666666-6666-6666-6666-666666666666"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7417),
+                            CreatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5406),
                             Email = "multi@elms.com",
                             FullName = "Vừa Phụ Huynh Vừa Giáo Viên",
                             IsActive = true,
                             IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(7418),
+                            LastUpdatedAt = new DateTime(2026, 7, 15, 10, 42, 12, 398, DateTimeKind.Local).AddTicks(5407),
                             Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "multirole"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000001"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8074),
-                            Email = "student1@elms.com",
-                            FullName = "Test Student 1",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8074),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student1"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000002"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8145),
-                            Email = "student2@elms.com",
-                            FullName = "Test Student 2",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8146),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student2"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000003"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8164),
-                            Email = "student3@elms.com",
-                            FullName = "Test Student 3",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8164),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student3"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000004"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8180),
-                            Email = "student4@elms.com",
-                            FullName = "Test Student 4",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8181),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student4"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000005"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8206),
-                            Email = "student5@elms.com",
-                            FullName = "Test Student 5",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8207),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student5"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000006"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8228),
-                            Email = "student6@elms.com",
-                            FullName = "Test Student 6",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8228),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student6"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000007"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8246),
-                            Email = "student7@elms.com",
-                            FullName = "Test Student 7",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8246),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student7"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000008"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8263),
-                            Email = "student8@elms.com",
-                            FullName = "Test Student 8",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8263),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student8"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000009"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8279),
-                            Email = "student9@elms.com",
-                            FullName = "Test Student 9",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8280),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student9"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000010"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8313),
-                            Email = "student10@elms.com",
-                            FullName = "Test Student 10",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8314),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student10"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000011"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8330),
-                            Email = "student11@elms.com",
-                            FullName = "Test Student 11",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8330),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student11"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000012"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8346),
-                            Email = "student12@elms.com",
-                            FullName = "Test Student 12",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8346),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student12"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000013"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8364),
-                            Email = "student13@elms.com",
-                            FullName = "Test Student 13",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8364),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student13"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000014"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8388),
-                            Email = "student14@elms.com",
-                            FullName = "Test Student 14",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8389),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student14"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000015"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8407),
-                            Email = "student15@elms.com",
-                            FullName = "Test Student 15",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8407),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student15"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000016"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8423),
-                            Email = "student16@elms.com",
-                            FullName = "Test Student 16",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8424),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student16"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000017"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8438),
-                            Email = "student17@elms.com",
-                            FullName = "Test Student 17",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8439),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student17"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000018"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8471),
-                            Email = "student18@elms.com",
-                            FullName = "Test Student 18",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8472),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student18"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000019"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8488),
-                            Email = "student19@elms.com",
-                            FullName = "Test Student 19",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8489),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student19"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-000000000020"),
-                            CreatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8504),
-                            Email = "student20@elms.com",
-                            FullName = "Test Student 20",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastUpdatedAt = new DateTime(2026, 7, 17, 15, 11, 33, 220, DateTimeKind.Local).AddTicks(8504),
-                            Password = "$2a$11$3HXCJnYevNW8Awmlq9VfIengAG7omtmw85UBxJAAYLmNTjatfD6Zy",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "student20"
                         });
                 });
 
@@ -3613,106 +2726,6 @@ namespace Infrastructure.Migrations
                         {
                             UserId = new Guid("66666666-6666-6666-6666-666666666666"),
                             RoleId = 4
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000001"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000002"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000003"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000004"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000005"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000006"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000007"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000008"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000009"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000010"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000011"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000012"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000013"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000014"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000015"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000016"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000017"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000018"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000019"),
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = new Guid("22222222-2222-2222-2222-000000000020"),
-                            RoleId = 2
                         });
                 });
 

@@ -1,0 +1,162 @@
+﻿@model Application.Dtos.CourseReview.GetListReviewResponse
+@using Application.Dtos.CourseReview
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <h4>
+            <i class="fas fa-star text-warning"></i> 
+            @Model.Summary.AverageRating.ToString("0.0") Average Rating • @Model.Summary.TotalReviews Reviews
+        </h4>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Review Summary</h5>
+                
+                @{
+                    var ratings = new[] { 
+                        new { Stars = 5, Count = Model.Summary.FiveCount },
+                        new { Stars = 4, Count = Model.Summary.FourCount },
+                        new { Stars = 3, Count = Model.Summary.ThreeCount },
+                        new { Stars = 2, Count = Model.Summary.TwoCount },
+                        new { Stars = 1, Count = Model.Summary.OneCount }
+                    };
+                    
+                    var currentRatingStr = Context.Request.Query["rating"];
+                    int? currentRatingFilter = !string.IsNullOrEmpty(currentRatingStr) ? int.Parse(currentRatingStr) : null;
+                }
+
+                @foreach (var item in ratings)
+                {
+                    bool isSelected = currentRatingFilter == item.Stars;
+                    int? nextRating = isSelected ? null : (int?)item.Stars;
+
+                    <a href="@Url.Action("Index", new { courseId = Context.Request.Query["courseId"], rating = nextRating })" 
+                       class="text-decoration-none text-dark d-block p-2 rounded @(isSelected ? "bg-light" : "")"
+                       style="cursor: pointer; transition: 0.2s;">
+                        
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                @for (int i = 0; i < item.Stars; i++)
+                                {
+                                    <i class="fas fa-star text-warning fs-6"></i>
+                                }
+                                @for (int i = item.Stars; i < 5; i++)
+                                {
+                                    <i class="far fa-star text-muted fs-6"></i>
+                                }
+                            </div>
+                            <span class="text-muted fs-6">@item.Count</span>
+                        </div>
+                    </a>
+                }
+                
+                @if (currentRatingFilter.HasValue)
+                {
+                    <div class="text-center mt-2">
+                        <a href="@Url.Action("Index", new { courseId = Context.Request.Query["courseId"] })" class="text-danger small text-decoration-none">
+                            <i class="fas fa-times-circle"></i> Clear filter
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                @{
+                    var myReview = ViewBag.MyReview as ReviewDto;
+                    bool hasReviewed = myReview != null;
+                    string actionUrl = hasReviewed ? Url.Action("Update", "CourseReview") : Url.Action("Create", "CourseReview");
+                    int currentRating = hasReviewed ? myReview.Rating : 5;
+                    string currentComment = hasReviewed ? myReview.Comment : "";
+                    string courseId = Context.Request.Query["courseId"];
+                }
+                
+                <h5 class="card-title mb-3">@(hasReviewed ? "Update your review" : "Write a review")</h5>
+                
+                <form action="@actionUrl" method="post">
+                    <input type="hidden" name="CourseId" value="@courseId" />
+                    
+                    <div class="rating-stars mb-3" id="star-selector">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="@(i <= currentRating ? "fas fa-star text-warning" : "far fa-star text-secondary") cursor-pointer fs-5" data-value="@i"></i>
+                        }
+                    </div>
+                    <input type="hidden" id="selected-rating" name="Rating" value="@currentRating" />
+                    
+                    <textarea name="Comment" class="form-control mb-3" rows="4" placeholder="Share your experience about this course..." required>@currentComment</textarea>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        @(hasReviewed ? "Save Changes" : "Submit Review")
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        @if (!Model.ListReview.Any())
+        {
+            <div class="alert alert-info">There are no reviews for this course yet.</div>
+        }
+        else
+        {
+            @foreach (var review in Model.ListReview)
+            {
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center me-3" style="width: 45px; height: 45px; font-size: 20px;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold">@review.StudentName</h6>
+                                <div class="text-warning" style="font-size: 14px;">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="@(i <= review.Rating ? "fas fa-star" : "far fa-star text-muted opacity-50")"></i>
+                                    }
+                                    <span class="text-muted ms-2 fw-normal">@review.ReviewDate.ToString("dd/MM/yyyy")</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="mb-0 mt-2">@review.Comment</p>
+                    </div>
+                </div>
+            }
+
+            @if (Model.TotalPages > 1)
+            {
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { courseId = Context.Request.Query["courseId"], pageNumber = i, rating = Model.Rating })">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        }
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('#star-selector i').forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = parseInt(this.getAttribute('data-value'));
+            document.getElementById('selected-rating').value = rating;
+            
+            document.querySelectorAll('#star-selector i').forEach(s => {
+                const starVal = parseInt(s.getAttribute('data-value'));
+                if (starVal <= rating) {
+                    s.className = 'fas fa-star text-warning cursor-pointer fs-5';
+                } else {
+                    s.className = 'far fa-star text-secondary cursor-pointer fs-5';
+                }
+            });
+        });
+    });
+</script>

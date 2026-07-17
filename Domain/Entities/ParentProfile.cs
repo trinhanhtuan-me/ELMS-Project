@@ -1,4 +1,4 @@
-﻿using Domain.Common;
+using Domain.Common;
 using System;
 using System.Collections.Generic;
 
@@ -6,7 +6,7 @@ namespace Domain.Entities;
 
 public class ParentProfile : AuditableEntity<Guid>
 {
-    public ParentProfile() { Id = Guid.NewGuid(); }
+    public ParentProfile() { }
 
 
     public string? Address { get; set; }

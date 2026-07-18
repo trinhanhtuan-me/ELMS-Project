@@ -1,4 +1,6 @@
+using Application.Dtos.Learning;
 using Domain.Entities;
+using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,5 +16,7 @@ namespace Application.Interfaces
         void Delete(Module module);
         Task<int> GetMaxOrderIndexAsync(Guid courseId);
         Task<List<Module>> GetByCourseIdWithItemsAsync(Guid courseId);
+        Task<ModuleItem?> GetVideoLessonAsync(Guid itemId);
+        Task<(ModuleItemType ItemType, LessonContentType? ContentType)?> GetItemTypeInfoAsync(Guid itemId);
     }
 }

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Dtos\Learning\Syllabus.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="Fido2" Version="3.0.1" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />

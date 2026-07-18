@@ -1,0 +1,173 @@
+@using Application.Dtos.Learning
+@model LearningSyllabusDto
+@{
+    ViewData["Title"] = Model.CourseTitle;
+}
+
+<style>
+    /* Bẻ khóa giới hạn chiều rộng của Layout mặc định để Sidebar bám sát lề trái */
+    div.container.flex-grow-1 {
+        max-width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .learning-sidebar {
+        border-right: 1px solid #e0e0e0;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 0;
+        background-color: #fff;
+    }
+    
+    .course-title {
+        font-weight: 700;
+        font-size: 1.3rem;
+        padding: 1.5rem 1.5rem 1rem 1.5rem;
+        margin: 0;
+        color: #202020;
+    }
+
+    .module-btn {
+        background: transparent !important;
+        border: none;
+        padding: 1rem 1.5rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #404040;
+        box-shadow: none !important;
+    }
+    .module-btn:not(.collapsed) {
+        color: #202020;
+        background: transparent;
+    }
+    .accordion-button::after {
+        width: 1rem;
+        height: 1rem;
+        background-size: 1rem;
+    }
+
+    /* Các thẻ bài học */
+    .learning-item {
+        padding: 0.85rem 1.5rem 0.85rem 2.5rem;
+        border: none;
+        border-left: 3px solid transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        background: transparent;
+    }
+    .learning-item:hover {
+        background-color: #f7f9fa;
+    }
+    .learning-item.active {
+        background-color: #f0f7ff; /* Màu xanh lơ nhạt */
+        border-left: 3px solid #0d6efd;
+    }
+    
+    .item-icon {
+        color: #909090;
+        margin-top: 4px;
+        font-size: 1.1rem;
+    }
+    .item-icon.completed {
+        color: #0d6efd; /* Tích xanh nếu xong */
+    }
+
+    .item-title {
+        font-size: 0.9rem;
+        color: #202020;
+        margin-bottom: 2px;
+        line-height: 1.4;
+    }
+    .item-meta {
+        font-size: 0.75rem;
+        color: #888;
+    }
+
+    /* Vùng hiển thị nội dung bên phải */
+    .content-area {
+        height: 100vh;
+        overflow-y: auto;
+        background-color: #fff;
+    }
+</style>
+
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <!-- Cột Trái: Sidebar -->
+        <div class="col-md-3 col-lg-3 learning-sidebar">
+            <h1 class="course-title">@Model.CourseTitle</h1>
+            
+            <div class="accordion accordion-flush" id="syllabusAccordion">
+                @foreach (var module in Model.Modules)
+                {
+                    var isExpanded = module.Items.Any(i => ViewBag.CurrentItemId != null && i.ItemId == (Guid)ViewBag.CurrentItemId) ? "show" : "";
+                    var isCollapsedBtn = string.IsNullOrEmpty(isExpanded) ? "collapsed" : "";
+                    
+                    <div class="accordion-item border-0">
+                        <h2 class="accordion-header" id="heading-@module.ModuleId">
+                            <button class="accordion-button module-btn @isCollapsedBtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@module.ModuleId">
+                                @module.Title
+                            </button>
+                        </h2>
+                        <div id="collapse-@module.ModuleId" class="accordion-collapse collapse @isExpanded" data-bs-parent="#syllabusAccordion">
+                            <div class="accordion-body p-0">
+                                <ul class="list-group list-group-flush">
+                                    @foreach (var item in module.Items)
+                                    {
+                                        var isActive = (ViewBag.CurrentItemId != null && (Guid)ViewBag.CurrentItemId == item.ItemId) ? "active" : "";
+                                        var iconClass = item.IsCompleted ? "fa-check-circle completed" : "fa-circle-o";
+                                        
+                                        // Lấy chữ Lesson, Quiz... làm subtitle
+                                        var typeName = item.ItemType.ToString();
+
+                                        <li class="list-group-item learning-item @isActive" onclick="loadItem('@item.ItemId', this)">
+                                            <i class="fa @iconClass item-icon"></i>
+                                            <div>
+                                                <div class="item-title">@item.Title</div>
+                                                <div class="item-meta">@typeName</div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Cột Phải: Content -->
+        <div class="col-md-9 col-lg-9 content-area">
+            <div class="p-4" id="content-container">
+                <h4 class="text-muted text-center mt-5">Vui lòng chọn bài học</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function loadItem(itemId, element) {
+            $('.learning-item').removeClass('active');
+            $(element).addClass('active');
+
+            // 2. Load nội dung qua AJAX
+            $('#content-container').html('<h4 class="text-center text-muted mt-5">Loading...</h4>');
+            
+            $.get('/Learning/GetItemContent?itemId=' + itemId, function(html) {
+                $('#content-container').html(html);
+            });
+        }
+        
+        // Tự động bấm vào bài học đầu tiên (hoặc bài đang lấy từ URL) lúc trang vừa load xong
+        $(function() {
+            var activeLi = $('.learning-item.active');
+            if(activeLi.length > 0) {
+                activeLi.click(); // Giả lập click để gọi hàm loadItem
+            }
+        });
+    </script>
+}

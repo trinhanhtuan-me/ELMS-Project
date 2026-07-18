@@ -19,6 +19,7 @@ namespace Infrastructure.Persistence.Repositories
             if (progress != null)
             {
                 progress.Status = ProgressStatus.Completed;
+                progress.PercentDone = 100;
                 return true;
             }
             return false;

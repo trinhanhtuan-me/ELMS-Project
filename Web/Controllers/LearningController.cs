@@ -59,8 +59,8 @@ namespace Web.Controllers
                         }
                         else if (itemInfo.Value.ContentType == LessonContentType.Reading)
                         {
-                            //var readingContent = await _learningService.GetReadingLessonAsync(itemId);
-                            //return PartialView("_ReadingLesson", readingContent);
+                            var readingContent = await _learningService.GetReadingLessonAsync(itemId, studentId);
+                            return PartialView("_ReadingLesson", readingContent);
                         }
                         break;
 
@@ -103,5 +103,28 @@ namespace Web.Controllers
             }
             return RedirectToAction("Index", new { courseId = request.CourseId, itemId = request.ModuleItemId });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> MarkReadingCompleted(MarkReadingCompletedRequest request)
+        {
+            var studentIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(studentIdStr, out Guid studentId))
+            {
+                return RedirectToAction("Login", "Identity");
+            }
+
+            try
+            {
+                await _learningService.MarkReadingCompletedAsync(studentId, request.ModuleItemId);
+                TempData["SuccessToast"] = "Completed reading!";
+            }
+            catch (BusinessRuleException ex)
+            {
+                TempData["ErrorToast"] = ex.Message;
+            }
+
+            return RedirectToAction("Index", new { courseId = request.CourseId, itemId = request.ModuleItemId });
+        }
+
     }
 }

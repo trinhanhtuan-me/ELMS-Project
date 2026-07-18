@@ -18,5 +18,7 @@ namespace Application.Interfaces
         Task<List<Module>> GetByCourseIdWithItemsAsync(Guid courseId);
         Task<ModuleItem?> GetVideoLessonAsync(Guid itemId);
         Task<(ModuleItemType ItemType, LessonContentType? ContentType)?> GetItemTypeInfoAsync(Guid itemId);
+
+        Task<ModuleItem?> GetReadingLessonAsync(Guid itemId);
     }
 }

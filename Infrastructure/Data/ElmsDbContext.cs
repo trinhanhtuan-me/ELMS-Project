@@ -1129,7 +1129,47 @@ public partial class ElmsDbContext : DbContext
 
         modelBuilder.Entity<Lesson>().HasData(
             new Lesson { Id = item1Id, Title = "Present Simple & Continuous", ContentType = Domain.Enums.LessonContentType.Video, VideoUrl = "https://res.cloudinary.com/pewx8g7u/video/upload/v1784285507/lessons/video/TIẾNG_ANH_GIAO_TIẾP_3_PHÚT_MỖI_NGÀY_-_Bài_80__TO_BE_OUT_OF_SORTS_x98vvq.mp4", DurationSec = 600 },
-            new Lesson { Id = item2Id, Title = "Tense Timelines (Reading)", ContentType = Domain.Enums.LessonContentType.Reading, TextContent = "Tense Timelines content", DurationSec = 300 }
+            new Lesson { Id = item2Id, Title = "Tense Timelines (Reading)", ContentType = Domain.Enums.LessonContentType.Reading, TextContent = @"
+<div class='reading-lesson'>
+    <h2 class='text-primary mb-4'>Mastering English Tenses: A Timeline Approach</h2>
+    
+    <p class='lead'>Understanding English tenses can be challenging, but visualizing them on a timeline makes it much easier to grasp when to use which tense.</p>
+    
+    <hr class='my-4' />
+
+    <h4 class='text-success'>1. The Past Tenses</h4>
+    <p>The past tenses deal with actions that have already concluded.</p>
+    <ul>
+        <li><b>Past Simple:</b> Actions that started and finished in the past. 
+            <br/><span class='text-muted'>Example: ""I visited Paris last year.""</span></li>
+        <li><b>Past Continuous:</b> Actions that were ongoing at a specific moment in the past.
+            <br/><span class='text-muted'>Example: ""I was watching TV when the phone rang.""</span></li>
+    </ul>
+
+    <h4 class='text-primary mt-4'>2. The Present Tenses</h4>
+    <p>Present tenses connect the past to the present or describe current facts and routines.</p>
+    <ul>
+        <li><b>Present Simple:</b> Habits, routines, and universal truths.
+            <br/><span class='text-muted'>Example: ""The sun rises in the east.""</span></li>
+        <li><b>Present Continuous:</b> Actions happening right now, at the moment of speaking.
+            <br/><span class='text-muted'>Example: ""I am studying English right now.""</span></li>
+        <li><b>Present Perfect:</b> Actions that happened at an unspecified time in the past but have a result in the present.
+            <br/><span class='text-muted'>Example: ""I have lost my keys.""</span></li>
+    </ul>
+
+    <h4 class='text-info mt-4'>3. The Future Tenses</h4>
+    <p>Future tenses look ahead to actions that have not yet occurred.</p>
+    <ul>
+        <li><b>Future Simple (Will):</b> Predictions, promises, or spontaneous decisions.
+            <br/><span class='text-muted'>Example: ""I think it will rain tomorrow.""</span></li>
+        <li><b>Future Intentions (Going to):</b> Planned actions or predictions based on current evidence.
+            <br/><span class='text-muted'>Example: ""Look at those dark clouds! It is going to rain.""</span></li>
+    </ul>
+
+    <div class='alert alert-warning mt-4'>
+        <strong>Pro Tip:</strong> Don't try to translate tenses word-for-word from your native language. Instead, try to understand the <em>concept</em> and the <em>timeframe</em> each English tense represents!
+    </div>
+</div>", DurationSec = 300 }
         );
 
         var question1Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1");

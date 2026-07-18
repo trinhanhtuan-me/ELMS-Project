@@ -18,6 +18,8 @@ namespace Application.UseCases
         Task<VideoLessonDto?> GetVideoLessonAsync(Guid itemId, Guid studentId);
         Task SubmitLessonQuestionAsync(Guid studentId, SubmitLessonQuestionRequest request);
         Task<(ModuleItemType ItemType, LessonContentType? ContentType)?> GetItemTypeInfoAsync(Guid itemId);
+        Task<ReadingLessonDto?> GetReadingLessonAsync(Guid itemId, Guid studentId);
+        Task MarkReadingCompletedAsync(Guid studentId, Guid moduleItemId);
 
     }
 
@@ -118,6 +120,28 @@ namespace Application.UseCases
             var item = await _module.GetItemTypeInfoAsync(itemId);
             if (item == null) throw new BusinessRuleException("Module items not found");
             return item;
+        }
+
+        public async Task<ReadingLessonDto?> GetReadingLessonAsync(Guid itemId, Guid studentId)
+        {
+            var moduleItem = await _module.GetReadingLessonAsync(itemId);
+            if (moduleItem == null || moduleItem.Lesson == null || moduleItem.Lesson.ContentType != LessonContentType.Reading)
+                throw new BusinessRuleException("Can not find reading lesson");
+            var isCompleted = await _progress.IsItemCompletedAsync(studentId, itemId);
+            return new ReadingLessonDto(moduleItem.Id, moduleItem.Lesson.Title, moduleItem.Lesson.TextContent, isCompleted);
+        }
+
+        public async Task MarkReadingCompletedAsync(Guid studentId, Guid moduleItemId)
+        {
+            var moduleItem = await _module.GetReadingLessonAsync(moduleItemId);
+            if (moduleItem == null || moduleItem.Lesson == null || moduleItem.Lesson.ContentType != LessonContentType.Reading)
+                throw new BusinessRuleException("Can not find reading lesson");
+            var isCompleted = await _progress.IsItemCompletedAsync(studentId, moduleItemId);
+            if (isCompleted) throw new BusinessRuleException("This reading have been completed already");
+
+            await _progress.UpdateProgressToCompletedAsync(studentId, moduleItemId);
+
+            await _uow.SaveChangeAsync();
         }
     }
 }

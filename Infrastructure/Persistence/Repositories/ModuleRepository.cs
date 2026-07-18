@@ -91,5 +91,12 @@ namespace Infrastructure.Persistence.Repositories
             if (info == null) return null;
             return (info.ItemType, info.ContentType);
         }
+
+        public async Task<ModuleItem?> GetReadingLessonAsync(Guid itemId)
+        {
+            return await _context.ModuleItems
+                .Include(mi => mi.Lesson)
+                .FirstOrDefaultAsync(mi => mi.Id == itemId);
+        }
     }
 }

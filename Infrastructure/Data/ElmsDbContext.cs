@@ -703,8 +703,7 @@ public partial class ElmsDbContext : DbContext
 
             entity.ToTable("Quiz");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.MaxAttempts).HasDefaultValue(3);
+            entity.Property(e => e.Id).ValueGeneratedNever();            entity.Property(e => e.AttemptCooldownMin).HasDefaultValue(60);
             entity.Property(e => e.PassingScorePct)
                 .HasDefaultValue(50.00m)
                 .HasColumnType("decimal(5, 2)");
@@ -1189,8 +1188,7 @@ public partial class ElmsDbContext : DbContext
             new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc06"), QuestionId = question2Id, Content = "Đi ra ngoài chơi", IsCorrect = false }
         );
 
-        modelBuilder.Entity<Quiz>().HasData(
-            new Quiz { Id = item3Id, Title = "Tenses Quiz 1", PassingScorePct = 70.00m, TimeLimitMin = 15, MaxAttempts = 3 }
+        modelBuilder.Entity<Quiz>().HasData(            new Quiz { Id = item3Id, Title = "Tenses Quiz 1", PassingScorePct = 70.00m, TimeLimitMin = 15, AttemptCooldownMin = 60 }
         );
 
         modelBuilder.Entity<Assignment>().HasData(

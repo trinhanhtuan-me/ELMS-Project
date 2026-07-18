@@ -1,4 +1,4 @@
-﻿using Domain.Common;
+using Domain.Common;
 using System;
 using System.Collections.Generic;
 
@@ -16,8 +16,7 @@ public class Quiz : Entity<Guid>
     public int? PickCount { get; set; }
 
     public int? TimeLimitMin { get; set; }
-
-    public int MaxAttempts { get; set; }
+    public int AttemptCooldownMin { get; set; }
 
     public virtual ModuleItem IdNavigation { get; set; } = null!;
 

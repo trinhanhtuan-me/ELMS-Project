@@ -55,6 +55,20 @@ namespace Infrastructure.Persistence.Repositories
             return modules.Max(m => m.OrderIndex);
         }
 
+        public async Task<List<Module>> GetByCourseIdWithItemsAsync(Guid courseId)
+        {
+            return await _context.Modules
+                .Include(m => m.ModuleItems)
+                    .ThenInclude(mi => mi.Lesson)
+                .Include(m => m.ModuleItems)
+                    .ThenInclude(mi => mi.Assignment)
+                .Include(m => m.ModuleItems)
+                    .ThenInclude(mi => mi.Discussion)
+                .Where(m => m.CourseId == courseId)
+                .OrderBy(m => m.OrderIndex)
+                .ToListAsync();
+        }
+
         public async Task<ModuleItem?> GetVideoLessonAsync(Guid itemId)
         {
             return await _context.ModuleItems

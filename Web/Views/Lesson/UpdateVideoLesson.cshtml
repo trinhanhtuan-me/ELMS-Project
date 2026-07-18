@@ -1,0 +1,84 @@
+@model Application.Dtos.Lesson.VideoLessonUpdateRequest
+@{
+    Layout = "_ModuleContentLayout";
+    ViewData["Title"] = "Cập nhật Bài học Video";
+    var moduleItemId = ViewBag.ModuleItemId;
+    var courseId = ViewBag.CourseId;
+}
+
+<div>
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+            <i class="fas fa-video text-blue-500 mr-3"></i> Cập nhật Bài học Video
+        </h2>
+        <form action="/Lesson/DeleteLesson" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài học này không? Hành động này không thể hoàn tác!');">
+            <input type="hidden" name="moduleItemId" value="@moduleItemId" />
+            <input type="hidden" name="courseId" value="@courseId" />
+            <button type="submit" class="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors flex items-center text-sm font-medium">
+                <i class="fas fa-trash-alt mr-2"></i> Xóa bài học
+            </button>
+        </form>
+    </div>
+
+    <form action="/Lesson/UpdateVideoLesson" method="post" enctype="multipart/form-data" class="space-y-6">
+        <input type="hidden" name="CourseId" value="@courseId" />
+        <input type="hidden" name="ModuleItemId" value="@moduleItemId" />
+        
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Tiêu đề bài học <span class="text-red-500">*</span></label>
+            <input type="text" name="Title" required value="@Model.Title"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                   placeholder="Nhập tiêu đề (VD: Bài 1: Giới thiệu khóa học)" />
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.CurrentVideoUrl))
+        {
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Video hiện tại</label>
+                <div class="rounded-lg overflow-hidden border border-gray-200 bg-black aspect-video max-w-2xl mx-auto">
+                    <video controls class="w-full h-full">
+                        <source src="@Model.CurrentVideoUrl" type="video/mp4">
+                        Trình duyệt của bạn không hỗ trợ xem video.
+                    </video>
+                </div>
+            </div>
+        }
+
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Cập nhật Video Mới (Không bắt buộc)</label>
+            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 transition-colors bg-gray-50">
+                <div class="space-y-1 text-center">
+                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                    <div class="flex text-sm text-gray-600 justify-center">
+                        <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500 px-2 py-1">
+                            <span>Tải video mới lên</span>
+                            <input id="file-upload" name="VideoFile" type="file" class="sr-only" accept="video/*">
+                        </label>
+                        <p class="pl-1 py-1">hoặc kéo thả vào đây</p>
+                    </div>
+                    <p class="text-xs text-gray-500" id="file-name">Để trống nếu không muốn thay đổi video hiện tại</p>
+                </div>
+            </div>
+            <p class="mt-2 text-xs text-gray-500 italic"><i class="fas fa-info-circle"></i> Nếu tải video mới, hệ thống sẽ thay thế video cũ.</p>
+        </div>
+
+        <div class="pt-4 border-t border-gray-100 flex justify-end gap-3">
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center">
+                <i class="fas fa-save mr-2"></i> Lưu thay đổi
+            </button>
+        </div>
+    </form>
+
+    <!-- Thêm phần câu hỏi ôn tập (Quiz) -->
+    @await Html.PartialAsync("_LessonQuestions", (Guid)ViewBag.ActualLessonId)
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('file-upload').addEventListener('change', function(e) {
+            var fileName = e.target.files[0] ? e.target.files[0].name : "Để trống nếu không muốn thay đổi video hiện tại";
+            document.getElementById('file-name').textContent = "Đã chọn: " + fileName;
+            document.getElementById('file-name').classList.add("text-blue-600", "font-medium");
+        });
+    </script>
+}

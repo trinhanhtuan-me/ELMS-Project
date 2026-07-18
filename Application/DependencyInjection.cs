@@ -18,6 +18,10 @@ namespace Application
             services.AddScoped<IFunctionService, FunctionService>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IModuleService, ModuleService>();
+            services.AddScoped<ILessonService, LessonService>();
+            services.AddScoped<IAssignmentService, AssignmentService>();
+            services.AddScoped<IDiscussionService, DiscussionService>();
+            services.AddScoped<ILessonQuestionService, LessonQuestionService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IParentLinkService, ParentLinkService>();
             services.AddScoped<IPasskeyService, PasskeyService>();

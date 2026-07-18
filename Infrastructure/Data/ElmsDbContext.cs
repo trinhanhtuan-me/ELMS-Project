@@ -1110,11 +1110,61 @@ public partial class ElmsDbContext : DbContext
             }
         );
 
+        var moduleId = Guid.Parse("77777777-7777-7777-7777-777777777777");
+        modelBuilder.Entity<Module>().HasData(
+            new Module { Id = moduleId, CourseId = seedCourseId, Title = "Module 1: Basics", OrderIndex = 1, CreatedBy = teacherId }
+        );
+
+        var item1Id = Guid.Parse("66666666-6666-6666-6666-666666666601");
+        var item2Id = Guid.Parse("66666666-6666-6666-6666-666666666602");
+        var item3Id = Guid.Parse("66666666-6666-6666-6666-666666666603");
+        var item4Id = Guid.Parse("66666666-6666-6666-6666-666666666604");
+
+        modelBuilder.Entity<ModuleItem>().HasData(
+            new ModuleItem { Id = item1Id, ModuleId = moduleId, ItemType = Domain.Enums.ModuleItemType.Lesson, OrderIndex = 1 },
+            new ModuleItem { Id = item2Id, ModuleId = moduleId, ItemType = Domain.Enums.ModuleItemType.Lesson, OrderIndex = 2 },
+            new ModuleItem { Id = item3Id, ModuleId = moduleId, ItemType = Domain.Enums.ModuleItemType.Quiz, OrderIndex = 3 },
+            new ModuleItem { Id = item4Id, ModuleId = moduleId, ItemType = Domain.Enums.ModuleItemType.Assignment, OrderIndex = 4 }
+        );
+
+        modelBuilder.Entity<Lesson>().HasData(
+            new Lesson { Id = item1Id, Title = "Present Simple & Continuous", ContentType = Domain.Enums.LessonContentType.Video, VideoUrl = "https://res.cloudinary.com/pewx8g7u/video/upload/v1784285507/lessons/video/TIẾNG_ANH_GIAO_TIẾP_3_PHÚT_MỖI_NGÀY_-_Bài_80__TO_BE_OUT_OF_SORTS_x98vvq.mp4", DurationSec = 600 },
+            new Lesson { Id = item2Id, Title = "Tense Timelines (Reading)", ContentType = Domain.Enums.LessonContentType.Reading, TextContent = "Tense Timelines content", DurationSec = 300 }
+        );
+
+        var question1Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1");
+        var question2Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2");
+        
+        modelBuilder.Entity<LessonQuestion>().HasData(
+            new LessonQuestion { Id = question1Id, LessonId = item1Id, Content = "Thì hiện tại tiếp diễn dùng để diễn tả hành động nào?", Explanation = "Chỉ hành động đang diễn ra tại thời điểm nói." },
+            new LessonQuestion { Id = question2Id, LessonId = item1Id, Content = "Cụm từ 'to be out of sorts' có nghĩa là gì?", Explanation = "To be out of sorts = cảm thấy không khỏe, khó ở." }
+        );
+
+        modelBuilder.Entity<LessonOption>().HasData(
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc01"), QuestionId = question1Id, Content = "Hành động lặp đi lặp lại", IsCorrect = false },
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc02"), QuestionId = question1Id, Content = "Hành động đang xảy ra ngay lúc nói", IsCorrect = true },
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc03"), QuestionId = question2Id, Content = "Rất vui vẻ và năng động", IsCorrect = false },
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc04"), QuestionId = question2Id, Content = "Cảm thấy không khỏe, hơi khó ở", IsCorrect = true },
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc05"), QuestionId = question2Id, Content = "Hết tiền, rỗng túi", IsCorrect = false },
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc06"), QuestionId = question2Id, Content = "Đi ra ngoài chơi", IsCorrect = false }
+        );
+
+        modelBuilder.Entity<Quiz>().HasData(
+            new Quiz { Id = item3Id, Title = "Tenses Quiz 1", PassingScorePct = 70.00m, TimeLimitMin = 15, MaxAttempts = 3 }
+        );
+
+        modelBuilder.Entity<Assignment>().HasData(
+            new Assignment { Id = item4Id, Title = "Daily Routine Paragraph", Content = "Mô tả thói quen", Instructions = "Write a paragraph...", MaxScore = 100m, PassingScorePct = 70.00m }
+        );
+
+
+
         var users = new List<User>();
         var userRoles = new List<object>();
         var profiles = new List<StudentProfile>();
         var enrollments = new List<Enrollment>();
         var reviews = new List<Review>();
+        var progresses = new List<Progress>();
 
         var comments = new[]
         {
@@ -1145,6 +1195,11 @@ public partial class ElmsDbContext : DbContext
             string comment = comments[random.Next(comments.Length)];
 
             reviews.Add(new Review { Id = Guid.Parse($"10000000-0000-0000-0000-0000000000{i:D2}"), CourseId = seedCourseId, StudentId = sId, Rating = rating, Comment = comment, UpdatedAt = new DateTime(2024, 1, 15).AddHours(i), CreatedAt = new DateTime(2024, 1, 15).AddHours(i) });
+            
+            progresses.Add(new Progress { StudentId = sId, ModuleItemId = item1Id, Status = Domain.Enums.ProgressStatus.InProgress, PercentDone = 0, UpdatedAt = new DateTime(2024, 1, 1) });
+            progresses.Add(new Progress { StudentId = sId, ModuleItemId = item2Id, Status = Domain.Enums.ProgressStatus.InProgress, PercentDone = 0, UpdatedAt = new DateTime(2024, 1, 1) });
+            progresses.Add(new Progress { StudentId = sId, ModuleItemId = item3Id, Status = Domain.Enums.ProgressStatus.InProgress, PercentDone = 0, UpdatedAt = new DateTime(2024, 1, 1) });
+            progresses.Add(new Progress { StudentId = sId, ModuleItemId = item4Id, Status = Domain.Enums.ProgressStatus.InProgress, PercentDone = 0, UpdatedAt = new DateTime(2024, 1, 1) });
         }
 
         modelBuilder.Entity<User>().HasData(users);
@@ -1152,6 +1207,7 @@ public partial class ElmsDbContext : DbContext
         modelBuilder.Entity<StudentProfile>().HasData(profiles);
         modelBuilder.Entity<Enrollment>().HasData(enrollments);
         modelBuilder.Entity<Review>().HasData(reviews);
+        modelBuilder.Entity<Progress>().HasData(progresses);
 
         OnModelCreatingPartial(modelBuilder);
     }

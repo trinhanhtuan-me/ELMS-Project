@@ -1,5 +1,7 @@
+using Application.Dtos.Learning;
 using Application.Interfaces;
 using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -51,6 +53,29 @@ namespace Infrastructure.Persistence.Repositories
             var modules = await _context.Modules.Where(m => m.CourseId == courseId).ToListAsync();
             if (!modules.Any()) return 0;
             return modules.Max(m => m.OrderIndex);
+        }
+
+        public async Task<ModuleItem?> GetVideoLessonAsync(Guid itemId)
+        {
+            return await _context.ModuleItems
+                .Include(mi => mi.Lesson)
+                    .ThenInclude(l => l.LessonQuestions)
+                        .ThenInclude(q => q.LessonOptions)
+                .FirstOrDefaultAsync(mi => mi.Id == itemId);
+        }
+
+        public async Task<(ModuleItemType ItemType, LessonContentType? ContentType)?> GetItemTypeInfoAsync(Guid itemId)
+        {
+            var info = await _context.ModuleItems
+                .Where(mi => mi.Id == itemId)
+                .Select(mi => new
+                {
+                    ItemType = mi.ItemType,
+                    ContentType = mi.Lesson != null ? (LessonContentType?)mi.Lesson.ContentType : null
+                })
+                .FirstOrDefaultAsync();
+            if (info == null) return null;
+            return (info.ItemType, info.ContentType);
         }
     }
 }

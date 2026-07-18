@@ -103,6 +103,7 @@ namespace Infrastructure.Persistence.Repositories
         {
             return await _context.ModuleItems
                 .Include(mi => mi.Quiz)
+                    .ThenInclude(q => q.QuizQuestions)
                 .FirstOrDefaultAsync(mi => mi.Id == itemId);
         }
     }

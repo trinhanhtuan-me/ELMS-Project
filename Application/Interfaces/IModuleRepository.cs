@@ -20,5 +20,6 @@ namespace Application.Interfaces
         Task<(ModuleItemType ItemType, LessonContentType? ContentType)?> GetItemTypeInfoAsync(Guid itemId);
 
         Task<ModuleItem?> GetReadingLessonAsync(Guid itemId);
+        Task<ModuleItem?> GetQuizAsync(Guid itemId);
     }
 }

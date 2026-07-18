@@ -32,7 +32,7 @@ namespace Web.Controllers
             catch (BusinessRuleException ex)
             {
                 TempData["ErrorToast"] = ex.Message;
-                return View();
+                return RedirectToAction("Index", "Home");
             }
         }
 
@@ -44,7 +44,8 @@ namespace Web.Controllers
             {
                 return Content("<div class='alert alert-danger'>Vui lòng đăng nhập lại.</div>", "text/html");
             }
-            try {
+            try
+            {
                 var itemInfo = await _learningService.GetItemTypeInfoAsync(itemId);
 
                 if (itemInfo == null) return NotFound();
@@ -65,9 +66,8 @@ namespace Web.Controllers
                         break;
 
                     case ModuleItemType.Quiz:
-                        // var quizContent = await _learningService.GetQuizAsync(itemId);
-                        // return PartialView("_QuizForm", quizContent);
-                        break;
+                        var quizContent = await _learningService.GetQuizIntroAsync(itemId, studentId);
+                        return PartialView("_Quiz", quizContent);
 
                     case ModuleItemType.Assignment:
                         // var assignmentContent = await _learningService.GetAssignmentAsync(itemId);
@@ -126,5 +126,72 @@ namespace Web.Controllers
             return RedirectToAction("Index", new { courseId = request.CourseId, itemId = request.ModuleItemId });
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> StartQuizAttempt(Guid itemId, Guid courseId)
+        {
+            try
+            {
+                var studentIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!Guid.TryParse(studentIdStr, out Guid studentId)) return RedirectToAction("Login", "Identity");
+
+                var attemptId = await _learningService.StartQuizAttemptAsync(itemId, studentId);
+
+                return RedirectToAction("TakeQuiz", new { attemptId = attemptId, courseId = courseId, itemId = itemId });
+            }
+            catch (BusinessRuleException ex)
+            {
+                TempData["ErrorToast"] = ex.Message;
+                return RedirectToAction("Index", new { courseId = courseId, itemId = itemId });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TakeQuiz(Guid attemptId, Guid courseId, Guid itemId)
+        {
+            try
+            {
+                var studentIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!Guid.TryParse(studentIdStr, out Guid studentId)) return RedirectToAction("Login", "Identity");
+
+                var attemptDto = await _learningService.GetQuizAttemptAsync(attemptId, studentId);
+
+                ViewBag.CourseId = courseId;
+                ViewBag.ItemId = itemId;
+
+                return View("TakeQuiz", attemptDto);
+            }
+            catch (BusinessRuleException ex)
+            {
+                TempData["ErrorToast"] = ex.Message;
+                return RedirectToAction("Index", new { courseId = courseId, itemId = itemId });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitQuizAttempt([FromBody] SubmitQuizAttemptRequest request, Guid courseId, Guid itemId)
+        {
+            try
+            {
+                var studentIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!Guid.TryParse(studentIdStr, out Guid studentId))
+                    return Json(new { success = false, message = "Please log in to continue." });
+
+                var score = await _learningService.SubmitQuizAttemptAsync(studentId, request);
+
+                TempData["SuccessToast"] = $"Quiz submitted successfully! Your score: {score:0.0}%";
+
+                return Json(new
+                {
+                    success = true,
+                    score = score,
+                    redirectUrl = Url.Action("Index", "Learning", new { courseId = courseId, itemId = itemId })
+                });
+            }
+            catch (BusinessRuleException ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
     }
 }

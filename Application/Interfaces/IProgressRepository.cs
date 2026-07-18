@@ -10,5 +10,7 @@ namespace Application.Interfaces
     {
         Task<bool> UpdateProgressToCompletedAsync(Guid studentId, Guid moduleItemId);
         Task<bool> IsItemCompletedAsync(Guid studentId, Guid moduleItemId);
+        Task<bool> UpdateQuizProgressAsync(Guid studentId, Guid moduleItemId, decimal scorePct);
+
     }
 }

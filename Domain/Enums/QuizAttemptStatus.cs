@@ -1,7 +1,7 @@
 namespace Domain.Enums;
 
 public enum QuizAttemptStatus : byte{
-    Draft = 1,
+    InProgress = 1,
     Submitted = 2
 }
 

@@ -98,5 +98,13 @@ namespace Infrastructure.Persistence.Repositories
                 .Include(mi => mi.Lesson)
                 .FirstOrDefaultAsync(mi => mi.Id == itemId);
         }
+
+        public async Task<ModuleItem?> GetQuizAsync(Guid itemId)
+        {
+            return await _context.ModuleItems
+                .Include(mi => mi.Quiz)
+                    .ThenInclude(q => q.QuizQuestions)
+                .FirstOrDefaultAsync(mi => mi.Id == itemId);
+        }
     }
 }

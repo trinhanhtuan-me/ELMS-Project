@@ -703,8 +703,7 @@ public partial class ElmsDbContext : DbContext
 
             entity.ToTable("Quiz");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.MaxAttempts).HasDefaultValue(3);
+            entity.Property(e => e.Id).ValueGeneratedNever();            entity.Property(e => e.AttemptCooldownMin).HasDefaultValue(60);
             entity.Property(e => e.PassingScorePct)
                 .HasDefaultValue(50.00m)
                 .HasColumnType("decimal(5, 2)");
@@ -767,6 +766,41 @@ public partial class ElmsDbContext : DbContext
             entity.HasOne(d => d.Question).WithMany(p => p.QuizOptions)
                 .HasForeignKey(d => d.QuestionId)
                 .HasConstraintName("FK__QuizOptio__Quest__725BF7F6");
+
+            entity.HasData(
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee1"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd1"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee2"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd1"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee3"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd1"), Content = "Option C", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee4"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd1"), Content = "Option D", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee5"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd2"), Content = "Option A", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee6"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd2"), Content = "Option B", IsCorrect = true },
+new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee05"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee06"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee07"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd04"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee08"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd04"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee09"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd05"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee10"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd05"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee11"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd06"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee12"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd06"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee13"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd07"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee14"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd07"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee15"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd08"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee16"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd08"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee17"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd09"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee18"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd09"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee19"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd10"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee20"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd10"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee21"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd11"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee22"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd11"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee23"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd12"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee24"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd12"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee25"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd13"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee26"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd13"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee27"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd14"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee28"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd14"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee29"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd15"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee30"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd15"), Content = "Option B", IsCorrect = false }
+            );
         });
 
         modelBuilder.Entity<QuizQuestion>(entity =>
@@ -781,6 +815,24 @@ public partial class ElmsDbContext : DbContext
             entity.HasOne(d => d.Quiz).WithMany(p => p.QuizQuestions)
                 .HasForeignKey(d => d.QuizId)
                 .HasConstraintName("FK__QuizQuest__QuizI__6D9742D9");
+
+            entity.HasData(
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd1"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 1 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd2"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 2 for Tenses Quiz 1" },
+new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 3 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd04"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 4 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd05"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 5 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd06"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 6 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd07"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 7 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd08"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 8 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd09"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 9 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd10"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 10 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd11"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 11 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd12"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 12 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd13"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 13 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd14"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 14 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd15"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 15 for Tenses Quiz 1" }
+            );
         });
 
         modelBuilder.Entity<Review>(entity =>
@@ -1189,8 +1241,7 @@ public partial class ElmsDbContext : DbContext
             new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc06"), QuestionId = question2Id, Content = "Đi ra ngoài chơi", IsCorrect = false }
         );
 
-        modelBuilder.Entity<Quiz>().HasData(
-            new Quiz { Id = item3Id, Title = "Tenses Quiz 1", PassingScorePct = 70.00m, TimeLimitMin = 15, MaxAttempts = 3 }
+        modelBuilder.Entity<Quiz>().HasData(            new Quiz { Id = item3Id, Title = "Tenses Quiz 1", PassingScorePct = 70.00m, TimeLimitMin = 15, AttemptCooldownMin = 60, PickCount = 10 }
         );
 
         modelBuilder.Entity<Assignment>().HasData(

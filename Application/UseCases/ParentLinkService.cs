@@ -3,6 +3,7 @@ using Application.Common.Interfaces;
 using Application.Dtos.ParentLink;
 using Application.Exceptions;
 using Application.Interfaces;
+using Application.Common.Mails;
 using Domain.Entities;
 using Domain.Enums;
 using System;
@@ -25,17 +26,23 @@ public class ParentLinkService : IParentLinkService
     private readonly IStudentProfileRepository _studentRepository;
     private readonly ICourseRequestRepository _courseRequestRepository;
     private readonly IUnitOfWork _uow;
+    private readonly IMailRepository _mailRepository;
+    private readonly IMailBodyBuilder _mailBodyBuilder;
 
     public ParentLinkService(
         IParentLinkRequestRepository linkRequestRepository,
         IStudentProfileRepository studentRepository,
         ICourseRequestRepository courseRequestRepository,
-        IUnitOfWork uow)
+        IUnitOfWork uow,
+        IMailRepository mailRepository,
+        IMailBodyBuilder mailBodyBuilder)
     {
         _linkRequestRepository = linkRequestRepository;
         _studentRepository = studentRepository;
         _courseRequestRepository = courseRequestRepository;
         _uow = uow;
+        _mailRepository = mailRepository;
+        _mailBodyBuilder = mailBodyBuilder;
     }
 
     public async Task<PaginatedList<ParentLinkRequestResponseDto>> GetRequestsForParentAsync(Guid parentId, string statusFilter, int pageNumber, int pageSize)
@@ -87,6 +94,23 @@ public class ParentLinkService : IParentLinkService
             student.ParentId = parentId;
             _studentRepository.Update(student);
 
+            var parentName = request.Parent.IdNavigation.FullName ?? request.Parent.IdNavigation.Username;
+            var studentName = student.IdNavigation.FullName ?? student.IdNavigation.Username;
+            var studentEmail = student.IdNavigation.Email;
+
+            if (!string.IsNullOrEmpty(studentEmail))
+            {
+                var htmlBody = await _mailBodyBuilder.BuildParentLinkApproved(studentName, parentName);
+                var mail = new Mail
+                {
+                    To = studentEmail,
+                    Subject = "[EnglishLMS] Yêu cầu liên kết tài khoản đã được duyệt",
+                    Body = htmlBody,
+                    Status = MailStatus.Pending
+                };
+                await _mailRepository.AddAsync(mail);
+            }
+
             await _uow.CommitAsync();
             return true;
         }
@@ -106,6 +130,23 @@ public class ParentLinkService : IParentLinkService
         request.Status = ParentLinkRequestStatus.Rejected;
         request.DecidedAt = DateTime.UtcNow;
         request.Note = dto.Note;
+
+        var parentName = request.Parent.IdNavigation.FullName ?? request.Parent.IdNavigation.Username;
+        var studentName = request.Student.IdNavigation.FullName ?? request.Student.IdNavigation.Username;
+        var studentEmail = request.Student.IdNavigation.Email;
+
+        if (!string.IsNullOrEmpty(studentEmail))
+        {
+            var htmlBody = await _mailBodyBuilder.BuildParentLinkRejected(studentName, parentName, dto.Note ?? string.Empty);
+            var mail = new Mail
+            {
+                To = studentEmail,
+                Subject = "[EnglishLMS] Yêu cầu liên kết tài khoản đã bị từ chối",
+                Body = htmlBody,
+                Status = MailStatus.Pending
+            };
+            await _mailRepository.AddAsync(mail);
+        }
 
         await _uow.SaveChangeAsync();
         return true;
@@ -128,7 +169,25 @@ public class ParentLinkService : IParentLinkService
             {
                 activeLink.Status = ParentLinkRequestStatus.Unlink;
                 activeLink.DecidedAt = DateTime.UtcNow;
-                activeLink.Note = string.IsNullOrEmpty(note) ? "Phụ huynh chủ động gỡ liên kết." : note;
+                var unlinkNote = string.IsNullOrEmpty(note) ? "Phụ huynh chủ động gỡ liên kết." : note;
+                activeLink.Note = unlinkNote;
+
+                var parentName = activeLink.Parent.IdNavigation.FullName ?? activeLink.Parent.IdNavigation.Username;
+                var studentName = activeLink.Student.IdNavigation.FullName ?? activeLink.Student.IdNavigation.Username;
+                var studentEmail = activeLink.Student.IdNavigation.Email;
+
+                if (!string.IsNullOrEmpty(studentEmail))
+                {
+                    var htmlBody = await _mailBodyBuilder.BuildParentLinkUnlinked(studentName, parentName, unlinkNote);
+                    var mail = new Mail
+                    {
+                        To = studentEmail,
+                        Subject = "[EnglishLMS] Tài khoản của bạn đã bị hủy liên kết",
+                        Body = htmlBody,
+                        Status = MailStatus.Pending
+                    };
+                    await _mailRepository.AddAsync(mail);
+                }
             }
 
             var pendingCourseReqs = await _courseRequestRepository.GetPendingOrUnpaidRequestsAsync(studentId);

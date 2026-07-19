@@ -42,6 +42,10 @@ namespace Infrastructure.Persistence.Repositories.Common
             services.AddScoped<IProgressRepository, ProgressRepository>();
             services.AddScoped<IQuizAttemptRepository, QuizAttemptRepository>();
             services.AddScoped<IAssignmentRepository, AssignmentRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+            services.AddScoped<IPaymentRepository, PaymentRepository>();
+            services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
             return services;
         }
     }

@@ -1,0 +1,182 @@
+@model List<Application.Dtos.ParentProgress.ChildModuleProgressDto>
+
+@{
+    Layout = "~/Views/Parent/_Layout.cshtml";
+    ViewData["Title"] = Localizer["progress_course_detail_title"] ?? "Chi Tiết Tiến Độ Học Tập";
+    var studentId = ViewBag.StudentId as Guid?;
+}
+
+<div class="space-y-6">
+    <!-- Breadcrumbs / Back button -->
+    <div class="flex justify-between items-center print:hidden">
+        <a href="@Url.Action("ChildCourses", "ParentProgress", new { studentId = studentId })" class="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 transition font-semibold">
+            <i class="fa-solid fa-arrow-left"></i>
+            @Localizer["progress_btn_back_to_courses"]
+        </a>
+    </div>
+
+    <!-- Header Title -->
+    <div>
+        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">@Localizer["progress_course_detail_title"]</h1>
+        <p class="text-sm text-slate-500 mt-1">@Localizer["progress_course_detail_subtitle"]</p>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <!-- Empty State -->
+        <div class="bg-white rounded-2xl border border-slate-100 p-12 text-center max-w-xl mx-auto my-8 shadow-sm">
+            <div class="h-16 w-16 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                <i class="fa-solid fa-folder-open text-2xl"></i>
+            </div>
+            <h3 class="text-slate-700 font-bold text-base">@Localizer["progress_no_modules_title"]</h3>
+            <p class="text-slate-400 text-xs mt-1 leading-relaxed">@Localizer["progress_no_modules_desc"]</p>
+        </div>
+    }
+    else
+    {
+        <!-- Modules Accordion List -->
+        <div class="space-y-4">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var module = Model[i];
+                var totalItems = module.Items.Count;
+                var completedItems = module.Items.Count(item => item.Status == "Completed");
+                var moduleProgressPct = totalItems > 0 
+                    ? Math.Round(((decimal)completedItems / totalItems) * 100, 0) 
+                    : 0;
+                var isOpen = i == 0; // Expand first module by default
+
+                <div class="bg-white rounded-2xl border border-slate-150 overflow-hidden shadow-sm transition duration-150">
+                    <!-- Module Header -->
+                    <button type="button" onclick="toggleModuleSection('module-@module.ModuleId')" 
+                            class="w-full flex flex-col sm:flex-row justify-between sm:items-center p-5 text-left hover:bg-slate-50/50 transition gap-4">
+                        <div class="flex items-start gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-650 flex items-center justify-center shrink-0 border border-indigo-100/30">
+                                <i class="fa-solid fa-folder text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-slate-800 font-bold text-sm tracking-tight leading-snug">@module.ModuleTitle</h3>
+                                <p class="text-slate-400 text-xs mt-1">@completedItems / @totalItems @Localizer["progress_items_completed"]</p>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar & Arrow -->
+                        <div class="flex items-center gap-5 shrink-0 self-end sm:self-auto w-full sm:w-auto">
+                            <div class="flex items-center gap-3 flex-grow sm:flex-grow-0 sm:w-48">
+                                <div class="w-full bg-slate-100 rounded-full h-1.5">
+                                    <div class="bg-indigo-600 h-1.5 rounded-full transition-all duration-300" style="width: @moduleProgressPct%"></div>
+                                </div>
+                                <span class="text-slate-600 font-extrabold text-xxs w-8 text-right">@moduleProgressPct%</span>
+                            </div>
+                            <i id="icon-module-@module.ModuleId" class="fa-solid @(isOpen ? "fa-chevron-up" : "fa-chevron-down") text-slate-400 transition-transform"></i>
+                        </div>
+                    </button>
+
+                    <!-- Module Items Table/List -->
+                    <div id="content-module-@module.ModuleId" class="@(isOpen ? "" : "hidden") border-t border-slate-100">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50 text-slate-400 text-[10px] uppercase tracking-wider font-extrabold border-b border-slate-100">
+                                        <th class="py-3 px-5 w-12 text-center"></th>
+                                        <th class="py-3 px-4">@Localizer["progress_table_title"]</th>
+                                        <th class="py-3 px-4 w-28 text-center">@Localizer["progress_table_type"]</th>
+                                        <th class="py-3 px-4 w-36 text-center">@Localizer["progress_table_status"]</th>
+                                        <th class="py-3 px-4 w-24 text-center">@Localizer["progress_table_score"]</th>
+                                        <th class="py-3 px-5 w-32 text-center">@Localizer["progress_table_date"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-xs">
+                                    @foreach (var item in module.Items)
+                                    {
+                                        var isItemCompleted = item.Status == "Completed";
+                                        <tr class="hover:bg-slate-50/30 transition">
+                                            <!-- Checkbox/Check icon column -->
+                                            <td class="py-3.5 px-5 text-center">
+                                                <div class="inline-flex items-center justify-center w-5 h-5 rounded-md @(isItemCompleted ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-slate-50 text-slate-300 border border-slate-200")">
+                                                    <i class="fa-solid @(isItemCompleted ? "fa-check" : "fa-ellipsis") text-[10px]"></i>
+                                                </div>
+                                            </td>
+
+                                            <!-- Title & Type Icon -->
+                                            <td class="py-3.5 px-4 font-semibold text-slate-700 min-w-[200px]">
+                                                <div class="flex items-center gap-2">
+                                                    @if (item.ItemType == "Lesson")
+                                                    {
+                                                        <i class="fa-solid fa-graduation-cap text-slate-400 shrink-0 text-xs"></i>
+                                                    }
+                                                    else if (item.ItemType == "Quiz")
+                                                    {
+                                                        <i class="fa-solid fa-circle-question text-slate-400 shrink-0 text-xs"></i>
+                                                    }
+                                                    else if (item.ItemType == "Assignment")
+                                                    {
+                                                        <i class="fa-solid fa-pen-to-square text-slate-400 shrink-0 text-xs"></i>
+                                                    }
+                                                    else if (item.ItemType == "Discussion")
+                                                    {
+                                                        <i class="fa-solid fa-comments text-slate-400 shrink-0 text-xs"></i>
+                                                    }
+                                                    <span class="line-clamp-1">@item.Title</span>
+                                                </div>
+                                            </td>
+
+                                            <!-- Type Tag -->
+                                            <td class="py-3.5 px-4 text-center">
+                                                <span class="inline-flex items-center px-2 py-0.5 text-[9px] font-bold rounded bg-slate-100 text-slate-500 uppercase tracking-wider">
+                                                    @item.ItemType
+                                                </span>
+                                            </td>
+
+                                            <!-- Status Tag -->
+                                            <td class="py-3.5 px-4 text-center">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-lg @(isItemCompleted ? "bg-emerald-50 text-emerald-600" : "bg-blue-50 text-blue-600")">
+                                                    <span class="w-1.5 h-1.5 rounded-full @(isItemCompleted ? "bg-emerald-500" : "bg-blue-500")"></span>
+                                                    @(isItemCompleted ? Localizer["progress_status_completed"] : Localizer["progress_status_inprogress"])
+                                                </span>
+                                            </td>
+
+                                            <!-- Score -->
+                                            <td class="py-3.5 px-4 text-center font-bold text-slate-700">
+                                                @if (item.ScorePct.HasValue)
+                                                {
+                                                    <span class="text-emerald-600 font-extrabold">@item.ScorePct%</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-slate-400 font-normal">-</span>
+                                                }
+                                            </td>
+
+                                            <!-- Date Completed -->
+                                            <td class="py-3.5 px-5 text-center text-slate-400 font-semibold">
+                                                @(item.CompletedAt?.ToString("dd/MM/yyyy") ?? "-")
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<script>
+    function toggleModuleSection(sectionId) {
+        var content = document.getElementById('content-' + sectionId);
+        var icon = document.getElementById('icon-' + sectionId);
+        
+        if (content.classList.contains('hidden')) {
+            content.classList.remove('hidden');
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+        } else {
+            content.classList.add('hidden');
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+        }
+    }
+</script>

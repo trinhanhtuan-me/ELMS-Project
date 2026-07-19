@@ -1,0 +1,104 @@
+@{
+    Layout = "~/Views/Parent/_Layout.cshtml";
+    ViewData["Title"] = Localizer["payment_result_title"] ?? "Kết quả thanh toán";
+    bool isSuccess = ViewBag.IsSuccess as bool? ?? false;
+    decimal amount = ViewBag.Amount as decimal? ?? 0;
+    string? txnRef = ViewBag.TxnRef as string;
+    DateTime payDate = ViewBag.PayDate as DateTime? ?? DateTime.Now;
+    string? errorMessage = ViewBag.ErrorMessage as string;
+}
+
+<div class="p-6 max-w-md mx-auto mt-10">
+    <div class="bg-white rounded-3xl border border-slate-150 p-6 shadow-lg text-center relative overflow-hidden">
+        @if (isSuccess)
+        {
+            <!-- Top bar -->
+            <div class="absolute top-0 inset-x-0 h-2 bg-emerald-500"></div>
+
+            <!-- Icon -->
+            <div class="h-16 w-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <!-- Message -->
+            <h2 class="text-xl font-bold text-slate-800">@Localizer["payment_success_msg"]</h2>
+            <p class="text-xs text-slate-500 mt-1">@Localizer["payment_success_desc"]</p>
+
+            <!-- Details -->
+            <div class="bg-slate-50 rounded-2xl p-4 my-6 text-left space-y-2.5 border border-slate-100">
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-slate-400">@Localizer["payment_total_label"]</span>
+                    <span class="font-bold text-emerald-600 text-sm">@amount.ToString("N0") VND</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-slate-400">@Localizer["payment_method_label"]</span>
+                    <span class="font-medium text-slate-700">@Localizer["payment_method_vnpay"]</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-slate-400">@Localizer["payment_txn_ref_label"]</span>
+                    <span class="font-mono font-medium text-slate-600 break-all ml-4 text-right">@txnRef</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-slate-400">@Localizer["payment_time_label"]</span>
+                    <span class="font-medium text-slate-700">@payDate.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="space-y-3">
+                <a href="@Url.Action("Index", "Order")" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow-sm transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    @Localizer["payment_view_orders"]
+                </a>
+                <a href="@Url.Action("Index", "CourseApproval", new { status = "Approved" })" class="w-full py-3 bg-slate-50 hover:bg-slate-100 text-slate-600 font-semibold rounded-xl text-sm border border-slate-200 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    @Localizer["payment_view_child_courses"]
+                </a>
+            </div>
+        }
+        else
+        {
+            <!-- Top bar -->
+            <div class="absolute top-0 inset-x-0 h-2 bg-rose-500"></div>
+
+            <!-- Icon -->
+            <div class="h-16 w-16 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </div>
+
+            <!-- Message -->
+            <h2 class="text-xl font-bold text-slate-800">@Localizer["payment_failed_msg"]</h2>
+            <p class="text-xs text-slate-500 mt-1">@Localizer["payment_failed_desc"]</p>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="bg-rose-50/50 border border-rose-100 text-rose-600 text-xs rounded-xl p-3 my-6 text-center">
+                    @errorMessage
+                </div>
+            }
+            else
+            {
+                <div class="bg-slate-50 rounded-2xl p-4 my-6 text-left space-y-2 border border-slate-100">
+                    <p class="text-xxs text-slate-400 text-center uppercase tracking-wider font-semibold">@Localizer["payment_failed_reasons_title"]</p>
+                    <ul class="list-disc pl-4 text-xs text-slate-500 space-y-1">
+                        <li>@Localizer["payment_failed_reason_1"]</li>
+                        <li>@Localizer["payment_failed_reason_2"]</li>
+                        <li>@Localizer["payment_failed_reason_3"]</li>
+                    </ul>
+                </div>
+            }
+
+            <!-- Actions -->
+            <div class="space-y-3">
+                <a href="@Url.Action("Index", "Payment")" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow-sm transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    @Localizer["payment_retry_btn"]
+                </a>
+                <a href="@Url.Action("Index", "CourseApproval", new { status = "Unpaid" })" class="w-full py-3 bg-slate-50 hover:bg-slate-100 text-slate-600 font-semibold rounded-xl text-sm border border-slate-200 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    @Localizer["payment_back_to_approvals_btn"]
+                </a>
+            </div>
+        }
+    </div>
+</div>

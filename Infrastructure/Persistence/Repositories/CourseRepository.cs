@@ -80,5 +80,23 @@ namespace Infrastructure.Persistence.Repositories
                 .Where(c => c.Id == courseId && !c.IsDeleted)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<List<Course>> GetPopularCoursesAsync(int count)
+        {
+            return await _context.Courses
+                .Where(c => !c.IsDeleted && c.Status == CourseStatus.Publish)
+                .OrderByDescending(c => c.Enrollments.Count) 
+                .Take(count)
+                .ToListAsync();
+        }
+
+        public async Task<List<Course>> GetNewestCoursesAsync(int count)
+        {
+            return await _context.Courses
+                .Where(c => !c.IsDeleted && c.Status == CourseStatus.Publish)
+                .OrderByDescending(c => c.PublishAt ?? c.CreatedAt) 
+                .Take(count)
+                .ToListAsync();
+        }
     }
 }

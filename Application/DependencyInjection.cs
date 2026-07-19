@@ -35,6 +35,7 @@ namespace Application
             services.AddScoped<ICourseRequestService, CourseRequestService>();
             services.AddScoped<ICourseReviewService, CourseReviewService>();
             services.AddScoped<ILearningService, LearningService>();
+            services.AddScoped<IStudentProfileService, StudentProfileService>();
             return services;
         }
     }

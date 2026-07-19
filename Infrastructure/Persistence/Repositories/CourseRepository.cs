@@ -85,7 +85,7 @@ namespace Infrastructure.Persistence.Repositories
         {
             return await _context.Courses
                 .Where(c => !c.IsDeleted && c.Status == CourseStatus.Publish)
-                .OrderByDescending(c => c.Enrollments.Count) 
+                .OrderByDescending(c => c.Enrollments.Count)
                 .Take(count)
                 .ToListAsync();
         }
@@ -94,9 +94,33 @@ namespace Infrastructure.Persistence.Repositories
         {
             return await _context.Courses
                 .Where(c => !c.IsDeleted && c.Status == CourseStatus.Publish)
-                .OrderByDescending(c => c.PublishAt ?? c.CreatedAt) 
+                .OrderByDescending(c => c.PublishAt ?? c.CreatedAt)
                 .Take(count)
                 .ToListAsync();
+        }
+
+        public async Task<Course?> GetPublicCourseDetailsAsync(Guid courseId)
+        {
+            return await _context.Courses
+                .Include(c => c.CreatedByNavigation)
+                    .ThenInclude(i => i.IdNavigation)
+                .Include(c => c.Category)
+                .Include(c => c.CoursePrice)
+                .Include(c => c.Enrollments)
+                .Include(c => c.CourseRequests)
+                .Include(c => c.Modules)
+                    .ThenInclude(m => m.ModuleItems)
+                        .ThenInclude(mi => mi.Lesson)
+                .Include(c => c.Modules)
+                    .ThenInclude(m => m.ModuleItems)
+                        .ThenInclude(mi => mi.Assignment)
+                .Include(c => c.Modules)
+                    .ThenInclude(m => m.ModuleItems)
+                        .ThenInclude(mi => mi.Quiz)
+                .Include(c => c.Modules)
+                    .ThenInclude(m => m.ModuleItems)
+                        .ThenInclude(mi => mi.Discussion)
+                .FirstOrDefaultAsync(c => c.Id == courseId && !c.IsDeleted && c.Status == CourseStatus.Publish);
         }
     }
 }

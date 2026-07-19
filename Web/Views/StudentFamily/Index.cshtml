@@ -115,7 +115,11 @@
                                 {
                                     <tr>
                                         <!-- Column 1: Course Name -->
-                                        <td class="fw-medium ps-3">@item.CourseName</td>
+                                        <td class="fw-medium ps-3">
+                                            <a href="/CourseDetail/Index/@item.CourseId" class="text-decoration-none text-dark">
+                                                @item.CourseName
+                                            </a>
+                                        </td>
 
                                         <!-- Column 2: Status Badges -->
                                         <td>
@@ -175,7 +179,7 @@
                                             }
                                             else if (item.Status == CourseRequestStatus.Approved)
                                             {
-                                                <button class="btn btn-success btn-sm w-100" style="max-width: 120px;">Go to Course</button>
+                                                <a href="/Learning/Index?courseId=@item.CourseId" class="btn btn-success btn-sm w-100" style="max-width: 120px;">Go to Course</a>
                                             }
 
                                         </td>

@@ -23,6 +23,7 @@ namespace Application
             services.AddScoped<IPasskeyService, PasskeyService>();
             services.AddScoped<ICourseApprovalService, CourseApprovalService>();
             services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IParentProgressService, ParentProgressService>();
             return services;
         }
     }

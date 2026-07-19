@@ -59,6 +59,40 @@ namespace Infrastructure.Shared.Mails
 
             return finalHtml;
         }
+        public async Task<string> BuildPaymentSuccessParentEmail(string parentName, Guid orderId, string itemsHtml, decimal totalAmount, string txnRef, DateTime capturedAt)
+        {
+            var templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Shared", "Mails", "Templates", "PaymentSuccessParent.html");
+
+            var templateContent = await _cache.GetOrSetAsync<string>(
+                key: "PaymentSuccessParentTemplate",
+                factory: async (ctx, _) => await File.ReadAllTextAsync(templatePath),
+                options: new FusionCacheEntryOptions().SetSkipDistributedCache(true, true)
+            );
+
+            return templateContent!
+                .Replace("{{ParentName}}", parentName)
+                .Replace("{{OrderId}}", orderId.ToString())
+                .Replace("{{ItemsHtml}}", itemsHtml)
+                .Replace("{{TotalAmount}}", totalAmount.ToString("N0"))
+                .Replace("{{TxnRef}}", txnRef)
+                .Replace("{{CapturedAt}}", capturedAt.ToString("dd/MM/yyyy HH:mm:ss"));
+        }
+
+        public async Task<string> BuildCourseActivationStudentEmail(string studentName, string courseTitle, string courseUrl)
+        {
+            var templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Shared", "Mails", "Templates", "CourseActivationStudent.html");
+
+            var templateContent = await _cache.GetOrSetAsync<string>(
+                key: "CourseActivationStudentTemplate",
+                factory: async (ctx, _) => await File.ReadAllTextAsync(templatePath),
+                options: new FusionCacheEntryOptions().SetSkipDistributedCache(true, true)
+            );
+
+            return templateContent!
+                .Replace("{{StudentName}}", studentName)
+                .Replace("{{CourseTitle}}", courseTitle)
+                .Replace("{{CourseUrl}}", courseUrl);
+        }
 
     }
 }

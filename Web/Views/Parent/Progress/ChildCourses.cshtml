@@ -1,0 +1,101 @@
+@model List<Application.Dtos.ParentProgress.ChildCourseProgressDto>
+
+@{
+    Layout = "~/Views/Parent/_Layout.cshtml";
+    ViewData["Title"] = Localizer["progress_child_courses_title"] ?? "Khóa Học Của Con";
+    var studentId = ViewBag.StudentId as Guid?;
+}
+
+<div class="space-y-6">
+    <!-- Breadcrumbs / Back button -->
+    <div class="flex justify-between items-center print:hidden">
+        <a href="@Url.Action("Index", "ParentProgress")" class="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 transition font-semibold">
+            <i class="fa-solid fa-arrow-left"></i>
+            @Localizer["progress_btn_back_to_dashboard"]
+        </a>
+    </div>
+
+    <!-- Header Title -->
+    <div>
+        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">@Localizer["progress_child_courses_title"]</h1>
+        <p class="text-sm text-slate-500 mt-1">@Localizer["progress_child_courses_subtitle"]</p>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <!-- Empty State -->
+        <div class="bg-white rounded-2xl border border-slate-100 p-12 text-center max-w-xl mx-auto my-8 shadow-sm">
+            <div class="h-16 w-16 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                <i class="fa-solid fa-graduation-cap text-2xl"></i>
+            </div>
+            <h3 class="text-slate-700 font-bold text-base">@Localizer["progress_no_courses_title"]</h3>
+            <p class="text-slate-400 text-xs mt-1 leading-relaxed">@Localizer["progress_no_courses_desc"]</p>
+        </div>
+    }
+    else
+    {
+        <!-- Courses Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach (var course in Model)
+            {
+                var isCompleted = course.ProgressPct >= 100;
+                <div class="bg-white rounded-2xl border border-slate-150 p-6 shadow-sm flex flex-col justify-between hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden group">
+                    <div>
+                        <!-- Top status badge and type icon -->
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xxs font-bold rounded-lg border @(isCompleted ? "bg-emerald-50 text-emerald-600 border-emerald-100/40" : "bg-indigo-50 text-indigo-600 border-indigo-100/40")">
+                                <i class="fa-solid @(isCompleted ? "fa-circle-check" : "fa-clock-rotate-left")"></i>
+                                @(isCompleted ? Localizer["progress_status_completed"] : Localizer["progress_status_learning"])
+                            </span>
+                            <div class="h-7 w-7 rounded-lg bg-slate-50 text-slate-400 flex items-center justify-center border border-slate-100">
+                                <i class="fa-solid fa-book text-xs"></i>
+                            </div>
+                        </div>
+
+                        <!-- Course Title -->
+                        <h4 class="text-slate-800 font-bold text-sm tracking-tight leading-snug line-clamp-2 min-h-[2.5rem] mb-4" title="@course.CourseTitle">@course.CourseTitle</h4>
+
+                        <!-- Progress Bar Section -->
+                        <div class="space-y-1.5 mb-5">
+                            <div class="flex justify-between items-center text-xxs">
+                                <span class="text-slate-400 font-bold">@Localizer["progress_completed_pct"]</span>
+                                <span class="text-slate-700 font-extrabold">@course.ProgressPct%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div class="h-2 rounded-full transition-all duration-500 @(isCompleted ? "bg-emerald-500" : "bg-indigo-600")" style="width: @course.ProgressPct%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Info Metrics Grid -->
+                        <div class="grid grid-cols-2 gap-3 border-t border-slate-100 pt-4 my-2">
+                            <div>
+                                <span class="text-slate-400 text-[10px] uppercase tracking-wider font-extrabold block">@Localizer["progress_lessons"]</span>
+                                <span class="text-slate-700 font-bold text-xs block mt-0.5">@course.CompletedItems / @course.TotalItems</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 text-[10px] uppercase tracking-wider font-extrabold block">@Localizer["progress_score_avg"]</span>
+                                @if (course.AverageScorePct.HasValue)
+                                {
+                                    <span class="text-emerald-600 font-extrabold text-xs block mt-0.5">@course.AverageScorePct%</span>
+                                }
+                                else
+                                {
+                                    <span class="text-slate-400 text-xs block mt-0.5">-</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Link -->
+                    <div class="mt-6 border-t border-slate-100 pt-4">
+                        <a href="@Url.Action("CourseDetail", "ParentProgress", new { studentId = studentId, courseId = course.CourseId })" 
+                           class="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-xl transition duration-150 flex items-center justify-center gap-1.5 border border-slate-150/50">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                            @Localizer["progress_btn_view_details"]
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

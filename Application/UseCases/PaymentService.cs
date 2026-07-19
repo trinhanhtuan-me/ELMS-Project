@@ -1,10 +1,12 @@
 using Application.Common;
 using Application.Common.Interfaces;
+using Application.Common.Mails;
 using Application.Dtos.Billing;
 using Application.Exceptions;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Enums;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +33,8 @@ public class PaymentService : IPaymentService
     private readonly IEnrollmentRepository _enrollmentRepository;
     private readonly IVNPayService _vnpayService;
     private readonly IMailRepository _mailRepository;
+    private readonly IMailBodyBuilder _mailBodyBuilder;
+    private readonly ILogger<PaymentService> _logger;
     private readonly IUnitOfWork _uow;
 
     public PaymentService(
@@ -41,6 +45,8 @@ public class PaymentService : IPaymentService
         IEnrollmentRepository enrollmentRepository,
         IVNPayService vnpayService,
         IMailRepository mailRepository,
+        IMailBodyBuilder mailBodyBuilder,
+        ILogger<PaymentService> logger,
         IUnitOfWork uow)
     {
         _courseRequestRepository = courseRequestRepository;
@@ -50,7 +56,10 @@ public class PaymentService : IPaymentService
         _enrollmentRepository = enrollmentRepository;
         _vnpayService = vnpayService;
         _mailRepository = mailRepository;
+        _mailBodyBuilder = mailBodyBuilder;
+        _logger = logger;
         _uow = uow;
+
     }
 
     public async Task<List<CourseRequestResponseDto>> GetUnpaidRequestsForParentAsync(Guid parentId)
@@ -214,10 +223,11 @@ public class PaymentService : IPaymentService
                         await _enrollmentRepository.AddAsync(enrollment);
                     }
                 }
+                await SendPaymentSuccessEmailAsync(order, payment);
+                await SendCourseActivationEmailToStudentsAsync(order);
 
                 await _uow.CommitAsync();
 
-                await SendPaymentSuccessEmailAsync(order, payment);
 
                 return true;
             }
@@ -291,6 +301,7 @@ public class PaymentService : IPaymentService
         return dto;
     }
 
+    //Helper methods for sending emails
     private async Task SendPaymentSuccessEmailAsync(Order order, Payment payment)
     {
         try
@@ -299,80 +310,79 @@ public class PaymentService : IPaymentService
             var parentEmail = parentUser.Email;
             if (string.IsNullOrEmpty(parentEmail)) return;
 
+            // 1. Tạo chuỗi HTML động cho danh sách các khóa học
             var itemsHtml = new StringBuilder();
             foreach (var item in order.OrderItems)
             {
                 itemsHtml.Append($@"
-                <tr>
-                    <td style=""padding: 10px; border-bottom: 1px solid #eee;"">{item.Course.Title}</td>
-                    <td style=""padding: 10px; border-bottom: 1px solid #eee;"">{item.Student.IdNavigation.FullName ?? item.Student.IdNavigation.Username}</td>
-                    <td style=""padding: 10px; border-bottom: 1px solid #eee; text-align: right;"">{item.PriceVnd:N0} VND</td>
-                </tr>");
+            <tr>
+                <td style=""padding: 10px; border-bottom: 1px solid #eee;"">{item.Course.Title}</td>
+                <td style=""padding: 10px; border-bottom: 1px solid #eee;"">{item.Student.IdNavigation.FullName ?? item.Student.IdNavigation.Username}</td>
+                <td style=""padding: 10px; border-bottom: 1px solid #eee; text-align: right;"">{item.PriceVnd:N0} VND</td>
+            </tr>");
             }
 
-            var html = $@"
-            <html>
-              <body style=""font-family: 'Segoe UI', sans-serif; line-height: 1.7; color: #333; background-color: #f8f9fa; padding: 30px;"">
-                <div style=""max-width: 600px; margin: 0 auto; background: #fff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden;"">
-                  <div style=""background-color: #4CAF50; color: #fff; padding: 20px 30px; text-align: center;"">
-                    <h2 style=""margin: 0; font-size: 22px;"">Thanh toán thành công 🎉</h2>
-                  </div>
-                  <div style=""padding: 30px;"">
-                    <p>Xin chào <b>{parentUser.FullName ?? parentUser.Username}</b>,</p>
-                    <p>Bạn đã thanh toán thành công hóa đơn đăng ký khóa học <b>#{order.Id}</b> qua cổng <b>VNPay</b>.</p>
+            // 2. Gọi MailBodyBuilder để dựng HTML từ template file
+            var htmlBody = await _mailBodyBuilder.BuildPaymentSuccessParentEmail(
+                parentUser.FullName ?? parentUser.Username,
+                order.Id,
+                itemsHtml.ToString(),
+                payment.AmountVnd,
+                payment.TxnRef,
+                payment.CapturedAt ?? DateTime.UtcNow
+            );
 
-                    <h4 style=""margin-top: 25px; margin-bottom: 10px; color: #4CAF50;"">Chi tiết khóa học đăng ký:</h4>
-                    <table style=""width: 100%; border-collapse: collapse; margin-bottom: 20px;"">
-                      <thead>
-                        <tr style=""background-color: #f2f2f2;"">
-                          <th style=""padding: 10px; text-align: left; font-size: 14px;"">Khóa học</th>
-                          <th style=""padding: 10px; text-align: left; font-size: 14px;"">Học sinh</th>
-                          <th style=""padding: 10px; text-align: right; font-size: 14px;"">Học phí</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {itemsHtml}
-                      </tbody>
-                    </table>
-
-                    <table style=""width: 100%; border-collapse: collapse; margin-top: 15px;"">
-                      <tr style=""background: #f0f8f4;"">
-                        <td style=""padding: 10px 12px; font-weight: bold;"">Tổng cộng</td>
-                        <td style=""padding: 10px 12px; text-align: right; font-weight: bold; color: #4CAF50;"">{payment.AmountVnd:N0} VND</td>
-                      </tr>
-                      <tr>
-                        <td style=""padding: 10px 12px; font-weight: bold;"">Mã giao dịch</td>
-                        <td style=""padding: 10px 12px; text-align: right;"">{payment.TxnRef}</td>
-                      </tr>
-                      <tr style=""background: #f0f8f4;"">
-                        <td style=""padding: 10px 12px; font-weight: bold;"">Thời gian thanh toán</td>
-                        <td style=""padding: 10px 12px; text-align: right;"">{payment.CapturedAt:dd/MM/yyyy HH:mm:ss}</td>
-                      </tr>
-                    </table>
-
-                    <p style=""margin-top: 25px;"">Cảm ơn bạn đã lựa chọn hệ thống của chúng tôi để đồng hành cùng quá trình học tập của con.</p>
-
-                    <hr style=""margin: 30px 0; border: none; border-top: 1px solid #ddd;"">
-                    <p style=""font-size: 13px; color: #777; text-align: center;"">
-                      Đây là thư điện tử tự động từ hệ thống EnglishLMS. Vui lòng không trả lời thư này.
-                    </p>
-                  </div>
-                </div>
-              </body>
-            </html>";
-
+            // 3. Đưa vào hàng đợi
             var mail = new Mail
             {
                 To = parentEmail,
                 Subject = "EnglishLMS: Xác nhận thanh toán học phí thành công",
-                Body = html,
+                Body = htmlBody,
                 Status = MailStatus.Pending
             };
             await _mailRepository.AddAsync(mail);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error sending email invoice: {ex.Message}");
+            _logger.LogError(ex, "Lỗi khi hàng đợi gửi mail hóa đơn cho Phụ huynh.");
         }
     }
+
+    private async Task SendCourseActivationEmailToStudentsAsync(Order order)
+    {
+        try
+        {
+            foreach (var item in order.OrderItems)
+            {
+                var studentUser = item.Student.IdNavigation;
+                var studentEmail = studentUser.Email;
+                if (string.IsNullOrEmpty(studentEmail)) continue;
+
+                var studentName = studentUser.FullName ?? studentUser.Username;
+                var courseTitle = item.Course.Title;
+                var courseUrl = $"http://localhost:5000/courses/{item.CourseId}"; 
+
+                // Gọi MailBodyBuilder để dựng HTML từ file template kích hoạt của học sinh
+                var htmlBody = await _mailBodyBuilder.BuildCourseActivationStudentEmail(
+                    studentName,
+                    courseTitle,
+                    courseUrl
+                );
+
+                var mail = new Mail
+                {
+                    To = studentEmail,
+                    Subject = $"[EnglishLMS] Khóa học '{courseTitle}' của bạn đã sẵn sàng!",
+                    Body = htmlBody,
+                    Status = MailStatus.Pending
+                };
+                await _mailRepository.AddAsync(mail);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Lỗi khi hàng đợi gửi mail kích hoạt khóa học cho Học sinh.");
+        }
+    }
+
 }

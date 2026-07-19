@@ -25,8 +25,8 @@
             @Localizer["order_history_title"]
         </a>
         
-        <a href="#" 
-           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+        <a href="/ParentProgress/Index" 
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors @(controller == "ParentProgress" ? "bg-red-50 text-red-600" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900")">
             <i class="fa-solid fa-chart-line text-base"></i>
             @Localizer["menu_student_progress"]
         </a>

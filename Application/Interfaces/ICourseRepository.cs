@@ -16,5 +16,6 @@ namespace Application.Interfaces
 
         Task<List<Course>> GetPopularCoursesAsync(int count);
         Task<List<Course>> GetNewestCoursesAsync(int count);
+        Task<Course?> GetPublicCourseDetailsAsync(Guid courseId);
     }
 }

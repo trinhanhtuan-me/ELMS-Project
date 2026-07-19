@@ -1,4 +1,4 @@
-﻿@using Application.Dtos.Home
+@using Application.Dtos.Home
 @model HomeViewModel
 
 @{
@@ -29,7 +29,9 @@
                     <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
                         <img src="@(course.Thumbnail ?? "https://via.placeholder.com/300x200?text=No+Image")" class="card-img-top object-fit-cover" style="height: 180px;" alt="Course">
                         <div class="card-body d-flex flex-column">
-                            <h6 class="fw-bold">@course.Title</h6>
+                            <h6 class="fw-bold">
+                                <a href="/CourseDetail/Index/@course.Id" class="text-decoration-none text-dark">@course.Title</a>
+                            </h6>
                             <p class="small text-muted mb-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
                                 @course.Description
                             </p>
@@ -61,7 +63,9 @@
                     <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
                         <img src="@(course.Thumbnail ?? "https://via.placeholder.com/300x200?text=No+Image")" class="card-img-top object-fit-cover" style="height: 180px;" alt="Course">
                         <div class="card-body d-flex flex-column">
-                            <h6 class="fw-bold">@course.Title</h6>
+                            <h6 class="fw-bold">
+                                <a href="/CourseDetail/Index/@course.Id" class="text-decoration-none text-dark">@course.Title</a>
+                            </h6>
                             <p class="small text-muted mb-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
                                 @course.Description
                             </p>

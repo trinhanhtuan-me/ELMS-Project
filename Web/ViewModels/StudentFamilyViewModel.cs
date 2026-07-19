@@ -20,6 +20,7 @@ namespace Web.ViewModels
     public class CourseRequestItemViewModel
     {
         public Guid CourseRequestId { get; set; }
+        public Guid CourseId { get; set; }
         public string CourseName { get; set; } = string.Empty;
         public CourseRequestStatus Status { get; set; }
         public string? Note { get; set; }

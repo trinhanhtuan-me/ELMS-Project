@@ -36,6 +36,7 @@ namespace Web.Controllers
                 CourseRequests = courseRequestsData.Data.Select(x => new CourseRequestItemViewModel
                 {
                     CourseRequestId = x.Id,
+                    CourseId = x.CourseId,
                     CourseName = x.Title,
                     Status = x.Status,
                     Note = x.Note

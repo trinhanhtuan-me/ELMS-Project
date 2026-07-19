@@ -21,6 +21,8 @@ namespace Application
             services.AddScoped<ICategoryService,CategoryService>();
             services.AddScoped<IParentLinkService, ParentLinkService>();
             services.AddScoped<IPasskeyService, PasskeyService>();
+            services.AddScoped<ICourseApprovalService, CourseApprovalService>();
+            services.AddScoped<IPaymentService, PaymentService>();
             return services;
         }
     }

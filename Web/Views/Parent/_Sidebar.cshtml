@@ -13,10 +13,16 @@
             @Localizer["menu_link_student"]
         </a>
         
-        <a href="#" 
-           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:bg-slate-50 hover:text-slate-900">
-            <i class="fa-solid fa-circle-check text-base"></i>
+        <a href="/CourseApproval/Index" 
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors @(controller == "CourseApproval" ? "bg-red-50 text-red-600" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900")">
+            <i class="fa-solid fa-graduation-cap text-base"></i>
             @Localizer["menu_course_approval"]
+        </a>
+
+        <a href="/Order/Index" 
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors @(controller == "Order" ? "bg-red-50 text-red-600" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900")">
+            <i class="fa-solid fa-file-invoice-dollar text-base"></i>
+            @Localizer["order_history_title"]
         </a>
         
         <a href="#" 

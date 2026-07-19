@@ -14,14 +14,14 @@
             <div class="flex items-center gap-4">
                 <!-- Language Switcher -->
                 <div class="flex items-center gap-1 border border-slate-200 rounded-lg p-0.5 bg-slate-50">
-                    <a href="?status=@ViewBag.CurrentStatus&culture=vi" 
+                    <button type="button" onclick="changeLanguage('vi')" 
                        class="px-2 py-0.5 rounded-md text-xs font-semibold transition-all @(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLower() == "vi" ? "bg-red-600 text-white shadow-sm" : "text-slate-600 hover:bg-slate-150 hover:text-slate-900")">
                         VI
-                    </a>
-                    <a href="?status=@ViewBag.CurrentStatus&culture=en" 
+                    </button>
+                    <button type="button" onclick="changeLanguage('en')" 
                        class="px-2 py-0.5 rounded-md text-xs font-semibold transition-all @(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLower() == "en" ? "bg-red-600 text-white shadow-sm" : "text-slate-600 hover:bg-slate-150 hover:text-slate-900")">
                         EN
-                    </a>
+                    </button>
                 </div>
                 
                 <span class="text-sm text-slate-500">@Localizer["parent_role_title"]@(User.Identity?.IsAuthenticated == true && !string.IsNullOrEmpty(User.Identity.Name) ? $" - {User.Identity.Name}" : "")</span>
@@ -32,3 +32,21 @@
         </div>
     </div>
 </header>
+
+<script>
+    function changeLanguage(culture) {
+        // ASP.NET Core culture cookie name is ".AspNetCore.Culture"
+        // Value format: c=en|uic=en
+        const cookieValue = `c=${culture}|uic=${culture}`;
+        
+        // Save culture cookie for 1 year
+        const expires = new Date();
+        expires.setTime(expires.getTime() + (365 * 24 * 60 * 60 * 1000));
+        document.cookie = `.AspNetCore.Culture=${encodeURIComponent(cookieValue)};expires=${expires.toUTCString()};path=/`;
+        
+        // Reload current page without the query string 'culture' parameter
+        const url = new URL(window.location.href);
+        url.searchParams.delete('culture');
+        window.location.href = url.toString();
+    }
+</script>

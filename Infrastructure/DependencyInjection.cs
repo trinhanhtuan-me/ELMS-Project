@@ -27,6 +27,7 @@ namespace Infrastructure
             services.AddScoped<IManagerFlashcardRepository, ManagerFlashcardRepository>();
             services.AddScoped<IModuleItemRepository, ModuleItemRepository>();
             services.AddScoped<ILessonQuestionRepository, LessonQuestionRepository>();
+            services.AddScoped<Application.Interfaces.IVNPayService, Infrastructure.Shared.Payment.VNPayService>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddFido2Security(configuration);
 

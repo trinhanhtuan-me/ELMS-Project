@@ -14,12 +14,21 @@ public class ParentLinkRequestRepository(ElmsDbContext context) : IParentLinkReq
 {
     public async Task<ParentLinkRequest?> GetByIdAsync(Guid id)
     {
-        return await context.ParentLinkRequests.FindAsync(id);
+        return await context.ParentLinkRequests
+            .Include(r => r.Student)
+                .ThenInclude(s => s.IdNavigation)
+            .Include(r => r.Parent)
+                .ThenInclude(p => p.IdNavigation)
+            .FirstOrDefaultAsync(r => r.Id == id);
     }
 
     public async Task<ParentLinkRequest?> GetActiveLinkAsync(Guid studentId, Guid parentId)
     {
         return await context.ParentLinkRequests
+            .Include(r => r.Student)
+                .ThenInclude(s => s.IdNavigation)
+            .Include(r => r.Parent)
+                .ThenInclude(p => p.IdNavigation)
             .FirstOrDefaultAsync(r => r.StudentId == studentId && r.ParentId == parentId && r.Status == ParentLinkRequestStatus.Approved);
     }
 

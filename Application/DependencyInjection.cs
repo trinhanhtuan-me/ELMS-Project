@@ -37,6 +37,10 @@ namespace Application
             services.AddScoped<ILearningService, LearningService>();
             services.AddScoped<IStudentProfileService, StudentProfileService>();
             services.AddScoped<IHomeService, HomeService>();
+            services.AddScoped<ICourseApprovalService, CourseApprovalService>();
+            services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IParentProgressService, ParentProgressService>();
+            services.AddScoped<IParentProfileService, ParentProfileService>();
             return services;
         }
     }

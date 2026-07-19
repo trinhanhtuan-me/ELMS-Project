@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +10,7 @@ namespace Application.Interfaces
     public interface IParentRepository
     {
         Task<ParentProfile?> FindByParentEmail(string email);
+        Task<User?> GetParentWithProfileAsync(Guid userId);
+        Task UpdateParentProfileAsync(User user, ParentProfile profile);
     }
 }

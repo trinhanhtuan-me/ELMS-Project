@@ -4,6 +4,7 @@ using Application.Exceptions;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Enums;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,11 @@ namespace Application.UseCases
         Task<Guid> StartQuizAttemptAsync(Guid itemId, Guid studentId);
         Task<QuizAttemptDto?> GetQuizAttemptAsync(Guid attemptId, Guid studentId);
         Task<decimal> SubmitQuizAttemptAsync(Guid studentId, SubmitQuizAttemptRequest request);
+
+        //Assignment
+        Task<AssignmentLearningDto?> GetAssignmentAsync(Guid itemId, Guid studentId);
+        Task SaveAssignmentDraftAsync(Guid itemId, Guid studentId, string? textAnswer, IFormFile? file);
+        Task SubmitAssignmentAsync(Guid itemId, Guid studentId, string? textAnswer, IFormFile? file);
     }
 
     public class LearningService : ILearningService
@@ -35,14 +41,20 @@ namespace Application.UseCases
         private readonly IModuleRepository _module;
         private readonly IProgressRepository _progress;
         private readonly IQuizAttemptRepository _attempt;
+        private readonly IModuleItemRepository _moduleItem;
+        private readonly IAssignmentRepository _assignment;
+        private readonly IFileStorageService _fileStorage;
 
-        public LearningService(IUnitOfWork uow, ICourseRepository course, IModuleRepository module, IProgressRepository progress, IQuizAttemptRepository attempt)
+        public LearningService(IUnitOfWork uow, ICourseRepository course, IModuleRepository module, IProgressRepository progress, IQuizAttemptRepository attempt, IModuleItemRepository moduleItem, IAssignmentRepository assignment, IFileStorageService fileStorage)
         {
             _uow = uow;
             _course = course;
             _module = module;
             _progress = progress;
             _attempt = attempt;
+            _moduleItem = moduleItem;
+            _assignment = assignment;
+            _fileStorage = fileStorage;
         }
 
         public async Task<LearningSyllabusDto?> GetCourseSyllabusAsync(Guid courseId, Guid studentId)
@@ -319,5 +331,68 @@ namespace Application.UseCases
 
             return scorePct;
         }
+
+        public async Task<AssignmentLearningDto?> GetAssignmentAsync(Guid itemId, Guid studentId)
+        {
+            var moduleItem = await _moduleItem.GetByIdWithAssignmentAsync(itemId);
+            if (moduleItem?.Assignment == null) return null;
+            var assignment = moduleItem.Assignment;
+            var work = await _assignment.GetByAssignmentWorkAndStudentAsync(assignment.Id, studentId);
+            return new AssignmentLearningDto(
+                ItemId: itemId,
+                AssignmentId: assignment.Id,
+                Title: assignment.Title,
+                Content: assignment.Content,
+                Instructions: assignment.Instructions,
+                SubmissionType: assignment.SubmissionType,
+                MaxScore: assignment.MaxScore,
+                PassingScorePct: assignment.PassingScorePct,
+                TextAnswer: work?.TextAnswer,
+                FileUrl: work?.FileUrl,
+                Status: work?.Status,
+                Score: work?.Score,
+                FeedbackText: work?.FeedbackText,
+                DraftSavedAt: work?.DraftSavedAt
+            );
+        }
+        private async Task<AssignmentWork> ProcessAssignmentWork(Guid itemId, Guid studentId, string? textAnswer, IFormFile? file, AssignmentWorkStatus status)
+        {
+            var moduleItem = await _moduleItem.GetByIdWithAssignmentAsync(itemId)
+                ?? throw new BusinessRuleException("Assignment not found.");
+
+            var assignmentId = moduleItem.Assignment!.Id;
+            var work = await _assignment.GetByAssignmentWorkAndStudentAsync(assignmentId, studentId);
+
+            if (work != null && (work.Status == AssignmentWorkStatus.Submitted || work.Status == AssignmentWorkStatus.Passed))
+                throw new BusinessRuleException("Assignment has already been submitted or passed and cannot be modified.");
+           
+            if (work == null)
+            {
+                work = new AssignmentWork { AssignmentId = assignmentId, StudentId = studentId, Status = status };
+                await _assignment.AddAsync(work);
+            }
+
+            work.Status = status;
+            work.TextAnswer = textAnswer;
+
+            if (file != null)
+            {
+                work.FileUrl = await _fileStorage.SaveFileAsync(file, "assignments");
+            }
+
+            if (status == AssignmentWorkStatus.Draft)
+            {
+                work.DraftSavedAt = DateTime.UtcNow;
+            }
+
+            await _uow.SaveChangeAsync();
+            return work;
+        }
+
+
+        public async Task SaveAssignmentDraftAsync(Guid itemId, Guid studentId, string? textAnswer, IFormFile? file)
+            => await ProcessAssignmentWork(itemId, studentId, textAnswer, file, AssignmentWorkStatus.Draft);
+        public async Task SubmitAssignmentAsync(Guid itemId, Guid studentId, string? textAnswer, IFormFile? file)
+            => await ProcessAssignmentWork(itemId, studentId, textAnswer, file, AssignmentWorkStatus.Submitted);
     }
 }

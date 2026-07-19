@@ -50,5 +50,28 @@ namespace Infrastructure.Persistence.Repositories
             }
             return false;
         }
+
+        public async Task<bool> UpdateAssignmentProgressAsync(Guid studentId, Guid moduleItemId, decimal scorePct, bool isPassed)
+        {
+            var progress = await _context.Progresses
+                .FirstOrDefaultAsync(p => p.StudentId == studentId && p.ModuleItemId == moduleItemId);
+
+            if (progress != null)
+            {
+                if (isPassed)
+                {
+                    progress.Status = ProgressStatus.Completed;
+                    progress.PercentDone = 100;
+                }
+
+                if (progress.ScorePct == null || scorePct > progress.ScorePct)
+                {
+                    progress.ScorePct = scorePct;
+                }
+
+                return true;
+            }
+            return false;
+        }
     }
 }

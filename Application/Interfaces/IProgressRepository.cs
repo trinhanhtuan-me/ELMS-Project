@@ -11,6 +11,7 @@ namespace Application.Interfaces
         Task<bool> UpdateProgressToCompletedAsync(Guid studentId, Guid moduleItemId);
         Task<bool> IsItemCompletedAsync(Guid studentId, Guid moduleItemId);
         Task<bool> UpdateQuizProgressAsync(Guid studentId, Guid moduleItemId, decimal scorePct);
+        Task<bool> UpdateAssignmentProgressAsync(Guid studentId, Guid moduleItemId, decimal scorePct, bool isPassed);
 
     }
 }

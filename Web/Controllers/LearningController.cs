@@ -70,9 +70,8 @@ namespace Web.Controllers
                         return PartialView("_Quiz", quizContent);
 
                     case ModuleItemType.Assignment:
-                        // var assignmentContent = await _learningService.GetAssignmentAsync(itemId);
-                        // return PartialView("_AssignmentForm", assignmentContent);
-                        break;
+                        var assignmentContent = await _learningService.GetAssignmentAsync(itemId, studentId);
+                        return PartialView("_Assignment", assignmentContent);
                 }
 
                 return Content("<div class='alert alert-warning'>Nội dung này chưa được hỗ trợ.</div>", "text/html");
@@ -187,6 +186,33 @@ namespace Web.Controllers
                     score = score,
                     redirectUrl = Url.Action("Index", "Learning", new { courseId = courseId, itemId = itemId })
                 });
+            }
+            catch (BusinessRuleException ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [HttpPost]
+        public async Task<IActionResult> SubmitAssignment(Guid itemId, string? textAnswer, IFormFile? file, string actionType)
+        {
+            try
+            {
+                var studentIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!Guid.TryParse(studentIdStr, out Guid studentId))
+                    return Json(new { success = false, message = "Please log in to continue." });
+
+                if (actionType == "draft")
+                {
+                    await _learningService.SaveAssignmentDraftAsync(itemId, studentId, textAnswer, file);
+                    return Json(new { success = true, message = "Draft saved successfully!" });
+                }
+                else
+                {
+                    await _learningService.SubmitAssignmentAsync(itemId, studentId, textAnswer, file);
+                    return Json(new { success = true, message = "Assignment submitted successfully!" });
+                }
             }
             catch (BusinessRuleException ex)
             {

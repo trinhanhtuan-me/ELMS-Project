@@ -1245,7 +1245,16 @@ new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), Quiz
         );
 
         modelBuilder.Entity<Assignment>().HasData(
-            new Assignment { Id = item4Id, Title = "Daily Routine Paragraph", Content = "Mô tả thói quen", Instructions = "Write a paragraph...", MaxScore = 100m, PassingScorePct = 70.00m }
+            new Assignment 
+            { 
+                Id = item4Id, 
+                Title = "Daily Routine Paragraph (Present Simple)", 
+                Content = "<strong>Task:</strong> Write a 120-150-word paragraph describing your daily routine using the Present Simple.<br><ul><li>Include frequency markers (always/usually/often...)</li><li>Use 3 sequence words (first, then, finally...)</li><li>Highlight 3 typical verbs of your day</li></ul><p><em>Tip: draft &rarr; revise &rarr; finalize. Check S-V agreement (he/she/it + s/es).</em></p>", 
+                Instructions = "1) Viết 120-150 từ về thói quen hằng ngày (Present Simple).<br>2) Dùng từ chỉ tần suất: always/usually/often/sometimes/never.<br>3) Thêm từ nối trình tự: first/then/after that/finally.<br>4) Gạch chân 3 động từ tiêu biểu (get up, have breakfast, do homework).<br>5) Kiểm tra chia động từ đúng với he/she/it (+s/es).<br>6) Soát lỗi chính tả & dấu câu trước khi nộp.<br>7) Đọc to để rà nhịp điệu và mạch lạc.", 
+                SubmissionType = Domain.Enums.AssignmentSubmissionType.Text,
+                MaxScore = 100m, 
+                PassingScorePct = 70.00m 
+            }
         );
 
 

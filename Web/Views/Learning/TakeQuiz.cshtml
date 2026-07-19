@@ -36,8 +36,26 @@
                 <div class="card-body fs-5">
                     @if (!string.IsNullOrEmpty(q.MediaUrl))
                     {
+                        var ext = System.IO.Path.GetExtension(q.MediaUrl).ToLower();
                         <div class="text-center mb-3">
-                            <img src="@q.MediaUrl" class="img-fluid rounded shadow-sm" style="max-height: 300px;" alt="Question Image" />
+                            @if (ext == ".mp3" || ext == ".wav" || ext == ".ogg" || ext == ".m4a")
+                            {
+                                <audio controls class="w-100 shadow-sm rounded" style="max-width: 400px;">
+                                    <source src="@q.MediaUrl">
+                                    Trình duyệt của bạn không hỗ trợ thẻ audio.
+                                </audio>
+                            }
+                            else if (ext == ".mp4" || ext == ".webm")
+                            {
+                                <video controls class="w-100 shadow-sm rounded" style="max-height: 300px;">
+                                    <source src="@q.MediaUrl">
+                                    Trình duyệt của bạn không hỗ trợ thẻ video.
+                                </video>
+                            }
+                            else
+                            {
+                                <img src="@q.MediaUrl" class="img-fluid rounded shadow-sm" style="max-height: 300px;" alt="Question Image" />
+                            }
                         </div>
                     }
 

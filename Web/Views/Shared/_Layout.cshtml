@@ -72,18 +72,18 @@
                 <div class="collapse navbar-collapse" id="navbarMain">
                     <!-- Navigation Links -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 fw-medium" style="font-size: 0.95rem;">
-                        <li class="nav-item"><a class="nav-link text-dark px-3" href="#">Explore</a></li>
+                        <li class="nav-item"><a class="nav-link text-dark px-3" href="/Catalog/Index">Explore</a></li>
                         <li class="nav-item"><a class="nav-link text-dark px-3" href="/MyProgress/Index">My Progress</a></li>
                         <li class="nav-item"><a class="nav-link text-dark px-3" href="#">Flashcards</a></li>
                     </ul>
 
                     <!-- Search Bar -->
-                    <form class="d-flex mx-auto d-none d-lg-block" style="width: 450px;">
+                    <form method="GET" action="/Catalog/Index" class="d-flex mx-auto d-none d-lg-block" style="width: 450px;">
                         <div class="input-group transition-all search-box" style="border-radius: 50px; border: 1px solid #ced4da; overflow: hidden; background-color: #f8f9fa;">
-                            <input type="text" class="form-control border-0 shadow-none bg-transparent ps-4 py-2" placeholder="Search for favorite courses..." style="font-size: 0.95rem;">
-                            <span class="input-group-text bg-transparent border-0 pe-4" style="cursor: pointer;">
+                            <input type="text" name="keyword" class="form-control border-0 shadow-none bg-transparent ps-4 py-2" placeholder="Search for favorite courses..." style="font-size: 0.95rem;">
+                            <button type="submit" class="input-group-text bg-transparent border-0 pe-4" style="cursor: pointer;">
                                 <i class="fa fa-search text-muted"></i>
-                            </span>
+                            </button>
                         </div>
                     </form>
 

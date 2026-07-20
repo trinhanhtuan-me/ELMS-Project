@@ -42,6 +42,7 @@ namespace Application
             services.AddScoped<IParentProgressService, ParentProgressService>();
             services.AddScoped<IParentProfileService, ParentProfileService>();
             services.AddScoped<IStudentProgressService, StudentProgressService>();
+            services.AddScoped<ICatalogService, CatalogService>();
             return services;
         }
     }

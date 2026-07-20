@@ -71,6 +71,48 @@ namespace Infrastructure.Persistence.Repositories
                 .OrderBy(m => m.OrderIndex)
                 .ToListAsync();
         }
+
+        public async Task CheckAndUpdateCourseCompletionByModuleItemIdAsync(Guid studentId, Guid moduleItemId)
+        {
+            var moduleItem = await context.ModuleItems
+                .Include(mi => mi.Module)
+                .FirstOrDefaultAsync(mi => mi.Id == moduleItemId);
+
+            if (moduleItem == null) return;
+
+            Guid courseId = moduleItem.Module.CourseId;
+
+            var enrollment = await context.Enrollments
+                .FirstOrDefaultAsync(e => e.StudentId == studentId && e.CourseId == courseId);
+
+            if (enrollment == null || enrollment.Status == EnrollmentStatus.Completed)
+                return;
+
+            int totalItems = await context.ModuleItems
+                .CountAsync(mi => mi.Module.CourseId == courseId);
+
+            int completedItems = await context.Progresses
+                .CountAsync(p => p.StudentId == studentId &&
+                                 p.ModuleItem.Module.CourseId == courseId &&
+                                 p.Status == ProgressStatus.Completed);
+
+            if (totalItems > 0 && totalItems == completedItems)
+            {
+                enrollment.Status = EnrollmentStatus.Completed;
+                enrollment.CompletedAt = DateTime.UtcNow;
+            }
+        }
+
+        public async Task<List<Enrollment>> GetStudentEnrollmentsWithDetailsAsync(Guid studentId)
+        {
+            return await context.Enrollments
+                    .Include(e => e.Course)
+                        .ThenInclude(c => c.Modules)
+                            .ThenInclude(m => m.ModuleItems)
+                                .ThenInclude(mi => mi.Progresses.Where(p => p.StudentId == studentId))
+                    .Where(e => e.StudentId == studentId)
+                    .ToListAsync();
+        }
     }
 }
 

@@ -31,7 +31,7 @@
             <div class="icon orange"><i class="fa fa-user-tie"></i></div>
             <div><div class="meta">Active Instructors</div><div class="value">@Model.TotalInstructors</div></div>
         </div>
-        <a href="@Url.Action("Index", "CourseManager", new { status = "submitted", sort = "newest" })" style="text-decoration:none; color:inherit;">
+        <a href="@Url.Action("CourseManagement", "Manager", new { status = "submitted", sort = "newest" })" style="text-decoration:none; color:inherit;">
             <div class="card" style="cursor:pointer;">
                 <div class="icon red"><i class="fa fa-hourglass-half"></i></div>
                 <div>

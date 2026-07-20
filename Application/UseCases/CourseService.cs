@@ -15,7 +15,7 @@ namespace Application.UseCases
     public interface ICourseService
     {
         Task<bool> CreateCourseAsync(CourseUpsertRequest request, Guid createdBy);
-        Task<List<CourseManagementResponse>> GetCoursesByInstructorAsync(Guid instructorId);
+        Task<Application.Common.Models.PagedResult<CourseManagementResponse>> GetPagedCoursesByInstructorAsync(Guid instructorId, string? searchTerm, int pageIndex, int pageSize);
         Task<bool> UpdateCourseAsync(CourseUpsertRequest request, Guid instructorId);
         Task<bool> SoftDeleteCourseAsync(Guid id, Guid instructorId);
         Task<CourseDetailResponse?> GetCourseDetailsAsync(Guid id, Guid instructorId);
@@ -64,12 +64,13 @@ namespace Application.UseCases
             return true;
         }
 
-        public async Task<List<CourseManagementResponse>> GetCoursesByInstructorAsync(Guid instructorId)
-        {
-            var courses = await _courseRepository.GetByInstructorIdAsync(instructorId);
 
-            
-            return courses.Select(c => new CourseManagementResponse(
+
+        public async Task<Application.Common.Models.PagedResult<CourseManagementResponse>> GetPagedCoursesByInstructorAsync(Guid instructorId, string? searchTerm, int pageIndex, int pageSize)
+        {
+            var (items, totalCount) = await _courseRepository.GetPagedByInstructorIdAsync(instructorId, searchTerm, pageIndex, pageSize);
+
+            var dtos = items.Select(c => new CourseManagementResponse(
                 c.Id,
                 c.Title,
                 c.Level,
@@ -79,6 +80,8 @@ namespace Application.UseCases
                 c.CategoryId,
                 c.Description
             )).ToList();
+
+            return new Application.Common.Models.PagedResult<CourseManagementResponse>(dtos, totalCount, pageIndex, pageSize);
         }
 
         public async Task<bool> UpdateCourseAsync(CourseUpsertRequest request, Guid instructorId)
@@ -86,6 +89,7 @@ namespace Application.UseCases
             if (request.Id == null) return false;
             var course = await _courseRepository.GetByIdAsync(request.Id.Value);
             if (course == null || course.CreatedBy != instructorId) return false;
+            if (course.Status != CourseStatus.Draft && course.Status != CourseStatus.Rejected) return false;
 
             if (request.ThumbnailFile != null && request.ThumbnailFile.Length > 0)
             {
@@ -128,6 +132,7 @@ namespace Application.UseCases
         {
             var course = await _courseRepository.GetByIdAsync(id);
             if (course == null || course.CreatedBy != instructorId) return false;
+            if (course.Status != CourseStatus.Draft && course.Status != CourseStatus.Rejected) return false;
 
             course.IsDeleted = true;
             course.UpdatedAt = DateTime.UtcNow;

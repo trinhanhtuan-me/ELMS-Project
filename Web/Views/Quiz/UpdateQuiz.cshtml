@@ -1,0 +1,102 @@
+@model Application.Dtos.Lesson.QuizUpdateRequest
+@{
+    Layout = "_ModuleContentLayout";
+    ViewData["Title"] = "Update Quiz";
+    var moduleId = ViewBag.ModuleId;
+    var courseId = ViewBag.CourseId;
+}
+
+<div>
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+            <i class="fas fa-question-circle text-purple-500 mr-3"></i> Update Quiz
+        </h2>
+        <div class="flex gap-2">
+            <a href="/QuizQuestion/Index?quizId=@Model.ActualLessonId&courseId=@courseId&moduleId=@moduleId&moduleItemId=@Model.ModuleItemId" class="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg font-medium hover:bg-blue-100 transition-colors flex items-center border border-blue-200">
+                <i class="fas fa-list-ol mr-2"></i> Manage Questions
+            </a>
+            <form asp-action="DeleteQuiz" asp-controller="Quiz" method="post" onsubmit="return confirm('Are you sure you want to delete this quiz?');">
+                <input type="hidden" name="moduleItemId" value="@Model.ModuleItemId" />
+                <input type="hidden" name="courseId" value="@courseId" />
+                <button type="submit" class="px-4 py-2 bg-red-50 text-red-600 rounded-lg font-medium hover:bg-red-100 transition-colors flex items-center border border-red-200">
+                    <i class="fas fa-trash-alt mr-2"></i> Delete Quiz
+                </button>
+            </form>
+        </div>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-exclamation-circle text-red-500"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-red-700 font-medium">Please check your input:</p>
+                    <div class="text-sm text-red-600 mt-1" asp-validation-summary="All"></div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <form asp-action="UpdateQuiz" asp-controller="Quiz" method="post" class="space-y-6">
+        <input type="hidden" asp-for="ModuleItemId" />
+        <input type="hidden" asp-for="CourseId" />
+        <input type="hidden" asp-for="ModuleId" />
+        <input type="hidden" asp-for="ActualLessonId" />
+        
+        <div class="bg-white p-6 border border-gray-200 rounded-xl shadow-sm">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Basic Information</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Quiz Title <span class="text-red-500">*</span></label>
+                    <input asp-for="Title" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" />
+                    <span asp-validation-for="Title" class="text-red-500 text-sm mt-1"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 border border-gray-200 rounded-xl shadow-sm">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Quiz Settings</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Passing Score (%) <span class="text-red-500">*</span></label>
+                    <input asp-for="PassingScorePct" type="number" min="0" max="100" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" />
+                    <span class="text-xs text-gray-500 mt-1 block">Percentage of correct answers required.</span>
+                    <span asp-validation-for="PassingScorePct" class="text-red-500 text-sm mt-1"></span>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Time Limit (Minutes)</label>
+                    <input asp-for="TimeLimitMin" type="number" min="1" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Unlimited" />
+                    <span class="text-xs text-gray-500 mt-1 block">Leave blank for unlimited time.</span>
+                    <span asp-validation-for="TimeLimitMin" class="text-red-500 text-sm mt-1"></span>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Number of Questions to Show</label>
+                    <input asp-for="PickCount" type="number" min="1" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="All" />
+                    <span asp-validation-for="PickCount" class="text-red-500 text-sm mt-1"></span>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Attempt Cooldown (Minutes) <span class="text-red-500">*</span></label>
+                    <input asp-for="AttemptCooldownMin" type="number" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" />
+                    <span class="text-xs text-gray-500 mt-1 block">0 for no wait time.</span>
+                    <span asp-validation-for="AttemptCooldownMin" class="text-red-500 text-sm mt-1"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-4 border-t border-gray-100 flex justify-end gap-3">
+            <a href="/Course/Details/@courseId" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                Back
+            </a>
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center">
+                <i class="fas fa-save mr-2"></i> Save Changes
+            </button>
+        </div>
+    </form>
+</div>

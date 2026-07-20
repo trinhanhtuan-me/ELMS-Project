@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Web.Controllers
 {
-    // [Authorize(Roles = "Manager")] 
+    [Authorize(Roles = "Manager")] 
     [Route("manager")]
     public class ManagerController(IManagerDashboardService _dashboardService , IManagerCourseService _managerCourseService, IManagerCategoryService _categoryService, IManagerProfileService _profileService, IManagerFlashcardService _flashcardService  ,IManagerRevenueService _revenueService) : Controller
     {
@@ -17,6 +17,7 @@ namespace Web.Controllers
         {
             var dashboardData = await _dashboardService.GetDashboardAsync();
             return View(dashboardData);
+            
         }
 
         [HttpPost("approve")]

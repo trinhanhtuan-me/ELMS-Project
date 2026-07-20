@@ -44,8 +44,9 @@ namespace Application.UseCases
         private readonly IModuleItemRepository _moduleItem;
         private readonly IAssignmentRepository _assignment;
         private readonly IFileStorageService _fileStorage;
+        private readonly IEnrollmentRepository _enrollment;
 
-        public LearningService(IUnitOfWork uow, ICourseRepository course, IModuleRepository module, IProgressRepository progress, IQuizAttemptRepository attempt, IModuleItemRepository moduleItem, IAssignmentRepository assignment, IFileStorageService fileStorage)
+        public LearningService(IUnitOfWork uow, ICourseRepository course, IModuleRepository module, IProgressRepository progress, IQuizAttemptRepository attempt, IModuleItemRepository moduleItem, IAssignmentRepository assignment, IFileStorageService fileStorage, IEnrollmentRepository enrollment)
         {
             _uow = uow;
             _course = course;
@@ -55,6 +56,7 @@ namespace Application.UseCases
             _moduleItem = moduleItem;
             _assignment = assignment;
             _fileStorage = fileStorage;
+            _enrollment = enrollment;
         }
 
         public async Task<LearningSyllabusDto?> GetCourseSyllabusAsync(Guid courseId, Guid studentId)
@@ -159,7 +161,7 @@ namespace Application.UseCases
             if (isCompleted) throw new BusinessRuleException("This reading have been completed already");
 
             await _progress.UpdateProgressToCompletedAsync(studentId, moduleItemId);
-
+            await _enrollment.CheckAndUpdateCourseCompletionByModuleItemIdAsync(studentId, moduleItemId);
             await _uow.SaveChangeAsync();
         }
 
@@ -326,7 +328,7 @@ namespace Application.UseCases
             {
                 await _progress.UpdateProgressToCompletedAsync(studentId, quiz.Id);
             }
-
+            await _enrollment.CheckAndUpdateCourseCompletionByModuleItemIdAsync(studentId, moduleItem.Id);
             await _uow.SaveChangeAsync();
 
             return scorePct;

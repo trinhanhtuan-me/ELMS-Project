@@ -50,10 +50,10 @@ namespace Infrastructure.Persistence.Repositories
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<ModuleItem?> GetByIdWithDiscussionAsync(Guid id)
+        public async Task<ModuleItem?> GetByIdWithQuizAsync(Guid id)
         {
             return await _context.ModuleItems
-                .Include(m => m.Discussion)
+                .Include(m => m.Quiz)
                 .Include(m => m.Module)
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
@@ -61,6 +61,25 @@ namespace Infrastructure.Persistence.Repositories
         public void Delete(ModuleItem item)
         {
             _context.ModuleItems.Remove(item);
+        }
+
+        public void Update(ModuleItem item)
+        {
+            _context.ModuleItems.Update(item);
+        }
+
+        public async Task<ModuleItem?> GetFullDetailByIdAsync(Guid id)
+        {
+            return await _context.ModuleItems
+                .Include(m => m.Lesson)
+                    .ThenInclude(l => l.LessonQuestions)
+                        .ThenInclude(lq => lq.LessonOptions)
+                .Include(m => m.Quiz)
+                    .ThenInclude(q => q.QuizQuestions)
+                        .ThenInclude(qq => qq.QuizOptions)
+                .Include(m => m.Assignment)
+                .Include(m => m.Module)
+                .FirstOrDefaultAsync(m => m.Id == id);
         }
     }
 }

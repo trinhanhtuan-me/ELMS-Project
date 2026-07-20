@@ -20,7 +20,8 @@ namespace Application
             services.AddScoped<IModuleService, ModuleService>();
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<IAssignmentService, AssignmentService>();
-            services.AddScoped<IDiscussionService, DiscussionService>();
+            services.AddScoped<IQuizService, QuizService>();
+            services.AddScoped<IQuizQuestionService, QuizQuestionService>();
             services.AddScoped<ILessonQuestionService, LessonQuestionService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IParentLinkService, ParentLinkService>();
@@ -41,6 +42,12 @@ namespace Application
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IParentProgressService, ParentProgressService>();
             services.AddScoped<IParentProfileService, ParentProfileService>();
+            services.AddScoped<ICourseApprovalService, CourseApprovalService>();
+            services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IParentProgressService, ParentProgressService>();
+            services.AddScoped<IParentProfileService, ParentProfileService>();
+            services.AddScoped<IStudentProgressService, StudentProgressService>();
+            services.AddScoped<ICatalogService, CatalogService>();
             return services;
         }
     }

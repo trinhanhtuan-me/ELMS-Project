@@ -1,0 +1,76 @@
+﻿@model List<Application.Dtos.MyProgress.MyCourseDto>
+@{
+    ViewData["Title"] = "My Progress";
+    var inProgressCourses = Model.Where(c => !c.IsCompleted).ToList();
+    var completedCourses = Model.Where(c => c.IsCompleted).ToList();
+}
+
+<div class="container mt-4">
+    <!-- Tabs Menu -->
+    <ul class="nav nav-pills mb-4" id="progressTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active rounded-pill px-4 py-1 me-2" data-bs-toggle="pill" data-bs-target="#in-progress" type="button" role="tab" style="border: 1px solid #dee2e6;">In Progress</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill px-4 py-1 text-dark" data-bs-toggle="pill" data-bs-target="#completed" type="button" role="tab" style="border: 1px solid #dee2e6;">Completed</button>
+        </li>
+    </ul>
+
+    <!-- Tabs Content -->
+    <div class="tab-content">
+        <!-- IN PROGRESS -->
+        <div class="tab-pane fade show active" id="in-progress" role="tabpanel">
+            @if (!inProgressCourses.Any())
+            {
+                <div class="p-3 bg-light border rounded text-muted">No courses in progress.</div>
+            }
+            else
+            {
+                @foreach (var course in inProgressCourses)
+                {
+                    <div class="d-flex align-items-center justify-content-between p-3 mb-3 border rounded">
+                        <div class="d-flex align-items-center w-75">
+                            <img src="@(course.Thumbnail ?? "https://via.placeholder.com/60")" width="60" height="60" class="rounded me-3" style="object-fit: cover;">
+                            <div class="w-100 pe-4">
+                                <h6 class="fw-bold mb-1">Course: @course.Title</h6>
+                                <small class="text-muted d-block mb-2">Completed: @course.ProgressPercent.ToString("0.0")%</small>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-primary" style="width: @course.ProgressPercent%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <a href="/Learning/Index?courseId=@course.CourseId" class="btn btn-primary btn-sm px-4 rounded-pill">Go to course</a>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- COMPLETED -->
+        <div class="tab-pane fade" id="completed" role="tabpanel">
+            @if (!completedCourses.Any())
+            {
+                <div class="p-3 bg-light border rounded text-muted">No completed courses yet.</div>
+            }
+            else
+            {
+                @foreach (var course in completedCourses)
+                {
+                    <div class="d-flex align-items-center justify-content-between p-3 mb-3 border rounded">
+                        <div class="d-flex align-items-center">
+                            <img src="@(course.Thumbnail)" width="60" height="60" class="rounded me-3 opacity-75" style="object-fit: cover;">
+                            <div>
+                                <h6 class="fw-bold mb-1">Course: @course.Title</h6>
+                                <small class="text-success fw-bold">Completed (100%)</small>
+                            </div>
+                        </div>
+                        <div>
+                            <a href="/Learning/Index?courseId=@course.CourseId" class="btn btn-outline-secondary btn-sm px-4 rounded-pill">Review</a>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

@@ -78,7 +78,8 @@ namespace Application.UseCases
                 c.Status,
                 c.Thumbnail,
                 c.CategoryId,
-                c.Description
+                c.Description,
+                c.CourseManagers.FirstOrDefault()?.RejectReason
             )).ToList();
 
             return new Application.Common.Models.PagedResult<CourseManagementResponse>(dtos, totalCount, pageIndex, pageSize);
@@ -146,7 +147,7 @@ namespace Application.UseCases
         public async Task<bool> SubmitCourseAsync(Guid id, Guid instructorId)
         {
             var course = await _courseRepository.GetByIdAsync(id);
-            if (course == null || course.CreatedBy != instructorId || course.Status != CourseStatus.Draft) return false;
+            if (course == null || course.CreatedBy != instructorId || (course.Status != CourseStatus.Draft && course.Status != CourseStatus.Rejected)) return false;
 
             course.Status = CourseStatus.Submitted;
             course.UpdatedAt = DateTime.UtcNow;

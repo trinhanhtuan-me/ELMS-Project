@@ -105,6 +105,12 @@
                         <td class="text-end">
                             @if (course.Status == Domain.Enums.CourseStatus.Draft || course.Status == Domain.Enums.CourseStatus.Rejected)
                             {
+                                @if (course.Status == Domain.Enums.CourseStatus.Rejected)
+                                {
+                                    <button type="button" class="action-btn text-warning" title="View Rejection Reason" onclick="openReasonModal('@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.RejectReason ?? "No reason provided."))')">
+                                        <i class="fa fa-info-circle"></i>
+                                    </button>
+                                }
                                 <button class="action-btn" title="Edit course" onclick="openEditModal('@course.Id', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Title))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Language))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Level))', '@course.CategoryId', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Description ?? ""))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Thumbnail ?? ""))')">
                                     <i class="fa fa-edit"></i>
                                 </button>
@@ -260,8 +266,34 @@
     </div>
 </div>
 
+<!-- Reason Modal -->
+<div class="modal fade" id="reasonModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
+            <div class="modal-header border-0 pb-0" style="background-color: #ffffff;">
+                <div>
+                    <h5 class="modal-title fw-bold mb-1 text-danger" style="font-size: 1.25rem;"><i class="fa fa-exclamation-triangle"></i> Rejection Reason</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="align-self: flex-start; margin-top: 0.5rem;"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p id="rejectionReasonText" class="text-dark" style="white-space: pre-wrap; font-size: 0.95rem;"></p>
+            </div>
+            <div class="modal-footer border-0 px-4 pb-4 pt-0">
+                <button type="button" class="btn btn-light px-4" style="border-radius: 8px; font-weight: 500; border: 1px solid #e0e5f2;" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
+        function openReasonModal(reason) {
+            document.getElementById('rejectionReasonText').innerText = reason;
+            var modal = new bootstrap.Modal(document.getElementById('reasonModal'));
+            modal.show();
+        }
+
         function openCreateModal() {
             document.getElementById('formTitle').innerText = 'Create new course';
             document.getElementById('courseForm').action = '/Course/Create';

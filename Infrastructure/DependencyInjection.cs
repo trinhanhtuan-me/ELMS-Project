@@ -25,6 +25,8 @@ namespace Infrastructure
             services.AddMailService(configuration);
             services.AddScoped<IFileStorageService, CloudinaryStorageService>();
             services.AddScoped<IManagerFlashcardRepository, ManagerFlashcardRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IQuizQuestionRepository, QuizQuestionRepository>();
             services.AddScoped<IModuleItemRepository, ModuleItemRepository>();
             services.AddScoped<ILessonQuestionRepository, LessonQuestionRepository>();
             services.AddScoped<ICacheService, CacheService>();

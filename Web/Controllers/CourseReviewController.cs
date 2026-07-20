@@ -1,4 +1,5 @@
 ﻿using Application.Dtos.CourseReview;
+using Application.Exceptions;
 using Application.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +44,7 @@ namespace Web.Controllers
                 await _service.CreateCourseReview(studentId, request);
                 TempData["SuccessToast"] = "Your review has been submitted successfully!";
             }
-            catch (Exception ex)
+            catch (BusinessRuleException ex)
             {
                 TempData["ErrorToast"] = ex.Message;
             }
@@ -62,7 +63,7 @@ namespace Web.Controllers
                 await _service.UpdateCourseReview(studentId, request);
                 TempData["SuccessToast"] = "Your review has been updated successfully!";
             }
-            catch (Exception ex)
+            catch (BusinessRuleException ex)
             {
                 TempData["ErrorToast"] = ex.Message;
             }

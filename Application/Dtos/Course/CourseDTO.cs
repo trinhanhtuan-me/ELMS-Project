@@ -47,6 +47,12 @@ namespace Application.Dtos.Course
         List<ModuleEntity> Modules 
     );
 
+    public class CoursePreviewViewModel
+    {
+        public CourseDetailResponse Course { get; set; } = null!;
+        public ModuleItem? CurrentItem { get; set; }
+    }
+
     public class CourseUpsertRequestValidator : AbstractValidator<CourseUpsertRequest>
     {
         public CourseUpsertRequestValidator()

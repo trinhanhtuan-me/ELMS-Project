@@ -1,5 +1,7 @@
+using Application.Dtos.Learning;
 using Application.Interfaces;
 using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -61,10 +63,49 @@ namespace Infrastructure.Persistence.Repositories
                 .Include(m => m.ModuleItems)
                     .ThenInclude(mi => mi.Assignment)
                 .Include(m => m.ModuleItems)
-                    .ThenInclude(mi => mi.Discussion)
+                    .ThenInclude(mi => mi.Quiz)
                 .Where(m => m.CourseId == courseId)
                 .OrderBy(m => m.OrderIndex)
                 .ToListAsync();
         }
+
+
+        public async Task<ModuleItem?> GetVideoLessonAsync(Guid itemId)
+        {
+            return await _context.ModuleItems
+                .Include(mi => mi.Lesson)
+                    .ThenInclude(l => l.LessonQuestions)
+                        .ThenInclude(q => q.LessonOptions)
+                .FirstOrDefaultAsync(mi => mi.Id == itemId);
+        }
+
+        public async Task<(ModuleItemType ItemType, LessonContentType? ContentType)?> GetItemTypeInfoAsync(Guid itemId)
+        {
+            var info = await _context.ModuleItems
+                .Where(mi => mi.Id == itemId)
+                .Select(mi => new
+                {
+                    ItemType = mi.ItemType,
+                    ContentType = mi.Lesson != null ? (LessonContentType?)mi.Lesson.ContentType : null
+                })
+                .FirstOrDefaultAsync();
+            if (info == null) return null;
+            return (info.ItemType, info.ContentType);
+        }
+
+        public async Task<ModuleItem?> GetReadingLessonAsync(Guid itemId)
+        {
+            return await _context.ModuleItems
+                .Include(mi => mi.Lesson)
+                .FirstOrDefaultAsync(mi => mi.Id == itemId);
+        }
+
+        public async Task<ModuleItem?> GetQuizAsync(Guid itemId)
+        {
+            return await _context.ModuleItems
+                .Include(mi => mi.Quiz)
+                .FirstOrDefaultAsync(mi => mi.Id == itemId);
+        }
+
     }
 }

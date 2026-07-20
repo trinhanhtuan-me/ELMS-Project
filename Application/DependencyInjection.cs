@@ -41,6 +41,7 @@ namespace Application
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IParentProgressService, ParentProgressService>();
             services.AddScoped<IParentProfileService, ParentProfileService>();
+            services.AddScoped<IStudentProgressService, StudentProgressService>();
             return services;
         }
     }

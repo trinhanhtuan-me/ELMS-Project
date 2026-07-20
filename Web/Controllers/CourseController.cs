@@ -12,6 +12,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
+using Application.Interfaces;
+
 namespace Web.Controllers
 {
     [Authorize]
@@ -19,14 +21,16 @@ namespace Web.Controllers
     {
         private readonly ICourseService _courseService;
         private readonly ICategoryService _categoryService;
+        private readonly IModuleItemRepository _moduleItemRepository;
 
-        public CourseController(ICourseService courseService, ICategoryService categoryService)
+        public CourseController(ICourseService courseService, ICategoryService categoryService, IModuleItemRepository moduleItemRepository)
         {
             _courseService = courseService;
             _categoryService = categoryService;
+            _moduleItemRepository = moduleItemRepository;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchTerm, int pageIndex = 1)
         {
             var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (!Guid.TryParse(userIdStr, out Guid instructorId))
@@ -35,9 +39,11 @@ namespace Web.Controllers
             }
 
             ViewBag.Categories = await _categoryService.GetAllCategoriesAsync();
+            ViewBag.SearchTerm = searchTerm;
 
-            var courses = await _courseService.GetCoursesByInstructorAsync(instructorId);
-            return View(courses);
+            int pageSize = 10;
+            var pagedCourses = await _courseService.GetPagedCoursesByInstructorAsync(instructorId, searchTerm, pageIndex, pageSize);
+            return View(pagedCourses);
         }
 
         public async Task<IActionResult> Details(Guid id)
@@ -54,6 +60,41 @@ namespace Web.Controllers
             if (course == null) return NotFound();
 
             return View("Views/Module/Details.cshtml",course);
+        }
+
+        public async Task<IActionResult> Preview(Guid id, Guid? itemId = null)
+        {
+            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!Guid.TryParse(userIdStr, out Guid instructorId))
+            {
+                return RedirectToAction("Login", "Identity");
+            }
+
+            var course = await _courseService.GetCourseDetailsAsync(id, instructorId);
+            if (course == null) return NotFound();
+
+            Domain.Entities.ModuleItem? currentItem = null;
+            if (itemId.HasValue)
+            {
+                currentItem = await _moduleItemRepository.GetFullDetailByIdAsync(itemId.Value);
+            }
+            else if (course.Modules != null && course.Modules.Any())
+            {
+                var firstModule = course.Modules.OrderBy(m => m.OrderIndex).FirstOrDefault();
+                var firstItem = firstModule?.ModuleItems?.OrderBy(mi => mi.OrderIndex).FirstOrDefault();
+                if (firstItem != null)
+                {
+                    currentItem = await _moduleItemRepository.GetFullDetailByIdAsync(firstItem.Id);
+                }
+            }
+
+            var vm = new CoursePreviewViewModel
+            {
+                Course = course,
+                CurrentItem = currentItem
+            };
+
+            return View(vm);
         }
 
         [HttpPost]

@@ -1,4 +1,4 @@
-﻿using Application.Common;
+using Application.Common;
 using Application.Dtos.Role;
 using Application.Exceptions;
 using Application.UseCases;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers
 {
-    //[Authorize(Policy = Policies.EndpointAccess)]
+    [Authorize(Policy = Policies.EndpointAccess)]
     public class RoleController(IRoleService roleService, IFunctionService functionService) : Controller
     {
         [HttpGet]

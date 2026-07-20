@@ -70,29 +70,35 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarMain">
-                    <!-- Navigation Links -->
+                    @if (ViewData["IsCourseManager"] as bool? != true)
+                    {
+                        <!-- Navigation Links -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 fw-medium" style="font-size: 0.95rem;">
-                        <li class="nav-item"><a class="nav-link text-dark px-3" href="#">Explore</a></li>
-                        <li class="nav-item"><a class="nav-link text-dark px-3" href="#">My Courses</a></li>
+                        <li class="nav-item"><a class="nav-link text-dark px-3" href="/Catalog/Index">Explore</a></li>
+                        <li class="nav-item"><a class="nav-link text-dark px-3" href="/MyProgress/Index">My Progress</a></li>
                         <li class="nav-item"><a class="nav-link text-dark px-3" href="#">Flashcards</a></li>
                     </ul>
 
                     <!-- Search Bar -->
-                    <form class="d-flex mx-auto d-none d-lg-block" style="width: 450px;">
+                    <form method="GET" action="/Catalog/Index" class="d-flex mx-auto d-none d-lg-block" style="width: 450px;">
                         <div class="input-group transition-all search-box" style="border-radius: 50px; border: 1px solid #ced4da; overflow: hidden; background-color: #f8f9fa;">
-                            <input type="text" class="form-control border-0 shadow-none bg-transparent ps-4 py-2" placeholder="Search for favorite courses..." style="font-size: 0.95rem;">
-                            <span class="input-group-text bg-transparent border-0 pe-4" style="cursor: pointer;">
+                            <input type="text" name="keyword" class="form-control border-0 shadow-none bg-transparent ps-4 py-2" placeholder="Search for favorite courses..." style="font-size: 0.95rem;">
+                            <button type="submit" class="input-group-text bg-transparent border-0 pe-4" style="cursor: pointer;">
                                 <i class="fa fa-search text-muted"></i>
-                            </span>
+                            </button>
                         </div>
                     </form>
+                    }
 
                     <!-- Right Actions -->
-                    <div class="d-flex align-items-center ms-auto gap-4 mt-3 mt-lg-0">
-                        <!-- Wishlist Icon -->
+                    <div class="d-flex align-items-center @((ViewData["IsCourseManager"] as bool? == true) ? "ms-auto" : "ms-auto") gap-4 mt-3 mt-lg-0">
+                        @if (ViewData["IsCourseManager"] as bool? != true)
+                        {
+                            <!-- Wishlist Icon -->
                         <a href="/StudentFamily" class="text-dark text-decoration-none fs-5 hover-text-primary transition-all">
                             <i class="fa fa-heart-o"></i>
-                        </a>
+                            </a>
+                        }
 
                         @if (User.Identity?.IsAuthenticated == true)
                         {
@@ -139,7 +145,7 @@
     </main>
 </div>
 
-@if (ViewData["HideHeaderFooter"] as bool? != true)
+@if (ViewData["IsCourseManager"] as bool? != true)
 {
 <footer class="text-white pt-5 pb-3 mt-5" style="background-color: #1c1d1f;">
     <div class="container py-4">
@@ -179,7 +185,9 @@
     </div>
 </footer>
 }
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 

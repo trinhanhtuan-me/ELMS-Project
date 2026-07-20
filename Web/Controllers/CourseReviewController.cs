@@ -1,12 +1,15 @@
-﻿using Application.Dtos.CourseReview;
+using Application.Dtos.CourseReview;
 using Application.Exceptions;
 using Application.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Application.Common;
 
 namespace Web.Controllers
 {
+    //[Authorize(Policy = Policies.EndpointAccess)]
     public class CourseReviewController : Controller
     {
         private readonly ICourseReviewService _service;

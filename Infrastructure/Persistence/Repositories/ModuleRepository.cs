@@ -63,11 +63,12 @@ namespace Infrastructure.Persistence.Repositories
                 .Include(m => m.ModuleItems)
                     .ThenInclude(mi => mi.Assignment)
                 .Include(m => m.ModuleItems)
-                    .ThenInclude(mi => mi.Discussion)
+                    .ThenInclude(mi => mi.Quiz)
                 .Where(m => m.CourseId == courseId)
                 .OrderBy(m => m.OrderIndex)
                 .ToListAsync();
         }
+
 
         public async Task<ModuleItem?> GetVideoLessonAsync(Guid itemId)
         {

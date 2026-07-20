@@ -25,6 +25,8 @@ namespace Infrastructure
             services.AddMailService(configuration);
             services.AddScoped<IFileStorageService, CloudinaryStorageService>();
             services.AddScoped<IManagerFlashcardRepository, ManagerFlashcardRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IQuizQuestionRepository, QuizQuestionRepository>();
             services.AddScoped<IModuleItemRepository, ModuleItemRepository>();
             services.AddScoped<ILessonQuestionRepository, LessonQuestionRepository>();
             services.AddScoped<Application.Interfaces.IVNPayService, Infrastructure.Shared.Payment.VNPayService>();
@@ -36,22 +38,17 @@ namespace Infrastructure
 
         private static IServiceCollection AddCacheService(this IServiceCollection services, IConfiguration configuration)
         {
-            //Configure Redis using L2 Cache
-            var redisConnection = configuration.GetConnectionString("Redis");
-            services.AddStackExchangeRedisCache(option =>
+            var jsonOptions = new System.Text.Json.JsonSerializerOptions
             {
-                option.Configuration =  redisConnection;
-                option.Configuration = redisConnection;
-                option.InstanceName = "ELMS_";
-            });
+                ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+            };
 
-            //Configure FusionCache consider Redis as L2 Cache
+            //Configure FusionCache to use Memory Cache (L1 Cache) only
             services.AddFusionCache().WithDefaultEntryOptions(new FusionCacheEntryOptions
             {
                 Duration = TimeSpan.FromMinutes(5)
             })
-            .WithSerializer(new FusionCacheSystemTextJsonSerializer())
-            .WithRegisteredDistributedCache();
+            .WithSerializer(new FusionCacheSystemTextJsonSerializer(jsonOptions));
 
             return services;
         }

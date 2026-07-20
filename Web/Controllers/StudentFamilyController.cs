@@ -36,6 +36,7 @@ namespace Web.Controllers
                 CourseRequests = courseRequestsData.Data.Select(x => new CourseRequestItemViewModel
                 {
                     CourseRequestId = x.Id,
+                    CourseId = x.CourseId,
                     CourseName = x.Title,
                     Status = x.Status,
                     Note = x.Note
@@ -43,7 +44,8 @@ namespace Web.Controllers
             };
 
             // Gán dữ liệu trạng thái
-            if (parentLink == null)
+            if (parentLink == null || parentLink.Status == ParentLinkRequestStatus.Canceled
+                || parentLink.Status == ParentLinkRequestStatus.Unlink || parentLink.Status == ParentLinkRequestStatus.Rejected)
             {
                 viewModel.ParentLinkStatus = "NotLinked";
             }

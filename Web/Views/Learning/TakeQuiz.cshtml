@@ -1,0 +1,149 @@
+@using Application.Dtos.Learning
+@model QuizAttemptDto
+@{
+    ViewData["Title"] = Model.QuizTitle;
+    ViewData["HideHeaderFooter"] = true;
+}
+
+<div class="container py-5">
+    <div class="row mb-4 align-items-center border-bottom pb-3">
+        <div class="col-md-8">
+            <h2 class="fw-bold text-primary">@Model.QuizTitle</h2>
+            <p class="text-muted mb-0"><i class="bi bi-play-circle"></i> Started at: @Model.StartedAt.ToLocalTime().ToString("g")</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+
+            @if (Model.TimeLimitMin.HasValue)
+            {
+                <div class="bg-warning text-dark px-4 py-2 rounded d-inline-block shadow-sm">
+                    <span class="fw-bold fs-4"><i class="bi bi-alarm me-2"></i> <span id="countdownTimer">--:--</span></span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <form id="takeQuizForm">
+        <input type="hidden" id="attemptId" value="@Model.AttemptId" />
+        <input type="hidden" id="courseId" value="@ViewBag.CourseId" />
+        <input type="hidden" id="itemId" value="@ViewBag.ItemId" />
+
+        @foreach (var q in Model.Questions)
+        {
+            <div class="card mb-4 shadow-sm border-0">
+                <div class="card-header bg-light border-0 py-3">
+                    <h5 class="mb-0"><strong>Question @q.DisplayOrder:</strong> @q.Content</h5>
+                </div>
+                <div class="card-body fs-5">
+                    @if (!string.IsNullOrEmpty(q.MediaUrl))
+                    {
+                        var ext = System.IO.Path.GetExtension(q.MediaUrl).ToLower();
+                        <div class="text-center mb-3">
+                            @if (ext == ".mp3" || ext == ".wav" || ext == ".ogg" || ext == ".m4a")
+                            {
+                                <audio controls class="w-100 shadow-sm rounded" style="max-width: 400px;">
+                                    <source src="@q.MediaUrl">
+                                    Trình duyệt của bạn không hỗ trợ thẻ audio.
+                                </audio>
+                            }
+                            else if (ext == ".mp4" || ext == ".webm")
+                            {
+                                <video controls class="w-100 shadow-sm rounded" style="max-height: 300px;">
+                                    <source src="@q.MediaUrl">
+                                    Trình duyệt của bạn không hỗ trợ thẻ video.
+                                </video>
+                            }
+                            else
+                            {
+                                <img src="@q.MediaUrl" class="img-fluid rounded shadow-sm" style="max-height: 300px;" alt="Question Image" />
+                            }
+                        </div>
+                    }
+
+                    <div class="options-list mt-3">
+                        @foreach (var opt in q.Options)
+                        {
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="radio" name="Answers[@q.QuestionId]" id="opt_@opt.OptionId" value="@opt.OptionId">
+                                <label class="form-check-label ms-2" style="cursor: pointer;" for="opt_@opt.OptionId">
+                                    @opt.Content
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="text-center mt-5 mb-5">
+            <button type="button" id="btnSubmitQuiz" class="btn btn-success btn-lg px-5 shadow rounded-pill">
+                <i class="bi bi-send-check-fill me-2"></i> Submit Quiz
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const attemptId = document.getElementById('attemptId').value;
+        const courseId = document.getElementById('courseId').value;
+        const itemId = document.getElementById('itemId').value;
+        let isSubmitted = false;
+
+        const hasTimeLimit = @(Model.TimeLimitMin.HasValue ? "true" : "false");
+
+        if (hasTimeLimit) {
+            const timeLimitMs = @(Model.TimeLimitMin ?? 0) * 60 * 1000;
+            const startedAt = new Date('@(Model.StartedAt.ToString("yyyy-MM-ddTHH:mm:ss"))Z').getTime();
+
+            setInterval(() => {
+                const remaining = timeLimitMs - (new Date().getTime() - startedAt);
+                if (!(remaining > 0) && !isSubmitted) {
+                    alert("Time's up! Automatically submit.");
+                    submitQuiz();
+                } else {
+                    const m = Math.floor((remaining / 1000) / 60);
+                    const s = Math.floor((remaining / 1000) % 60);
+                    document.getElementById('countdownTimer').innerText = m + ":" + s.toString().padStart(2, '0');
+                }
+            }, 1000);
+        }
+
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden && !isSubmitted) {
+                alert("Cheat detected! Automatically submit.");
+                submitQuiz();
+            }
+        });
+
+        document.getElementById('btnSubmitQuiz').onclick = function() {
+            if (confirm("Are u sure to submit ?")) {
+                submitQuiz();
+            }
+        };
+
+        function submitQuiz() {
+            if (isSubmitted) return;
+            isSubmitted = true;
+
+            const formData = new FormData(document.getElementById('takeQuizForm'));
+            const answers = {};
+            for (let [key, value] of formData.entries()) {
+                if (key.includes("Answers[")) {
+                    let qId = key.split('[')[1].split(']')[0];
+                    answers[qId] = value;
+                }
+            }
+
+            fetch(`/Learning/SubmitQuizAttempt?courseId=${courseId}&itemId=${itemId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ AttemptId: attemptId, Answers: answers })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) window.location.href = data.redirectUrl;
+                else { alert("Lỗi: " + data.message); isSubmitted = false; }
+            });
+        }
+    </script>
+}

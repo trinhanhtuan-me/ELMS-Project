@@ -55,7 +55,7 @@ namespace Application.UseCases
                 request.PageSize
             );
 
-            var result = listCourseRequest.Select(c => new GetListCourseRequestVm(c.Id, c.Course.Title, c.Status, c.Note)).ToList();
+            var result = listCourseRequest.Select(c => new GetListCourseRequestVm(c.Id, c.CourseId, c.Course.Title, c.Status, c.Note)).ToList();
 
             return new PaginatedList<GetListCourseRequestVm>(totalCount, result);
         }

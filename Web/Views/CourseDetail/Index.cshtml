@@ -1,0 +1,180 @@
+@model Application.Dtos.CourseDetail.PublicCourseDetailVm
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<!-- TOP BANNER (Nền tối tràn viền) -->
+<div class="bg-dark py-5" style="width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-5 mb-4 mb-lg-0">
+                <img src="@(Model.Thumbnail ?? "https://via.placeholder.com/600x400")" class="img-fluid rounded-4 shadow" alt="Course Thumbnail">
+            </div>
+            <div class="col-lg-7 text-white ps-lg-5">
+                <h1 class="fw-bold mb-3">@Model.Title</h1>
+                <div class="d-flex align-items-center mb-3 text-light">
+                    <i class="fas fa-user-circle fs-4 me-2"></i>
+                    <span>Instructor: <span class="fw-bold text-info">@Model.InstructorName</span></span>
+                </div>
+                
+                <div class="mb-3 d-flex align-items-center flex-wrap gap-2">
+                    <span class="text-warning fw-bold fs-5 me-1">@Model.AverageRating.ToString("0.0")</span>
+                    <div class="text-warning small me-2">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="@(i <= Math.Round(Model.AverageRating) ? "fas" : "far") fa-star"></i>
+                        }
+                    </div>
+                    <span class="text-light text-opacity-75">(@Model.TotalReviews reviews)</span>
+                    <span class="text-light text-opacity-75 ms-2 border-start ps-2">@Model.TotalStudents students</span>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    <span class="badge bg-light text-dark rounded-pill px-3 py-2"><i class="fas fa-folder me-1"></i> @Model.CategoryName</span>
+                    <span class="badge bg-light text-dark rounded-pill px-3 py-2"><i class="fas fa-layer-group me-1"></i> @Model.Level</span>
+                    <span class="badge bg-light text-dark rounded-pill px-3 py-2"><i class="fas fa-language me-1"></i> @Model.Language</span>
+                </div>
+
+
+                <!-- LOGIC NÚT BẤM CHUẨN XÁC THEO 3 TRẠNG THÁI -->
+                <div style="max-width: 350px;">
+                    @if (Model.ButtonState == "Enrolled")
+                    {
+                        <!-- Trạng thái 1: Đã Enroll -> Nút Link nhảy vào phòng học -->
+                        <a href="/Learning/Index?courseId=@Model.CourseId" class="btn w-100 py-3 fw-bold rounded-3 shadow-sm" style="background-color: #6c5ce7; color: white;">
+                            <i class="fas fa-play-circle me-2"></i> Go to course
+                        </a>
+                    }
+                    else if (Model.ButtonState == "Requested")
+                    {
+                        <!-- Trạng thái 2: Chưa Enroll, Đã lưu -> Nút xám bị khóa -->
+                        <button class="btn btn-secondary w-100 py-3 fw-bold rounded-3 shadow-sm" disabled>
+                            <i class="fas fa-check-circle me-2"></i> Saved
+                        </button>
+                    }
+                    else
+                    {
+                        <!-- Trạng thái 3: Chưa có gì -> Form nộp yêu cầu lưu khóa học -->
+                        <form asp-action="RequestCourse" asp-controller="CourseDetail" method="post">
+                            <input type="hidden" name="courseId" value="@Model.CourseId" />
+                            <button type="submit" class="btn w-100 py-3 fw-bold rounded-3 shadow-sm" style="background-color: #6c5ce7; color: white; border: none;">
+                                <i class="fas fa-bookmark me-2"></i> Add to saved list
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5" style="max-width: 1000px;">
+    
+    <!-- KHÁM PHÁ (Mô tả) -->
+    <div class="mb-5 pb-4 border-bottom">
+        <h4 class="fw-bold mb-4">This course has @Model.Modules.Count modules</h4>
+        <p class="text-muted" style="line-height: 1.8;">
+            @Html.Raw(Model.Description?.Replace("\n", "<br/>"))
+        </p>
+    </div>
+
+    <!-- KHUNG KHÓA HỌC (Curriculum Accordion Bootstrap) -->
+    <div class="mb-5 pb-4 border-bottom">
+        <h4 class="fw-bold mb-4">Course Curriculum</h4>
+        <div class="accordion" id="curriculumAccordion">
+            @foreach (var mod in Model.Modules)
+            {
+                var targetId = "collapse-" + mod.ModuleId;
+                <div class="accordion-item border-0 mb-3 rounded-3 shadow-sm overflow-hidden bg-light">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button bg-light text-dark fw-bold collapsed border-bottom-0" type="button" data-bs-toggle="collapse" data-bs-target="#@targetId">
+                            @mod.Title
+                        </button>
+                    </h2>
+                    <div id="@targetId" class="accordion-collapse collapse" data-bs-parent="#curriculumAccordion">
+                        <div class="accordion-body bg-white pt-4 pb-2">
+                            @if (!string.IsNullOrEmpty(mod.Description))
+                            {
+                                <p class="text-muted mb-3">@mod.Description</p>
+                            }
+                            
+                            <p class="fw-bold text-dark mb-2">Learning materials include:</p>
+                            <div class="d-flex flex-wrap gap-4 text-muted small mb-4">
+                                @if(mod.VideoCount > 0){ <span><i class="fas fa-play-circle me-1"></i> @mod.VideoCount videos</span> }
+                                @if(mod.ReadingCount > 0){ <span><i class="fas fa-book-open me-1"></i> @mod.ReadingCount readings</span> }
+                                @if(mod.AssignmentCount > 0){ <span><i class="fas fa-tasks me-1"></i> @mod.AssignmentCount assignments</span> }
+                                @if(mod.QuizCount > 0){ <span><i class="far fa-question-circle me-1"></i> @mod.QuizCount quizzes</span> }
+                                @if(mod.DiscussionCount > 0){ <span><i class="far fa-comments me-1"></i> @mod.DiscussionCount discussions</span> }
+                            </div>
+
+                            <a data-bs-toggle="collapse" href="#module-items-@mod.ModuleId" role="button" aria-expanded="false" class="text-primary text-decoration-none small fw-bold d-block mb-3"><i class="fas fa-caret-right me-1"></i> Show module details</a>
+
+                            <!-- Chi tiết từng bài học bên trong Module -->
+                            <div class="collapse" id="module-items-@mod.ModuleId">
+                                @foreach (var item in mod.Items)
+                                {
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center text-dark fw-medium mb-1">
+                                            @if(item.ItemType == "Video") { <i class="fas fa-play-circle text-muted me-2"></i> <span>Video</span> }
+                                            else if(item.ItemType == "Reading") { <i class="fas fa-book-open text-muted me-2"></i> <span>Reading</span> }
+                                            else if(item.ItemType == "Assignment") { <i class="fas fa-tasks text-muted me-2"></i> <span>Assignment</span> }
+                                            else if(item.ItemType == "Quiz") { <i class="far fa-question-circle text-muted me-2"></i> <span>Quiz</span> }
+                                            else if(item.ItemType == "Discussion") { <i class="far fa-comments text-muted me-2"></i> <span>Discussion</span> }
+                                        </div>
+                                        <p class="text-muted small ms-4 mb-0">@item.Title</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- ĐÁNH GIÁ (Reviews) -->
+    <div>
+        <div class="d-flex align-items-center mb-4">
+            <i class="fas fa-star text-warning fs-3 me-3"></i>
+            <h4 class="fw-bold mb-0">@Model.AverageRating.ToString("0.0") Average Rating • @Model.TotalReviews Reviews</h4>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var review in Model.Reviews)
+            {
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 bg-light rounded-4 p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="d-flex align-items-center">
+                                <!-- Avatar mặc định -->
+                                <div class="bg-secondary rounded-circle text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h6 class="fw-bold mb-0">@review.StudentName</h6>
+                                    <div class="text-warning small mt-1">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            <i class="@(i <= review.Rating ? "fas" : "far") fa-star"></i>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="text-muted small">@review.ReviewDate.ToString("dd/MM/yyyy")</span>
+                        </div>
+                        <p class="text-muted small mb-0" style="line-height: 1.6;">
+                            @review.Comment
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+        
+        @if (Model.TotalReviews > 4)
+        {
+            <div class="mt-4">
+                <a href="/CourseReview/Index?courseId=@Model.CourseId" class="btn btn-outline-primary rounded-pill px-4">View all reviews</a>
+            </div>
+        }
+    </div>
+</div>

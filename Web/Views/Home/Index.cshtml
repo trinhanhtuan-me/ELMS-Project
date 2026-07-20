@@ -1,8 +1,135 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@using Application.Dtos.Home
+@model HomeViewModel
+
+@{
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-4">
+    <!-- 1. TOP BANNER -->
+    <div class="rounded-4 p-5 mb-5 d-flex align-items-center position-relative overflow-hidden" style="min-height: 350px; background-color: #ffd24a;">
+        <div class="bg-white p-4 rounded-3 shadow-sm position-relative z-1" style="max-width: 450px;">
+            <h2 class="fw-bold mb-3">Learn your way</h2>
+            <p class="text-muted mb-0">Embark on an exciting learning journey to explore your potential and achieve your goals.</p>
+        </div>
+        <img src="https://play-lh.googleusercontent.com/I6rXDrmqIalAw4f-r1lJNB97k-K9_rzwu67bDuKUjytzShxATg2J2l913clKf01lp-0" alt="Banner" class="position-absolute end-0 top-50 translate-middle-y d-none d-md-block h-100 object-fit-cover" style="width: 45%; object-position: left;" />
+    </div>
+
+    <!-- 2. POPULAR COURSES -->
+    <div class="mb-5 pb-4 border-bottom">
+        <div class="mb-4">
+            <h3 class="fw-bold text-dark">Popular Courses</h3>
+            <p class="text-muted">Discover our most loved English courses, curated to make learning easier and more fun every day.</p>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var course in Model.PopularCourses)
+            {
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <img src="@(course.Thumbnail ?? "https://via.placeholder.com/300x200?text=No+Image")" class="card-img-top object-fit-cover" style="height: 180px;" alt="Course">
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="fw-bold">
+                                <a href="/CourseDetail/Index/@course.Id" class="text-decoration-none text-dark">@course.Title</a>
+                            </h6>
+                            <p class="small text-muted mb-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                @course.Description
+                            </p>
+                            <div class="mt-auto">
+                                <span class="badge bg-primary rounded-pill px-3 py-2">Popular</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="mt-4">
+            <a href="/Catalog/Index?sortBy=popular" class="btn btn-outline-primary px-4 rounded-pill">View all &rarr;</a>
+        </div>
+    </div>
+
+    <!-- 3. NEW COURSES -->
+    <div class="mb-5 pb-5 border-bottom">
+        <div class="mb-4">
+            <h3 class="fw-bold text-dark">New Courses</h3>
+            <p class="text-muted">Explore our newly released courses to upgrade your skills and catch up with learning trends.</p>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var course in Model.NewestCourses)
+            {
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <img src="@(course.Thumbnail ?? "https://via.placeholder.com/300x200?text=No+Image")" class="card-img-top object-fit-cover" style="height: 180px;" alt="Course">
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="fw-bold">
+                                <a href="/CourseDetail/Index/@course.Id" class="text-decoration-none text-dark">@course.Title</a>
+                            </h6>
+                            <p class="small text-muted mb-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                @course.Description
+                            </p>
+                            <div class="mt-auto">
+                                <span class="badge bg-primary rounded-pill px-3 py-2 mb-2">New</span>
+                                <small class="d-block text-muted" style="font-size: 0.75rem;">Updated: @(course.PublishAt?.ToString("dd/MM/yyyy") ?? "N/A")</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="mt-4">
+            <a href="/Catalog/Index?sortBy=newest" class="btn btn-outline-primary px-4 rounded-pill">View all &rarr;</a>
+        </div>
+    </div>
+
+    <!-- 4. BENEFITS SECTION -->
+    <div class="mb-5 pt-3">
+        <h3 class="fw-bold text-center mb-5">What you will gain from our courses</h3>
+        <div class="row g-4 gx-5">
+            <div class="col-md-6 d-flex align-items-start gap-3">
+                <i class="far fa-smile fs-3 text-secondary"></i>
+                <div>
+                    <h6 class="fw-bold">Learn at your own pace</h6>
+                    <p class="text-muted small">Comfortably arrange your learning schedule. Each lesson is designed to keep you inspired without feeling pressured.</p>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex align-items-start gap-3">
+                <i class="fas fa-graduation-cap fs-3 text-secondary"></i>
+                <div>
+                    <h6 class="fw-bold">Experienced instructors</h6>
+                    <p class="text-muted small">Courses are curated and taught by dedicated, highly experienced teachers who ensure every lesson is easily understandable.</p>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex align-items-start gap-3">
+                <i class="fas fa-users fs-3 text-secondary"></i>
+                <div>
+                    <h6 class="fw-bold">Supportive community</h6>
+                    <p class="text-muted small">Learn and share the journey of mastering English together. Ask questions, exchange experiences, and get support from peers.</p>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex align-items-start gap-3">
+                <i class="far fa-lightbulb fs-3 text-secondary"></i>
+                <div>
+                    <h6 class="fw-bold">Comprehensive skill development</h6>
+                    <p class="text-muted small">The curriculum is designed to balance listening, speaking, reading, and writing to help you build a solid English foundation.</p>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex align-items-start gap-3">
+                <i class="fas fa-laptop fs-3 text-secondary"></i>
+                <div>
+                    <h6 class="fw-bold">Practical lessons</h6>
+                    <p class="text-muted small">Bite-sized exercises and engaging activities will help you apply your knowledge immediately into real-life contexts.</p>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex align-items-start gap-3">
+                <i class="fas fa-magic fs-3 text-secondary"></i>
+                <div>
+                    <h6 class="fw-bold">Discover your potential</h6>
+                    <p class="text-muted small">Learn and experience in a friendly environment to recognize your strengths and maximize your abilities.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

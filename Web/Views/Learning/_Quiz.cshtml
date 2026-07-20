@@ -1,0 +1,79 @@
+@using Application.Dtos.Learning
+@model QuizIntroDto
+
+<div class="quiz-intro-container p-4 bg-white rounded shadow-sm border">
+    <h3 class="mb-4 text-primary fw-bold border-bottom pb-2">@Model.Title</h3>
+
+    <div class="mb-4 p-3 bg-light rounded">
+        <ul class="list-unstyled mb-0">
+            <li class="mb-2"><i class="bi bi-bullseye text-warning me-2"></i> <strong>Passing Score:</strong> @Model.PassingScorePct%</li>
+            <li class="mb-2"><i class="bi bi-clock text-info me-2"></i> <strong>Time Limit:</strong> @(Model.TimeLimitMin.HasValue ? $"{Model.TimeLimitMin.Value} minutes" : "Unlimited")</li>
+            <li><i class="bi bi-hourglass-split text-secondary me-2"></i> <strong>Retake Cooldown:</strong> @Model.AttemptCooldownMin minutes</li>
+        </ul>
+    </div>
+
+    @if (Model.IsCompleted)
+    {
+        <div class="alert alert-success d-flex align-items-center mb-4">
+            <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+            <div>
+                <strong>Congratulations!</strong> You have passed this quiz.<br />
+                Your best score is: <strong>@Model.BestScorePct%</strong>
+            </div>
+        </div>
+    }
+    else if (Model.BestScorePct.HasValue)
+    {
+        <div class="alert alert-warning d-flex align-items-center mb-4">
+            <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+            <div>
+                You haven't passed yet. Your best score so far is <strong>@Model.BestScorePct%</strong>. Keep trying!
+            </div>
+        </div>
+    }
+
+    <div class="text-center mt-5">
+        @if (Model.IsCooldownActive)
+        {
+            <div class="alert alert-danger d-inline-block">
+                ⏳ Please wait <strong>@Model.RemainingCooldownMin minutes</strong> before retaking this quiz.
+            </div>
+            <br />
+            <button class="btn btn-secondary btn-lg px-5 mt-2" disabled>
+                <i class="bi bi-lock-fill me-2"></i> Locked
+            </button>
+        }
+        else
+        {
+            <form action="@Url.Action("StartQuizAttempt", "Learning")" method="post">
+                <input type="hidden" name="itemId" value="@Model.ItemId" />
+                <input type="hidden" name="courseId" id="quizIntroCourseId" value="" />
+
+                @if (Model.IsCompleted || Model.BestScorePct.HasValue)
+                {
+                    <button type="submit" class="btn btn-warning btn-lg px-5 shadow-sm">
+                        <i class="bi bi-arrow-repeat me-2"></i> Retake Quiz
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-primary btn-lg px-5 shadow-sm">
+                        <i class="bi bi-play-circle-fill me-2"></i> Start Quiz
+                    </button>
+                }
+            </form>
+        }
+    </div>
+</div>
+
+<script>
+    (function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        let cId = urlParams.get('courseId');
+        if(!cId) {
+            const parts = window.location.pathname.split('/');
+            cId = parts[parts.length - 1];
+        }
+        document.getElementById('quizIntroCourseId').value = cId;
+    })();
+</script>

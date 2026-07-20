@@ -1,0 +1,182 @@
+@{
+    Layout = "~/Views/Parent/_Layout.cshtml";
+    ViewData["Title"] = Localizer["parent_security_title"];
+}
+
+<div>
+    <!-- Header -->
+    <div class="mb-8 border-b border-slate-100 pb-6">
+        <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-blue-600"></i>
+            @Localizer["parent_security_title"]
+        </h1>
+        <p class="text-sm text-slate-500 mt-1">@Localizer["parent_security_desc"]</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Change Password Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm flex flex-col justify-between">
+            <div>
+                <h2 class="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-key text-slate-400"></i>
+                    @Localizer["parent_security_change_pwd"]
+                </h2>
+
+                <form asp-controller="ParentProfile" asp-action="ChangePassword" method="post" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">@Localizer["parent_security_curr_pwd"]</label>
+                        <input name="CurrentPassword" type="password" class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors" placeholder="@Localizer["parent_security_curr_pwd"]" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">@Localizer["parent_security_new_pwd"]</label>
+                        <input name="NewPassword" type="password" class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors" placeholder="@Localizer["parent_security_new_pwd"]" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">@Localizer["parent_security_confirm_pwd"]</label>
+                        <input name="ConfirmPassword" type="password" class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors" placeholder="@Localizer["parent_security_confirm_pwd"]" required>
+                    </div>
+
+                    <div class="pt-4 flex justify-end">
+                        <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition shadow-sm hover:shadow">
+                            @Localizer["parent_security_btn_update_pwd"]
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Passkey Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm flex flex-col justify-between">
+            <div>
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-fingerprint text-slate-400"></i>
+                    @Localizer["parent_security_passkey_title"]
+                </h2>
+
+                <p class="text-sm text-slate-500 leading-relaxed mb-4">
+                    @Localizer["parent_security_passkey_desc1"]
+                    <strong class="text-slate-700 font-semibold">@Localizer["parent_security_passkey_biometrics"]</strong>.
+                </p>
+
+                <p class="text-sm text-slate-500 leading-relaxed mb-6">
+                    @Localizer["parent_security_passkey_desc2"]
+                </p>
+
+                @if (ViewBag.HasPasskey == true)
+                {
+                    <div class="p-4 bg-emerald-50 border border-emerald-100 text-emerald-800 text-sm rounded-xl flex gap-3 items-center mb-6">
+                        <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+                        <span class="font-medium">@Localizer["parent_security_passkey_protected"]</span>
+                    </div>
+                    
+                    <button id="btn-register-passkey" type="button" class="w-full flex items-center justify-center gap-2 px-5 py-2.5 border border-emerald-500 text-emerald-600 hover:bg-emerald-50 font-semibold rounded-xl text-sm transition-all">
+                        <i class="fa-solid fa-circle-plus"></i> @Localizer["parent_security_btn_add_passkey"]
+                    </button>
+                }
+                else
+                {
+                    <button id="btn-register-passkey" type="button" class="w-full flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm transition-all shadow-sm">
+                        <i class="fa-solid fa-fingerprint"></i> @Localizer["parent_security_btn_register_passkey"]
+                    </button>
+                }
+
+                <div id="passkey-message" class="mt-4 text-sm font-medium"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function coerceToArrayBuffer(base64String) {
+            let base64 = base64String.replace(/-/g, "+").replace(/_/g, "/");
+            let padding = base64.length % 4;
+            if (padding) {
+                if (padding === 1) base64 += "===";
+                else if (padding === 2) base64 += "==";
+                else if (padding === 3) base64 += "=";
+            }
+            const str = window.atob(base64);
+            const bytes = new Uint8Array(str.length);
+            for (let i = 0; i < str.length; i++) {
+                bytes[i] = str.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function coerceToBase64Url(buffer) {
+            const bytes = new Uint8Array(buffer);
+            let str = "";
+            for (const byte of bytes) {
+                str += String.fromCharCode(byte);
+            }
+            const base64 = window.btoa(str);
+            return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+        }
+
+        document.getElementById('btn-register-passkey').addEventListener('click', async () => {
+            const messageDiv = document.getElementById('passkey-message');
+            messageDiv.innerHTML = '<span class="text-blue-600 flex items-center gap-1.5"><i class="fa-solid fa-circle-notch animate-spin"></i> @Localizer["parent_security_msg_processing"]</span>';
+
+            const userIdentifier = '@User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value' || '@User.Identity?.Name';
+
+            try {
+                const optionsResponse = await fetch('/Identity/MakeCredentialOptions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identifier: userIdentifier })
+                });
+
+                if (!optionsResponse.ok) {
+                    const err = await optionsResponse.json();
+                    throw new Error(err.error || "Could not get options from server.");
+                }
+
+                const options = await optionsResponse.json();
+
+                options.challenge = coerceToArrayBuffer(options.challenge);
+                options.user.id = coerceToArrayBuffer(options.user.id);
+                if (options.excludeCredentials) {
+                    for (let cred of options.excludeCredentials) {
+                        cred.id = coerceToArrayBuffer(cred.id);
+                    }
+                }
+
+                const newCredential = await navigator.credentials.create({ publicKey: options });
+
+                const attestationResponse = {
+                    id: newCredential.id,
+                    rawId: coerceToBase64Url(newCredential.rawId),
+                    type: newCredential.type,
+                    extensions: newCredential.getClientExtensionResults(),
+                    response: {
+                        attestationObject: coerceToBase64Url(newCredential.response.attestationObject),
+                        clientDataJSON: coerceToBase64Url(newCredential.response.clientDataJSON)
+                    }
+                };
+
+                const registerResponse = await fetch('/Identity/MakeCredential', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        identifier: userIdentifier,
+                        attesion: attestationResponse
+                    })
+                });
+
+                if (!registerResponse.ok) {
+                    const err = await registerResponse.json();
+                    throw new Error(err.error || "Failed to save passkey on server.");
+                }
+
+                messageDiv.innerHTML = '<span class="text-emerald-600 font-semibold flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> @Localizer["parent_security_msg_success"]</span>';
+
+            } catch (error) {
+                console.error(error);
+                messageDiv.innerHTML = `<span class="text-rose-600 font-semibold flex items-center gap-1.5"><i class="fa-solid fa-circle-xmark"></i> Error: ${error.message}</span>`;
+            }
+        });
+    </script>
+}

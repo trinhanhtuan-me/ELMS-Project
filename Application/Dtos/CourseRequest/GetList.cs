@@ -1,4 +1,4 @@
-﻿using Domain.Enums;
+using Domain.Enums;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -32,5 +32,5 @@ namespace Application.Dtos.CourseRequest
         }
     }
 
-    public sealed record GetListCourseRequestVm(Guid Id, string Title, CourseRequestStatus Status, string? Note);
+    public sealed record GetListCourseRequestVm(Guid Id, Guid CourseId, string Title, CourseRequestStatus Status, string? Note);
 }

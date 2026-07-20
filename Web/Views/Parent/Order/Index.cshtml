@@ -1,0 +1,179 @@
+@using Domain.Enums;
+@model Application.Common.PaginatedList<Application.Dtos.Billing.OrderResponseDto>
+
+@{
+    Layout = "~/Views/Parent/_Layout.cshtml";
+    ViewData["Title"] = Localizer["order_history_title"] ?? "Lịch Sử Đơn Hàng";
+
+    int currentPage = int.TryParse(Context.Request.Query["pageNumber"].ToString(), out var p) && p > 0 ? p : 1;
+    int pageSize = 6;
+    int totalItems = Model.Total;
+    int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+    if (totalPages < 1) totalPages = 1;
+}
+
+<div>
+    <!-- Header -->
+    <div class="mb-8 border-b border-slate-100 pb-6">
+        <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+            @(Localizer["order_history_title"])
+        </h1>
+        <p class="text-sm text-slate-500 mt-1">@(Localizer["order_history_description"])</p>
+    </div>
+
+    <!-- Error/Success Toasts -->
+    @if (TempData["ErrorToast"] != null)
+    {
+        <div class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-xl flex gap-3 items-start animate-fade-in">
+            <i class="fa-solid fa-triangle-exclamation text-rose-500 shrink-0 mt-0.5 text-base"></i>
+            <div>@TempData["ErrorToast"]</div>
+        </div>
+    }
+
+    <!-- Content Table / Cards -->
+    @if (!Model.Data.Any())
+    {
+        <div class="text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+            <div class="h-12 w-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-receipt text-slate-400 text-xl"></i>
+            </div>
+            <h3 class="text-slate-700 font-medium text-base">@Localizer["order_no_data"]</h3>
+            <p class="text-slate-400 text-xs mt-1">@Localizer["order_no_data_desc"]</p>
+        </div>
+    }
+    else
+    {
+        <div class="bg-white rounded-2xl border border-slate-150 shadow-sm overflow-hidden hidden md:block">
+            <table class="min-w-full divide-y divide-slate-100">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-6 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">@Localizer["order_code_label"]</th>
+                        <th scope="col" class="px-6 py-6 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">@Localizer["order_date_label"]</th>
+                        <th scope="col" class="px-6 py-6 class text-right text-xs font-bold text-slate-500 uppercase tracking-wider">@Localizer["order_course_count_label"]</th>
+                        <th scope="col" class="px-6 py-6 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">@Localizer["order_total_label"]</th>
+                        <th scope="col" class="px-6 py-6 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">@Localizer["order_status_label"]</th>
+                        <th scope="col" class="px-6 py-6 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">@Localizer["order_actions_label"]</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 bg-white">
+                    @foreach (var order in Model.Data)
+                    {
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-mono font-medium text-slate-600">
+                                #@order.OrderId.ToString().Substring(0, 8).ToUpper()...
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                                @order.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 text-right font-medium">
+                                @order.CourseCount
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 font-bold text-right">
+                                @order.TotalAmountVnd.ToString("N0") VND
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                @if (order.Status == OrderStatus.Paid)
+                                {
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-lg">
+                                        <i class="fa-solid fa-circle-check text-xxs"></i>
+                                        @Localizer["order_status_paid"]
+                                    </span>
+                                }
+                                else if (order.Status == OrderStatus.Pending)
+                                {
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-600 text-xs font-bold rounded-lg">
+                                        <i class="fa-solid fa-hourglass-half text-xxs"></i>
+                                        @Localizer["order_status_pending"]
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-50 text-slate-550 text-xs font-bold rounded-lg">
+                                        <i class="fa-solid fa-circle-xmark text-xxs"></i>
+                                        @Localizer["order_status_cancelled"]
+                                    </span>
+                                }
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                <a href="@Url.Action("Detail", "Order", new { id = order.OrderId })" 
+                                   class="text-blue-500 hover:text-blue-700 font-bold flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-eye text-xs"></i>
+                                    @Localizer["order_detail_btn"]
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mobile view cards -->
+        <div class="grid grid-cols-1 gap-4 md:hidden">
+            @foreach (var order in Model.Data)
+            {
+                <div class="bg-white rounded-2xl border border-slate-150 p-4 shadow-sm space-y-3 relative overflow-hidden">
+                    <div class="flex justify-between items-center pb-2 border-b border-slate-50">
+                        <span class="text-xs font-mono font-bold text-slate-500">#@order.OrderId.ToString().Substring(0, 8).ToUpper()...</span>
+                        @if (order.Status == OrderStatus.Paid)
+                        {
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-600 text-xxs font-bold rounded-lg">
+                                @Localizer["order_status_paid"]
+                            </span>
+                        }
+                        else if (order.Status == OrderStatus.Pending)
+                        {
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-600 text-xxs font-bold rounded-lg">
+                                @Localizer["order_status_pending"]
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-50 text-slate-550 text-xxs font-bold rounded-lg">
+                                @Localizer["order_status_cancelled"]
+                            </span>
+                        }
+                    </div>
+                    
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400">@Localizer["order_time_label"]</span>
+                        <span class="text-slate-700 font-medium">@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                    </div>
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400">@Localizer["order_total_label"] (@order.CourseCount)</span>
+                        <span class="text-slate-800 font-bold">@order.TotalAmountVnd.ToString("N0") VND</span>
+                    </div>
+
+                    <a href="@Url.Action("Detail", "Order", new { id = order.OrderId })" 
+                       class="w-full py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-indigo-600 font-semibold rounded-xl text-xs flex items-center justify-center gap-1.5 transition">
+                        <i class="fa-solid fa-eye"></i>
+                        @Localizer["order_view_detail_btn"]
+                    </a>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages > 1)
+        {
+            <div class="flex justify-center items-center gap-2 mt-10">
+                <a href="@(currentPage > 1 ? Url.Action("Index", new { pageNumber = currentPage - 1 }) : "#")"
+                   class="h-9 w-9 border border-slate-200 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-50 transition @(currentPage == 1 ? "opacity-40 cursor-not-allowed" : "")">
+                    <i class="fa-solid fa-angle-left"></i>
+                </a>
+                
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <a href="@Url.Action("Index", new { pageNumber = i })"
+                       class="h-9 w-9 rounded-lg flex items-center justify-center text-sm font-semibold transition @(currentPage == i ? "bg-indigo-600 text-white" : "border border-slate-200 text-slate-600 hover:bg-slate-50")">
+                        @i
+                    </a>
+                }
+
+                <a href="@(currentPage < totalPages ? Url.Action("Index", new { pageNumber = currentPage + 1 }) : "#")"
+                   class="h-9 w-9 border border-slate-200 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-50 transition @(currentPage == totalPages ? "opacity-40 cursor-not-allowed" : "")">
+                    <i class="fa-solid fa-angle-right"></i>
+                </a>
+            </div>
+        }
+    }
+</div>

@@ -29,22 +29,26 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col print:bg-white print:min-h-0">
     <!-- Header -->
-    <partial name="~/Views/Parent/_Header.cshtml" />
+    <div class="print:hidden">
+        <partial name="~/Views/Parent/_Header.cshtml" />
+    </div>
 
-    <div class="flex-grow max-w-7xl w-full mx-auto flex flex-col md:flex-row px-4 sm:px-6 lg:px-8 py-8 gap-8">
+    <div class="flex-grow max-w-7xl w-full mx-auto flex flex-col md:flex-row px-4 sm:px-6 lg:px-8 py-8 gap-8 print:max-w-full print:p-0 print:m-0 print:gap-0">
         <!-- Sidebar Navigation -->
-        <partial name="~/Views/Parent/_Sidebar.cshtml" />
+        <div class="print:hidden shrink-0">
+            <partial name="~/Views/Parent/_Sidebar.cshtml" />
+        </div>
 
         <!-- Main Content -->
-        <main class="flex-grow bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
+        <main class="flex-grow bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm print:border-none print:shadow-none print:p-0 print:m-0">
             @RenderBody()
         </main>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto print:hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-slate-500">
             @Localizer["copyright"]
         </div>

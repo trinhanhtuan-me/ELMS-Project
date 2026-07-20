@@ -44,7 +44,8 @@ namespace Web.Controllers
             };
 
             // Gán dữ liệu trạng thái
-            if (parentLink == null)
+            if (parentLink == null || parentLink.Status == ParentLinkRequestStatus.Canceled
+                || parentLink.Status == ParentLinkRequestStatus.Unlink || parentLink.Status == ParentLinkRequestStatus.Rejected)
             {
                 viewModel.ParentLinkStatus = "NotLinked";
             }

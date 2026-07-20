@@ -122,5 +122,48 @@ namespace Infrastructure.Persistence.Repositories
                         .ThenInclude(mi => mi.Discussion)
                 .FirstOrDefaultAsync(c => c.Id == courseId && !c.IsDeleted && c.Status == CourseStatus.Publish);
         }
+
+        public async Task<int> CountSearchCoursesAsync(string? keyword, List<int>? categoryIds, List<string>? languages, List<string>? levels)
+        {
+            var query = _context.Courses.Where(c => !c.IsDeleted && c.Status == CourseStatus.Publish);
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+                query = query.Where(c => c.Title.Contains(keyword) || c.Description.Contains(keyword));
+
+            if (categoryIds != null && categoryIds.Any()) query = query.Where(c => categoryIds.Contains(c.CategoryId));
+            if (languages != null && languages.Any()) query = query.Where(c => languages.Contains(c.Language));
+            if (levels != null && levels.Any()) query = query.Where(c => levels.Contains(c.Level));
+
+            return await query.CountAsync();
+        }
+
+        public async Task<List<Course>> SearchCoursesAsync(string? keyword, List<int>? categoryIds, List<string>? languages, List<string>? levels, string sortBy, int page, int pageSize)
+        {
+            var query = _context.Courses
+                        .Include(c => c.Enrollments)
+                        .Where(c => !c.IsDeleted && c.Status == CourseStatus.Publish);
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+                query = query.Where(c => c.Title.Contains(keyword) || c.Description.Contains(keyword));
+
+            if (categoryIds != null && categoryIds.Any()) query = query.Where(c => categoryIds.Contains(c.CategoryId));
+            if (languages != null && languages.Any()) query = query.Where(c => languages.Contains(c.Language));
+            if (levels != null && levels.Any()) query = query.Where(c => levels.Contains(c.Level));
+
+            if (sortBy == "newest")
+                query = query.OrderByDescending(c => c.CreatedAt);
+            else
+                query = query.OrderByDescending(c => c.Enrollments.Count);
+
+            return await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+        }
+
+        public async Task<(List<string> Languages, List<string> Levels)> GetFilterOptionsAsync()
+        {
+            var query = _context.Courses.Where(c => !c.IsDeleted && c.Status == CourseStatus.Publish);
+            var languages = await query.Select(c => c.Language).Distinct().ToListAsync();
+            var levels = await query.Select(c => c.Level).Distinct().ToListAsync();
+            return (languages, levels);
+        }
     }
 }

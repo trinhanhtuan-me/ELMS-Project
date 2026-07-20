@@ -14,12 +14,21 @@ public class ParentLinkRequestRepository(ElmsDbContext context) : IParentLinkReq
 {
     public async Task<ParentLinkRequest?> GetByIdAsync(Guid id)
     {
-        return await context.ParentLinkRequests.FindAsync(id);
+        return await context.ParentLinkRequests
+            .Include(r => r.Student)
+                .ThenInclude(s => s.IdNavigation)
+            .Include(r => r.Parent)
+                .ThenInclude(p => p.IdNavigation)
+            .FirstOrDefaultAsync(r => r.Id == id);
     }
 
     public async Task<ParentLinkRequest?> GetActiveLinkAsync(Guid studentId, Guid parentId)
     {
         return await context.ParentLinkRequests
+            .Include(r => r.Student)
+                .ThenInclude(s => s.IdNavigation)
+            .Include(r => r.Parent)
+                .ThenInclude(p => p.IdNavigation)
             .FirstOrDefaultAsync(r => r.StudentId == studentId && r.ParentId == parentId && r.Status == ParentLinkRequestStatus.Approved);
     }
 
@@ -40,5 +49,24 @@ public class ParentLinkRequestRepository(ElmsDbContext context) : IParentLinkReq
         return await context.ParentLinkRequests
             .Where(r => r.ParentId == parentId && r.Status == status)
             .CountAsync();
+    }
+
+    public async Task CreateAsync(ParentLinkRequest request)
+    {
+        await context.ParentLinkRequests.AddAsync(request);
+    }
+
+    public async Task<ParentLinkRequest?> FindByStudentAndParent(Guid studentId, Guid parentId)
+    {
+        return await context.ParentLinkRequests.FirstOrDefaultAsync(l => l.StudentId == studentId && l.ParentId == parentId);
+    }
+
+    public async Task<ParentLinkRequest?> FindByStudent(Guid studentId)
+    {
+        return await context.ParentLinkRequests
+         .Include(req => req.Parent)
+             .ThenInclude(p => p.IdNavigation)
+         .OrderByDescending(req => req.CreatedAt)
+         .FirstOrDefaultAsync(req => req.StudentId == studentId);
     }
 }

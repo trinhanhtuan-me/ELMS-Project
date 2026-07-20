@@ -68,12 +68,12 @@ namespace Application.UseCases
             if (request.IsStudent!.Value)
             {
                 roleName = "Student";
-                newUser.StudentProfile = new StudentProfile();
+                newUser.StudentProfile = new StudentProfile { Id = newUser.Id };
             }
             else
             {
                 roleName = "Parent";
-                newUser.ParentProfile = new ParentProfile();
+                newUser.ParentProfile = new ParentProfile { Id = newUser.Id };
             }
             var role = await _role.FindRoleByName(roleName);
             if (role == null) throw new BusinessRuleException("Account role is invalid!");

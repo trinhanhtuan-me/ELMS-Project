@@ -1,6 +1,7 @@
 using Application.Common.Cache;
 using Fido2NetLib;
 using Infrastructure.Data;
+using Infrastructure.Persistence.Repositories;
 using Infrastructure.Persistence.Repositories.Common;
 using Infrastructure.Shared.Cache;
 using Infrastructure.Shared.Mails;
@@ -23,6 +24,10 @@ namespace Infrastructure
             services.AddCacheService(configuration);
             services.AddMailService(configuration);
             services.AddScoped<IFileStorageService, CloudinaryStorageService>();
+            services.AddScoped<IManagerFlashcardRepository, ManagerFlashcardRepository>();
+            services.AddScoped<IModuleItemRepository, ModuleItemRepository>();
+            services.AddScoped<ILessonQuestionRepository, LessonQuestionRepository>();
+            services.AddScoped<Application.Interfaces.IVNPayService, Infrastructure.Shared.Payment.VNPayService>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddFido2Security(configuration);
 

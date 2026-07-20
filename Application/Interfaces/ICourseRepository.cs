@@ -12,5 +12,10 @@ namespace Application.Interfaces
         Task<Course?> GetByIdAsync(Guid id);
         Task<Course?> GetWithModulesByIdAsync(Guid id, Guid instructorId);
         void Update(Course course);
+        Task<Course?> GetSyllabusForStudentAsync(Guid courseId, Guid studentId);
+
+        Task<List<Course>> GetPopularCoursesAsync(int count);
+        Task<List<Course>> GetNewestCoursesAsync(int count);
+        Task<Course?> GetPublicCourseDetailsAsync(Guid courseId);
     }
 }

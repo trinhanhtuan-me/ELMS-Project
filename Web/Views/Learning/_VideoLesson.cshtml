@@ -1,0 +1,112 @@
+﻿@using Application.Dtos.Learning
+@model VideoLessonDto
+
+<div class="video-lesson-container p-2">
+    <h3 class="mb-3 text-primary">@Model.Title</h3>
+
+    <div class="ratio ratio-16x9 shadow-sm rounded border">
+        <video id="lessonVideo" controls class="w-100 bg-dark">
+            <source src="@Model.VideoUrl" type="video/mp4">
+            Your browser does not support HTML5 Video.
+        </video>
+    </div>
+
+    <div class="mt-5">
+        <h5 class="text-dark fw-bold mb-3">Quick Check</h5>
+
+        @if (Model.IsCompleted)
+        {
+            <div class="alert alert-success fw-bold shadow-sm">
+                <i class="bi bi-check-circle-fill me-2"></i> You have completed this lesson! Below are the correct answers:
+            </div>
+
+            <div id="quizContainer" class="p-4 bg-white rounded shadow-sm border text-start">
+                @if (Model.Questions != null && Model.Questions.Any())
+                {
+                    @foreach (var question in Model.Questions)
+                    {
+                        <div class="card mb-4 border-success shadow-sm">
+                            <div class="card-body">
+                                <p class="fw-bold fs-5 text-dark mb-3">@question.Content</p>
+
+                                @foreach (var opt in question.Options)
+                                {
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" disabled
+                                        @(opt.IsCorrect ? "checked" : "")>
+
+                                        <label class="form-check-label @(opt.IsCorrect ? "text-success fw-bold" : "text-muted")">
+                                            @opt.Content
+                                            @if (opt.IsCorrect)
+                                            {
+                                                <i class="bi bi-check-lg ms-1"></i>
+                                            }
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        }
+        else
+        {
+            <div id="lockedQuizPlaceholder" class="p-5 bg-light rounded border text-center">
+                <i class="bi bi-lock text-secondary" style="font-size: 2rem;"></i>
+                <h6 class="mt-3 fw-bold text-dark">You still have a lesson to complete</h6>
+                <p class="text-muted small mb-0">This section will unlock when you finish watching the video above</p>
+            </div>
+
+            <div id="quizContainer" class="d-none p-4 bg-white rounded shadow-sm border text-start">
+                <form method="post" action="/Learning/SubmitLessonQuestion" id="quizForm">
+                    <input type="hidden" name="CourseId" id="courseIdInput" value="" />
+                    <input type="hidden" name="ModuleItemId" value="@Model.ItemId" />
+
+                    @if (Model.Questions != null && Model.Questions.Any())
+                    {
+                        @foreach (var question in Model.Questions)
+                        {
+                            <div class="card mb-4 border-info shadow-sm">
+                                <div class="card-body">
+                                    <p class="fw-bold fs-5 text-dark mb-3">@question.Content</p>
+
+                                    @foreach (var opt in question.Options)
+                                    {
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="radio"
+                                                   name="Answers[@question.QuestionId]" value="@opt.OptionId" required id="opt_@opt.OptionId">
+                                            <label class="form-check-label" for="opt_@opt.OptionId">
+                                                @opt.Content
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        <button type="submit" class="btn btn-primary px-4 py-2 rounded-pill fw-bold">Submit Answers</button>
+                    }
+                </form>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('courseId');
+        if (courseId && $('#courseIdInput').length > 0) {
+            $('#courseIdInput').val(courseId);
+        }
+    });
+
+    var lockedBox = document.getElementById('lockedQuizPlaceholder');
+    if (lockedBox) {
+        document.getElementById('lessonVideo').addEventListener('ended', function() {
+            lockedBox.classList.add('d-none');
+            document.getElementById('quizContainer').classList.remove('d-none');
+            document.getElementById('quizContainer').scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+</script>

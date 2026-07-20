@@ -1,0 +1,192 @@
+@{
+    Layout = "_Layout";
+    var modules = ViewBag.Modules as List<Domain.Entities.Module> ?? new List<Domain.Entities.Module>();
+    var courseId = ViewBag.CourseId?.ToString();
+    var activeModuleId = ViewBag.ModuleId?.ToString();
+}
+
+@section Styles {
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* To prevent tailwind from conflicting too much with bootstrap, we use it carefully */
+        .module-layout-container {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+}
+
+<div class="module-layout-container max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    
+    <div class="mb-6 flex items-center justify-between">
+        <div>
+            <a href="/Course/Details/@courseId" class="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-2 mb-2">
+                <i class="fas fa-arrow-left"></i> Quay lại chi tiết khóa học
+            </a>
+            <h1 class="text-2xl font-bold text-gray-900">Quản lý nội dung bài học</h1>
+        </div>
+    </div>
+
+    <div class="flex flex-col md:flex-row gap-8">
+        
+        <!-- Sidebar -->
+        <div class="w-full md:w-1/4">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sticky top-24">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-gray-100">
+                    <i class="fas fa-layer-group text-blue-500 mr-2"></i> Danh sách Module
+                </h3>
+                
+                <div class="space-y-3">
+                    @if (!modules.Any())
+                    {
+                        <p class="text-sm text-gray-500 italic">Chưa có module nào.</p>
+                    }
+                    
+                    @foreach (var module in modules)
+                    {
+                        var isActive = module.Id.ToString() == activeModuleId;
+                        
+                        <div class="border rounded-lg transition-colors @(isActive ? "border-blue-300 ring-1 ring-blue-300" : "border-gray-200")">
+                            
+                            <!-- Module Header -->
+                            <div class="bg-gray-50 px-3 py-2 flex justify-between items-center cursor-pointer hover:bg-gray-100 rounded-t-lg" onclick="toggleModule('@module.Id')">
+                                <div class="font-medium text-sm text-gray-800 truncate pr-2">
+                                    <i class="fas fa-chevron-down text-xs text-gray-400 mr-1 transition-transform" id="icon-@module.Id"></i>
+                                    Module @module.OrderIndex: @module.Title
+                                </div>
+                                
+                                <!-- Add Button Dropdown in Sidebar -->
+                                <div class="relative dropdown-sidebar" onclick="event.stopPropagation();">
+                                    <button onclick="toggleDropdown('@module.Id')" class="text-gray-400 hover:text-blue-600 focus:outline-none p-1">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <div id="dropdown-@module.Id" class="hidden absolute left-full top-0 ml-2 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-100 py-1">
+                                        <a href="/Lesson/CreateVideoLesson?moduleId=@module.Id&courseId=@courseId" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                                            <i class="fas fa-video mr-2"></i> Bài học Video
+                                        </a>
+                                        <a href="/Lesson/CreateReadingLesson?moduleId=@module.Id&courseId=@courseId" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                                            <i class="fas fa-file-alt mr-2"></i> Bài học Reading
+                                        </a>
+                                        <div class="border-t border-gray-100 my-1"></div>
+                                        <a href="/Assignment/CreateAssignment?moduleId=@module.Id&courseId=@courseId" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                                            <i class="fas fa-tasks mr-2"></i> Bài tập (Assignment)
+                                        </a>
+                                        <a href="/Discussion/CreateDiscussion?moduleId=@module.Id&courseId=@courseId" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                                            <i class="fas fa-comments mr-2"></i> Thảo luận (Discussion)
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Module Items -->
+                            <div id="items-@module.Id" class="bg-white @(isActive ? "" : "hidden")">
+                                @if (module.ModuleItems != null && module.ModuleItems.Any())
+                                {
+                                    <ul class="divide-y divide-gray-100">
+                                        @foreach (var item in module.ModuleItems.OrderBy(i => i.OrderIndex))
+                                        {
+                                            var isVideo = item.Lesson?.ContentType == Domain.Enums.LessonContentType.Video;
+                                            var updateUrl = "";
+                                            var title = "";
+                                            
+                                            if (item.ItemType == Domain.Enums.ModuleItemType.Lesson) {
+                                                updateUrl = isVideo ? $"/Lesson/UpdateVideoLesson?lessonId={item.Id}" : $"/Lesson/UpdateReadingLesson?lessonId={item.Id}";
+                                                title = item.Lesson?.Title ?? "Bài học";
+                                            }
+                                            else if (item.ItemType == Domain.Enums.ModuleItemType.Assignment) {
+                                                updateUrl = $"/Assignment/UpdateAssignment?lessonId={item.Id}";
+                                                title = item.Assignment?.Title ?? "Bài tập";
+                                            }
+                                            else if (item.ItemType == Domain.Enums.ModuleItemType.Discussion) {
+                                                updateUrl = $"/Discussion/UpdateDiscussion?lessonId={item.Id}";
+                                                title = item.Discussion?.Title ?? "Thảo luận";
+                                            }
+                                                
+                                            <li>
+                                                <a href="@updateUrl" class="px-4 py-2 text-sm text-gray-600 flex items-center gap-2 hover:bg-gray-50 transition-colors cursor-pointer block w-full">
+                                                    @if (item.ItemType == Domain.Enums.ModuleItemType.Lesson)
+                                                    {
+                                                        if (isVideo)
+                                                        {
+                                                            <i class="fas fa-play-circle text-blue-500 w-4"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="fas fa-file-lines text-green-500 w-4"></i>
+                                                        }
+                                                    }
+                                                    else if (item.ItemType == Domain.Enums.ModuleItemType.Assignment)
+                                                    {
+                                                        <i class="fas fa-tasks text-orange-500 w-4"></i>
+                                                    }
+                                                    else if (item.ItemType == Domain.Enums.ModuleItemType.Discussion)
+                                                    {
+                                                        <i class="fas fa-comments text-purple-500 w-4"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="fas fa-circle text-gray-400 w-4"></i>
+                                                    }
+                                                    <span class="truncate">@title</span>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <div class="px-4 py-3 text-xs text-gray-400 italic text-center">
+                                        Chưa có bài học nào
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Form Area -->
+        <div class="w-full md:w-3/4">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                @RenderBody()
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleModule(id) {
+            const itemsDiv = document.getElementById('items-' + id);
+            const icon = document.getElementById('icon-' + id);
+            if (itemsDiv.classList.contains('hidden')) {
+                itemsDiv.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                itemsDiv.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        function toggleDropdown(id) {
+            // Close all others first
+            document.querySelectorAll('.dropdown-sidebar > div').forEach(el => {
+                if (el.id !== 'dropdown-' + id) el.classList.add('hidden');
+            });
+            const dropdown = document.getElementById('dropdown-' + id);
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.dropdown-sidebar')) {
+                document.querySelectorAll('.dropdown-sidebar > div').forEach(el => {
+                    el.classList.add('hidden');
+                });
+            }
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+}

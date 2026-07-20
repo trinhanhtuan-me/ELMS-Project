@@ -1,4 +1,4 @@
-﻿using Domain.Common;
+using Domain.Common;
 using System;
 using System.Collections.Generic;
 
@@ -6,7 +6,7 @@ namespace Domain.Entities;
 
 public class InstructorProfile : AuditableEntity<Guid>
 {
-    public InstructorProfile() { Id = Guid.NewGuid(); }
+    public InstructorProfile() { }
 
 
     public string? Bio { get; set; }

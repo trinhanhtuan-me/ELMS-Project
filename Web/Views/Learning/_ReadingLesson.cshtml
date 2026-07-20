@@ -1,0 +1,43 @@
+﻿@using Application.Dtos.Learning
+@model ReadingLessonDto
+
+<div class="reading-lesson-container p-4 bg-white rounded shadow-sm border">
+    <h3 class="mb-4 text-primary fw-bold border-bottom pb-2">@Model.Title</h3>
+    
+    <div class="reading-content fs-5 text-dark" style="line-height: 1.8;">
+        @Html.Raw(Model.TextContent)
+    </div>
+
+    <hr class="my-5" />
+
+    <div class="d-flex justify-content-center mt-4">
+        @if (Model.IsCompleted)
+        {
+            <div class="alert alert-success d-inline-block fw-bold px-5 py-3 shadow-sm rounded-pill">
+                <i class="bi bi-check-circle-fill me-2 fs-5"></i> You completed this reading!
+            </div>
+        }
+        else
+        {
+            <form method="post" action="/Learning/MarkReadingCompleted" id="readingForm">
+                <input type="hidden" name="CourseId" id="readingCourseIdInput" value="" />
+                
+                <input type="hidden" name="ModuleItemId" value="@Model.ItemId" />
+                
+                <button type="submit" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold shadow">
+                    <i class="bi bi-check2-square me-2"></i> Mark as completed
+                </button>
+            </form>
+        }
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('courseId');
+        if (courseId && $('#readingCourseIdInput').length > 0) {
+            $('#readingCourseIdInput').val(courseId);
+        }
+    });
+</script>

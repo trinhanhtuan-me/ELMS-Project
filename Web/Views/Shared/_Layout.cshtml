@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebMVC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         .transition-all {
@@ -23,6 +24,7 @@
             box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1) !important;
         }
     </style>
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="d-flex flex-column min-vh-100">
     @* <header>
@@ -52,7 +54,8 @@
             </div>
         </nav> *@
 
-    @* Header here *@
+    @if (ViewData["HideHeaderFooter"] as bool? != true)
+    {
     <header class="bg-white border-bottom sticky-top">
         <div class="container-fluid px-lg-5 px-3">
             <nav class="navbar navbar-expand-lg navbar-light py-2">
@@ -87,7 +90,7 @@
                     <!-- Right Actions -->
                     <div class="d-flex align-items-center ms-auto gap-4 mt-3 mt-lg-0">
                         <!-- Wishlist Icon -->
-                        <a href="#" class="text-dark text-decoration-none fs-5 hover-text-primary transition-all">
+                        <a href="/StudentFamily" class="text-dark text-decoration-none fs-5 hover-text-primary transition-all">
                             <i class="fa fa-heart-o"></i>
                         </a>
 
@@ -96,11 +99,19 @@
                             <!-- Avatar Dropdown for Logged In Users -->
                             <div class="dropdown">
                                 <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="" alt="Avatar" width="40" height="40" class="rounded-circle shadow-sm">
+                                    <img src="https://ui-avatars.com/api/?name=@(System.Uri.EscapeDataString(User.Identity.Name ?? "User"))&background=0d6efd&color=fff" alt="Avatar" width="40" height="40" class="rounded-circle shadow-sm">
                                 </a>
                                 <ul class="dropdown-menu text-small shadow border-0 mt-2 dropdown-menu-end">
-                                    <li><a class="dropdown-item py-2" href="#"><i class="fa fa-user-circle-o me-2 text-muted"></i>Profile</a></li>
-                                    <li><a class="dropdown-item py-2" href="/SecurityManagement/Index"><i class="fa fa-shield me-2 text-muted"></i>Security Management</a></li>
+                                    @if (User.IsInRole("Parent"))
+                                    {
+                                        <li><a class="dropdown-item py-2" href="/ParentProfile"><i class="fa fa-user-circle-o me-2 text-muted"></i>Profile</a></li>
+                                        <li><a class="dropdown-item py-2" href="/ParentProfile/Security"><i class="fa fa-shield me-2 text-muted"></i>Security Management</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a class="dropdown-item py-2" href="/StudentProfile"><i class="fa fa-user-circle-o me-2 text-muted"></i>Profile</a></li>
+                                        <li><a class="dropdown-item py-2" href="/SecurityManagement/Index"><i class="fa fa-shield me-2 text-muted"></i>Security Management</a></li>
+                                    }
                                     <li><a class="dropdown-item py-2" href="/Identity/SelectRole"><i class="fa fa-exchange me-2 text-muted"></i>Switch Workspace</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item py-2 text-danger fw-medium" href="/Identity/Logout"><i class="fa fa-sign-out me-2"></i>Log out</a></li>
@@ -120,6 +131,7 @@
             </nav>
         </div>
     </header>
+    }
 
 <div class="container flex-grow-1">
     <main role="main" class="pb-3">
@@ -127,6 +139,8 @@
     </main>
 </div>
 
+@if (ViewData["HideHeaderFooter"] as bool? != true)
+{
 <footer class="text-white pt-5 pb-3 mt-5" style="background-color: #1c1d1f;">
     <div class="container py-4">
         <div class="row mb-4">
@@ -164,6 +178,7 @@
         </div>
     </div>
 </footer>
+}
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>

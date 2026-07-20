@@ -1,0 +1,16 @@
+using Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Application.Interfaces
+{
+    public interface IParentRepository
+    {
+        Task<ParentProfile?> FindByParentEmail(string email);
+        Task<User?> GetParentWithProfileAsync(Guid userId);
+        Task UpdateParentProfileAsync(User user, ParentProfile profile);
+    }
+}

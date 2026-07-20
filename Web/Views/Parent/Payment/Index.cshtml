@@ -1,0 +1,165 @@
+@model List<Application.Dtos.Billing.CourseRequestResponseDto>
+
+@{
+    Layout = "~/Views/Parent/_Layout.cshtml";
+    ViewData["Title"] = Localizer["payment_checkout_title"] ?? "Thanh Toán Học Phí";
+}
+
+<div>
+    <!-- Header -->
+    <div class="mb-8 border-b border-slate-100 pb-6">
+        <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-credit-card text-emerald-600"></i>
+            @(Localizer["payment_checkout_title"])
+        </h1>
+        <p class="text-sm text-slate-500 mt-1">@(Localizer["payment_checkout_description"])</p>
+    </div>
+
+    <!-- Error/Success Toasts or Validation Summary -->
+    @if (TempData["ErrorToast"] != null)
+    {
+        <div class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-xl flex gap-3 items-start">
+            <i class="fa-solid fa-triangle-exclamation text-rose-500 shrink-0 mt-0.5 text-base"></i>
+            <div>
+                <span class="font-medium">Lỗi:</span> @TempData["ErrorToast"]
+            </div>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+            <div class="h-12 w-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-cart-shopping text-slate-400 text-xl"></i>
+            </div>
+            <h3 class="text-slate-700 font-medium text-base">@Localizer["payment_no_items"]</h3>
+            <p class="text-slate-400 text-xs mt-1">@Localizer["payment_no_items_desc"]</p>
+            <div class="mt-6">
+                <a href="@Url.Action("Index", "CourseApproval", new { status = "Pending" })" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition shadow-sm">
+                    <i class="fa-solid fa-arrow-right"></i>
+                    @Localizer["payment_goto_approval"]
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <form asp-action="Initiate" method="post" id="paymentForm" onsubmit="return validateForm()">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left: Unpaid requests list -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="bg-white rounded-2xl border border-slate-150 p-4 shadow-sm">
+                        <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-50">
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">@Localizer["payment_course_list"]</span>
+                            <button type="button" onclick="selectAllItems()" class="text-xs text-indigo-600 hover:text-indigo-700 font-semibold">@Localizer["payment_select_all"]</button>
+                        </div>
+                        
+                        <div class="divide-y divide-slate-100">
+                            @foreach (var item in Model)
+                            {
+                                <div class="py-4 flex gap-4 items-start select-none">
+                                    <div class="pt-0.5">
+                                        <input type="checkbox" name="RequestIds" value="@item.RequestId" data-price="@item.PriceVnd" onchange="updateTotal()"
+                                               class="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex justify-between items-start gap-2">
+                                            <h4 class="text-sm font-bold text-slate-800 truncate">@item.CourseName</h4>
+                                            <span class="text-sm font-bold text-slate-700 shrink-0">@item.PriceVnd.ToString("N0") VND</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 mt-1.5 text-xs text-slate-500">
+                                            <span class="font-medium text-slate-700">@Localizer["payment_child_label"]: @item.StudentName</span>
+                                            <span class="text-slate-300">•</span>
+                                            <span>@Localizer["payment_date_approved"]: @item.DecidedAt?.ToString("dd/MM/yyyy")</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Payment Summary Card -->
+                <div class="space-y-6">
+                    <div class="bg-white rounded-2xl border border-slate-150 p-5 shadow-sm sticky top-6">
+                        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 pb-2 border-b border-slate-50">@Localizer["payment_summary_title"]</h3>
+                        
+                        <div class="space-y-3.5 mb-6">
+                            <div class="flex justify-between text-xs text-slate-500">
+                                <span>@Localizer["payment_selected_count_label"]</span>
+                                <span id="selectedCount" class="font-bold text-slate-700">0</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-slate-500">
+                                <span>@Localizer["payment_method_label"]</span>
+                                <span class="font-medium text-slate-700 flex items-center gap-1">
+                                    <i class="fa-solid fa-wallet text-emerald-600"></i>
+                                    @Localizer["payment_method_vnpay"]
+                                </span>
+                            </div>
+                            <div class="border-t border-slate-100 pt-3 flex justify-between items-baseline">
+                                <span class="text-sm font-bold text-slate-800">@Localizer["payment_total_label"]</span>
+                                <span id="totalAmountText" class="text-lg font-black text-emerald-600">0 VND</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 text-slate-500 text-xxs mb-5 flex gap-2">
+                            <i class="fa-solid fa-shield-halved text-emerald-600 shrink-0 text-sm mt-0.5"></i>
+                            <span>@Localizer["payment_security_info"]</span>
+                        </div>
+
+                        <button type="submit" id="btnSubmit" disabled
+                                class="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl text-sm shadow-sm hover:bg-emerald-700 transition disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-credit-card"></i>
+                            @Localizer["payment_submit_button"]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    }
+</div>
+
+<script>
+    function selectAllItems() {
+        const checkboxes = document.querySelectorAll('input[name="RequestIds"]');
+        let allChecked = true;
+        checkboxes.forEach(c => {
+            if (!c.checked) allChecked = false;
+        });
+
+        checkboxes.forEach(c => {
+            c.checked = !allChecked;
+        });
+
+        updateTotal();
+    }
+
+    function updateTotal() {
+        const checkboxes = document.querySelectorAll('input[name="RequestIds"]:checked');
+        let count = checkboxes.length;
+        let total = 0;
+
+        checkboxes.forEach(c => {
+            total += parseFloat(c.getAttribute('data-price') || '0');
+        });
+
+        document.getElementById('selectedCount').innerText = count;
+        document.getElementById('totalAmountText').innerText = total.toLocaleString('vi-VN') + ' VND';
+
+        const btnSubmit = document.getElementById('btnSubmit');
+        if (count > 0) {
+            btnSubmit.disabled = false;
+        } else {
+            btnSubmit.disabled = true;
+        }
+    }
+
+    function validateForm() {
+        const checked = document.querySelectorAll('input[name="RequestIds"]:checked');
+        if (checked.length === 0) {
+            alert('@Html.Raw(Localizer["payment_select_required_alert"])');
+            return false;
+        }
+        return true;
+    }
+</script>

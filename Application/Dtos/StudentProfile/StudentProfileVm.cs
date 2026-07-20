@@ -1,0 +1,26 @@
+﻿using Domain.Enums;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Application.Dtos.StudentProfile
+{
+    public class StudentProfileVm
+    {
+        public Guid UserId { get; set; }
+        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? FullName { get; set; }
+        public DateOnly? DateOfBirth { get; set; }
+        public string? Phone { get; set; }
+        public Gender? Gender { get; set; }
+        public string? GradeLevel { get; set; }
+        public string? Institution { get; set; }
+        public string? Address { get; set; }
+        public string? AvatarUrl { get; set; }
+        public IFormFile? AvatarFile { get; set; }
+    }
+}

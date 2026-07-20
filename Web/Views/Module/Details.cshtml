@@ -262,11 +262,10 @@
                                     <i class="fa fa-plus"></i>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#"><i class="fa fa-video-camera"></i> Bài học video</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fa fa-file-text-o"></i> Bài học reading</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fa fa-comments-o"></i> Bài thảo luận</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fa fa-question-circle"></i> Bài quiz</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fa fa-tasks"></i> Bài assign</a></li>
+                                    <li><a class="dropdown-item" href="/Discussion/CreateDiscussion?moduleId=@module.Id&courseId=@Model.Id"><i class="fa fa-comments"></i> Thảo luận (Discussion)</a></li>
+                                    <li><a class="dropdown-item" href="/Assignment/CreateAssignment?moduleId=@module.Id&courseId=@Model.Id"><i class="fa fa-tasks"></i> Bài tập (Assignment)</a></li>
+                                    <li><a class="dropdown-item" href="/Lesson/CreateVideoLesson?moduleId=@module.Id&courseId=@Model.Id"><i class="fa fa-video-camera"></i> Bài học video</a></li>
+                                    <li><a class="dropdown-item" href="/Lesson/CreateReadingLesson?moduleId=@module.Id&courseId=@Model.Id"><i class="fa fa-file-text-o"></i> Bài học reading</a></li>
                                 </ul>
                             </div>
                         </div>

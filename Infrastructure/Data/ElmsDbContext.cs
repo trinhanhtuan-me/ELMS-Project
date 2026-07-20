@@ -703,8 +703,7 @@ public partial class ElmsDbContext : DbContext
 
             entity.ToTable("Quiz");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.MaxAttempts).HasDefaultValue(3);
+            entity.Property(e => e.Id).ValueGeneratedNever();            entity.Property(e => e.AttemptCooldownMin).HasDefaultValue(60);
             entity.Property(e => e.PassingScorePct)
                 .HasDefaultValue(50.00m)
                 .HasColumnType("decimal(5, 2)");
@@ -767,6 +766,41 @@ public partial class ElmsDbContext : DbContext
             entity.HasOne(d => d.Question).WithMany(p => p.QuizOptions)
                 .HasForeignKey(d => d.QuestionId)
                 .HasConstraintName("FK__QuizOptio__Quest__725BF7F6");
+
+            entity.HasData(
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee1"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd1"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee2"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd1"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee3"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd1"), Content = "Option C", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee4"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd1"), Content = "Option D", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee5"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd2"), Content = "Option A", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeee6"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd2"), Content = "Option B", IsCorrect = true },
+new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee05"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee06"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee07"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd04"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee08"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd04"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee09"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd05"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee10"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd05"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee11"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd06"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee12"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd06"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee13"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd07"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee14"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd07"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee15"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd08"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee16"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd08"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee17"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd09"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee18"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd09"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee19"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd10"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee20"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd10"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee21"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd11"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee22"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd11"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee23"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd12"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee24"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd12"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee25"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd13"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee26"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd13"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee27"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd14"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee28"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd14"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee29"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd15"), Content = "Option A", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee30"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd15"), Content = "Option B", IsCorrect = false }
+            );
         });
 
         modelBuilder.Entity<QuizQuestion>(entity =>
@@ -781,6 +815,24 @@ public partial class ElmsDbContext : DbContext
             entity.HasOne(d => d.Quiz).WithMany(p => p.QuizQuestions)
                 .HasForeignKey(d => d.QuizId)
                 .HasConstraintName("FK__QuizQuest__QuizI__6D9742D9");
+
+            entity.HasData(
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd1"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 1 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-ddddddddddd2"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 2 for Tenses Quiz 1" },
+new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 3 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd04"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 4 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd05"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 5 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd06"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 6 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd07"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 7 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd08"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 8 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd09"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 9 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd10"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 10 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd11"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 11 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd12"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 12 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd13"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 13 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd14"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 14 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd15"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 15 for Tenses Quiz 1" }
+            );
         });
 
         modelBuilder.Entity<Review>(entity =>
@@ -1085,6 +1137,177 @@ public partial class ElmsDbContext : DbContext
             new SystemKey { Id = 65, ParentId = 63, CodeKey = "PAYMENT_STATUS_CAPTURED", CodeValue = 2, Description = "Captured", SortOrder = 2, IsDeleted = false },
             new SystemKey { Id = 66, ParentId = 63, CodeKey = "PAYMENT_STATUS_FAILED", CodeValue = 3, Description = "Failed", SortOrder = 3, IsDeleted = false }
         );
+
+        // Seed Course, Enrollments, and Reviews for testing Review
+        var seedCategoryId = 999;
+        var seedCourseId = Guid.Parse("88888888-8888-8888-8888-888888888888");
+
+        modelBuilder.Entity<Category>().HasData(
+            new Category { Id = seedCategoryId, Name = "English Grammar", Description = "Learn English Grammar", Picture = "grammar.jpg" }
+        );
+
+        modelBuilder.Entity<Course>().HasData(
+            new Course
+            {
+                Id = seedCourseId,
+                Title = "Tenses Made Easy",
+                CategoryId = seedCategoryId,
+                CreatedBy = teacherId,
+                Level = "Beginner",
+                Language = "English",
+                Status = Domain.Enums.CourseStatus.Publish,
+                Thumbnail = "tenses.jpg",
+                CreatedAt = new DateTime(2024, 1, 1),
+                UpdatedAt = new DateTime(2024, 1, 1)
+            }
+        );
+
+        var moduleId = Guid.Parse("77777777-7777-7777-7777-777777777777");
+        modelBuilder.Entity<Module>().HasData(
+            new Module { Id = moduleId, CourseId = seedCourseId, Title = "Module 1: Basics", OrderIndex = 1, CreatedBy = teacherId }
+        );
+
+        var item1Id = Guid.Parse("66666666-6666-6666-6666-666666666601");
+        var item2Id = Guid.Parse("66666666-6666-6666-6666-666666666602");
+        var item3Id = Guid.Parse("66666666-6666-6666-6666-666666666603");
+        var item4Id = Guid.Parse("66666666-6666-6666-6666-666666666604");
+
+        modelBuilder.Entity<ModuleItem>().HasData(
+            new ModuleItem { Id = item1Id, ModuleId = moduleId, ItemType = Domain.Enums.ModuleItemType.Lesson, OrderIndex = 1 },
+            new ModuleItem { Id = item2Id, ModuleId = moduleId, ItemType = Domain.Enums.ModuleItemType.Lesson, OrderIndex = 2 },
+            new ModuleItem { Id = item3Id, ModuleId = moduleId, ItemType = Domain.Enums.ModuleItemType.Quiz, OrderIndex = 3 },
+            new ModuleItem { Id = item4Id, ModuleId = moduleId, ItemType = Domain.Enums.ModuleItemType.Assignment, OrderIndex = 4 }
+        );
+
+        modelBuilder.Entity<Lesson>().HasData(
+            new Lesson { Id = item1Id, Title = "Present Simple & Continuous", ContentType = Domain.Enums.LessonContentType.Video, VideoUrl = "https://res.cloudinary.com/pewx8g7u/video/upload/v1784285507/lessons/video/TIẾNG_ANH_GIAO_TIẾP_3_PHÚT_MỖI_NGÀY_-_Bài_80__TO_BE_OUT_OF_SORTS_x98vvq.mp4", DurationSec = 600 },
+            new Lesson { Id = item2Id, Title = "Tense Timelines (Reading)", ContentType = Domain.Enums.LessonContentType.Reading, TextContent = @"
+<div class='reading-lesson'>
+    <h2 class='text-primary mb-4'>Mastering English Tenses: A Timeline Approach</h2>
+    
+    <p class='lead'>Understanding English tenses can be challenging, but visualizing them on a timeline makes it much easier to grasp when to use which tense.</p>
+    
+    <hr class='my-4' />
+
+    <h4 class='text-success'>1. The Past Tenses</h4>
+    <p>The past tenses deal with actions that have already concluded.</p>
+    <ul>
+        <li><b>Past Simple:</b> Actions that started and finished in the past. 
+            <br/><span class='text-muted'>Example: ""I visited Paris last year.""</span></li>
+        <li><b>Past Continuous:</b> Actions that were ongoing at a specific moment in the past.
+            <br/><span class='text-muted'>Example: ""I was watching TV when the phone rang.""</span></li>
+    </ul>
+
+    <h4 class='text-primary mt-4'>2. The Present Tenses</h4>
+    <p>Present tenses connect the past to the present or describe current facts and routines.</p>
+    <ul>
+        <li><b>Present Simple:</b> Habits, routines, and universal truths.
+            <br/><span class='text-muted'>Example: ""The sun rises in the east.""</span></li>
+        <li><b>Present Continuous:</b> Actions happening right now, at the moment of speaking.
+            <br/><span class='text-muted'>Example: ""I am studying English right now.""</span></li>
+        <li><b>Present Perfect:</b> Actions that happened at an unspecified time in the past but have a result in the present.
+            <br/><span class='text-muted'>Example: ""I have lost my keys.""</span></li>
+    </ul>
+
+    <h4 class='text-info mt-4'>3. The Future Tenses</h4>
+    <p>Future tenses look ahead to actions that have not yet occurred.</p>
+    <ul>
+        <li><b>Future Simple (Will):</b> Predictions, promises, or spontaneous decisions.
+            <br/><span class='text-muted'>Example: ""I think it will rain tomorrow.""</span></li>
+        <li><b>Future Intentions (Going to):</b> Planned actions or predictions based on current evidence.
+            <br/><span class='text-muted'>Example: ""Look at those dark clouds! It is going to rain.""</span></li>
+    </ul>
+
+    <div class='alert alert-warning mt-4'>
+        <strong>Pro Tip:</strong> Don't try to translate tenses word-for-word from your native language. Instead, try to understand the <em>concept</em> and the <em>timeframe</em> each English tense represents!
+    </div>
+</div>", DurationSec = 300 }
+        );
+
+        var question1Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1");
+        var question2Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2");
+        
+        modelBuilder.Entity<LessonQuestion>().HasData(
+            new LessonQuestion { Id = question1Id, LessonId = item1Id, Content = "Thì hiện tại tiếp diễn dùng để diễn tả hành động nào?", Explanation = "Chỉ hành động đang diễn ra tại thời điểm nói." },
+            new LessonQuestion { Id = question2Id, LessonId = item1Id, Content = "Cụm từ 'to be out of sorts' có nghĩa là gì?", Explanation = "To be out of sorts = cảm thấy không khỏe, khó ở." }
+        );
+
+        modelBuilder.Entity<LessonOption>().HasData(
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc01"), QuestionId = question1Id, Content = "Hành động lặp đi lặp lại", IsCorrect = false },
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc02"), QuestionId = question1Id, Content = "Hành động đang xảy ra ngay lúc nói", IsCorrect = true },
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc03"), QuestionId = question2Id, Content = "Rất vui vẻ và năng động", IsCorrect = false },
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc04"), QuestionId = question2Id, Content = "Cảm thấy không khỏe, hơi khó ở", IsCorrect = true },
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc05"), QuestionId = question2Id, Content = "Hết tiền, rỗng túi", IsCorrect = false },
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc06"), QuestionId = question2Id, Content = "Đi ra ngoài chơi", IsCorrect = false }
+        );
+
+        modelBuilder.Entity<Quiz>().HasData(            new Quiz { Id = item3Id, Title = "Tenses Quiz 1", PassingScorePct = 70.00m, TimeLimitMin = 15, AttemptCooldownMin = 60, PickCount = 10 }
+        );
+
+        modelBuilder.Entity<Assignment>().HasData(
+            new Assignment 
+            { 
+                Id = item4Id, 
+                Title = "Daily Routine Paragraph (Present Simple)", 
+                Content = "<strong>Task:</strong> Write a 120-150-word paragraph describing your daily routine using the Present Simple.<br><ul><li>Include frequency markers (always/usually/often...)</li><li>Use 3 sequence words (first, then, finally...)</li><li>Highlight 3 typical verbs of your day</li></ul><p><em>Tip: draft &rarr; revise &rarr; finalize. Check S-V agreement (he/she/it + s/es).</em></p>", 
+                Instructions = "1) Viết 120-150 từ về thói quen hằng ngày (Present Simple).<br>2) Dùng từ chỉ tần suất: always/usually/often/sometimes/never.<br>3) Thêm từ nối trình tự: first/then/after that/finally.<br>4) Gạch chân 3 động từ tiêu biểu (get up, have breakfast, do homework).<br>5) Kiểm tra chia động từ đúng với he/she/it (+s/es).<br>6) Soát lỗi chính tả & dấu câu trước khi nộp.<br>7) Đọc to để rà nhịp điệu và mạch lạc.", 
+                SubmissionType = Domain.Enums.AssignmentSubmissionType.Text,
+                MaxScore = 100m, 
+                PassingScorePct = 70.00m 
+            }
+        );
+
+
+
+        var users = new List<User>();
+        var userRoles = new List<object>();
+        var profiles = new List<StudentProfile>();
+        var enrollments = new List<Enrollment>();
+        var reviews = new List<Review>();
+        var progresses = new List<Progress>();
+
+        var comments = new[]
+        {
+            "Cân bằng tốt giữa video, reading và drill; học không bị chán. Ước gì có thêm cheat sheet.",
+            "Trước đây mình hay rối Present Perfect, giờ đã hiểu logic since/for.",
+            "Bài luyện thi rất thực tế, mình nắm rõ hơn cách dùng các thì.",
+            "Giải thích ngắn gọn nhưng đi thẳng vào trọng tâm, kèm ví dụ dễ nhớ.",
+            "Khóa học khá khó, giảng viên nói hơi nhanh.",
+            "Khóa học tuyệt vời, nội dung dễ hiểu, bài tập đa dạng.",
+            "Rất hữu ích cho người mất gốc như mình.",
+            "Giáo viên vui tính, tài liệu đầy đủ.",
+            "Mini-test cuối mỗi mục phản hồi rõ ràng để biết mình đang thiếu chỗ nào.",
+            "Bài tập có độ khó tăng dần, tốc độ hợp lý, không bị nặng nề."
+        };
+        
+        var random = new Random(123); // Fixed seed for deterministic rating
+
+        for (int i = 1; i <= 20; i++)
+        {
+            var sId = Guid.Parse($"22222222-2222-2222-2222-0000000000{i:D2}");
+            users.Add(new User { Id = sId, Username = $"student{i}", Email = $"student{i}@elms.com", FullName = $"Test Student {i}", Password = defaultPasswordHash, IsActive = true, IsDeleted = false });
+            userRoles.Add(new { UserId = sId, RoleId = 2 });
+            profiles.Add(new StudentProfile { Id = sId, Institution = "FPT", GradeLevel = "University", Address = "Hanoi" });
+            
+            enrollments.Add(new Enrollment { Id = Guid.Parse($"99999999-9999-9999-9999-0000000000{i:D2}"), CourseId = seedCourseId, StudentId = sId, Status = Domain.Enums.EnrollmentStatus.Completed, EnrolledAt = new DateTime(2024, 1, 1), CompletedAt = new DateTime(2024, 1, 10) });
+
+            byte rating = (byte)random.Next(2, 6); // 2 to 5 stars
+            string comment = comments[random.Next(comments.Length)];
+
+            reviews.Add(new Review { Id = Guid.Parse($"10000000-0000-0000-0000-0000000000{i:D2}"), CourseId = seedCourseId, StudentId = sId, Rating = rating, Comment = comment, UpdatedAt = new DateTime(2024, 1, 15).AddHours(i), CreatedAt = new DateTime(2024, 1, 15).AddHours(i) });
+            
+            progresses.Add(new Progress { StudentId = sId, ModuleItemId = item1Id, Status = Domain.Enums.ProgressStatus.InProgress, PercentDone = 0, UpdatedAt = new DateTime(2024, 1, 1) });
+            progresses.Add(new Progress { StudentId = sId, ModuleItemId = item2Id, Status = Domain.Enums.ProgressStatus.InProgress, PercentDone = 0, UpdatedAt = new DateTime(2024, 1, 1) });
+            progresses.Add(new Progress { StudentId = sId, ModuleItemId = item3Id, Status = Domain.Enums.ProgressStatus.InProgress, PercentDone = 0, UpdatedAt = new DateTime(2024, 1, 1) });
+            progresses.Add(new Progress { StudentId = sId, ModuleItemId = item4Id, Status = Domain.Enums.ProgressStatus.InProgress, PercentDone = 0, UpdatedAt = new DateTime(2024, 1, 1) });
+        }
+
+        modelBuilder.Entity<User>().HasData(users);
+        modelBuilder.Entity("PUserRole").HasData(userRoles);
+        modelBuilder.Entity<StudentProfile>().HasData(profiles);
+        modelBuilder.Entity<Enrollment>().HasData(enrollments);
+        modelBuilder.Entity<Review>().HasData(reviews);
+        modelBuilder.Entity<Progress>().HasData(progresses);
 
         OnModelCreatingPartial(modelBuilder);
     }

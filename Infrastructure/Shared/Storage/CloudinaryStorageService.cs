@@ -59,5 +59,41 @@ namespace Infrastructure.Shared.Storage
 
             return uploadResult.SecureUrl?.ToString();
         }
+
+        public async Task<FileUploadResult> SaveFileWithMetadataAsync(IFormFile file, string folderName)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return new FileUploadResult();
+            }
+            if (string.IsNullOrWhiteSpace(folderName))
+            {
+                throw new ArgumentException("Tên thư mục (folderName) không được để trống.", nameof(folderName));
+            }
+
+            VideoUploadResult uploadResult;
+            using (var stream = file.OpenReadStream())
+            {
+                var uploadParams = new VideoUploadParams
+                {
+                    File = new FileDescription(file.FileName, stream),
+                    Folder = folderName,
+                    UseFilename = true,
+                    UniqueFilename = true
+                };
+
+                uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            }
+            if (uploadResult.Error != null)
+            {
+                throw new Exception($"Cloudinary Upload Error: {uploadResult.Error.Message}");
+            }
+
+            return new FileUploadResult
+            {
+                Url = uploadResult.SecureUrl?.ToString(),
+                DurationSec = uploadResult.Duration
+            };
+        }
     }
 }

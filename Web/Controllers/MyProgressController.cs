@@ -1,9 +1,13 @@
-﻿using Application.UseCases;
+using Application.UseCases;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
+using Microsoft.AspNetCore.Authorization;
+using Application.Common;
+
 namespace Web.Controllers
 {
+    [Authorize(Policy = Policies.EndpointAccess)]
     public class MyProgressController : Controller
     {
         private readonly IStudentProgressService _progressService;

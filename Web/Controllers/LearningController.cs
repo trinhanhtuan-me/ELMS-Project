@@ -6,8 +6,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
+using Microsoft.AspNetCore.Authorization;
+using Application.Common;
+
 namespace Web.Controllers
 {
+    [Authorize(Policy = Policies.EndpointAccess)]
     public class LearningController(ILearningService _learningService) : Controller
     {
 

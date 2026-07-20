@@ -6,7 +6,7 @@ namespace Application.Dtos.Manager
     public class PublishCourseRequest
     {
         public Guid CourseId { get; set; }
-        public DateTime PublishDate { get; set; }
+        public DateTime? PublishDate { get; set; }
         public decimal Price { get; set; }
     }
 

@@ -111,6 +111,7 @@
                                         <i class="fa fa-info-circle"></i>
                                     </button>
                                 }
+
                                 <button class="action-btn" title="Edit course" onclick="openEditModal('@course.Id', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Title))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Language))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Level))', '@course.CategoryId', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Description ?? ""))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Thumbnail ?? ""))')">
                                     <i class="fa fa-edit"></i>
                                 </button>

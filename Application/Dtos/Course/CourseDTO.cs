@@ -35,7 +35,8 @@ namespace Application.Dtos.Course
         CourseStatus Status,
         string? Thumbnail,
         int CategoryId,
-        string? Description
+        string? Description,
+        string? RejectReason
     );
 
   

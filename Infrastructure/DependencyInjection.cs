@@ -27,6 +27,10 @@ namespace Infrastructure
             services.AddScoped<IManagerFlashcardRepository, ManagerFlashcardRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IQuizQuestionRepository, QuizQuestionRepository>();
+<<<<<<< HEAD
+            services.AddScoped<IInstructorAssignmentRepository, InstructorAssignmentRepository>();
+=======
+>>>>>>> 8a48b0d43569b420f35ab5a72beb9e41a8c55148
             services.AddScoped<IModuleItemRepository, ModuleItemRepository>();
             services.AddScoped<ILessonQuestionRepository, LessonQuestionRepository>();
             services.AddScoped<Application.Interfaces.IVNPayService, Infrastructure.Shared.Payment.VNPayService>();

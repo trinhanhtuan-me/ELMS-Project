@@ -1,0 +1,103 @@
+@model Application.Dtos.SecurityManagement.ChangePasswordRequest
+@{
+    Layout = "~/Views/Shared/_InstructorLayout.cshtml";
+    ViewData["Title"] = "Security Settings";
+    bool hasPasskey = ViewBag.HasPasskey ?? false;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/course.css" asp-append-version="true" />
+    <style>
+        .profile-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #475569;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            padding: 0.75rem 1rem;
+            color: #1e293b;
+        }
+        .form-control:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+            border-color: #4338ca;
+        }
+    </style>
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1"><i class="fa fa-shield text-primary me-2"></i> Security Settings</h2>
+            <p class="text-muted mb-0">Manage your password and security preferences.</p>
+        </div>
+    </div>
+
+    @if (TempData["SuccessToast"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessToast"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorToast"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorToast"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="profile-card">
+                <h4 class="fw-bold mb-4 border-bottom pb-3">Change Password</h4>
+                <form asp-action="ChangePassword" asp-controller="InstructorProfile" method="post">
+                    <div class="mb-4">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" asp-for="CurrentPassword" class="form-control" required placeholder="Enter your current password">
+                        <span asp-validation-for="CurrentPassword" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">New Password</label>
+                        <input type="password" asp-for="NewPassword" class="form-control" required placeholder="Enter new password">
+                        <span asp-validation-for="NewPassword" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" asp-for="ConfirmPassword" class="form-control" required placeholder="Confirm new password">
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+
+                    <div class="text-end mt-4">
+                        <button type="submit" class="btn btn-primary px-4"><i class="fa fa-key me-2"></i> Update Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

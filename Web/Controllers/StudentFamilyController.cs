@@ -6,9 +6,12 @@ using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Application.Common;
 
 namespace Web.Controllers
 {
+    [Authorize(Policy = Policies.EndpointAccess)]
     public class StudentFamilyController(IStudentFamilyService _studentFamily, IParentLinkService _parentLink, ICourseRequestService _courseRequestService) : Controller
     {
         [HttpGet]

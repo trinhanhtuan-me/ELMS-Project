@@ -1,11 +1,15 @@
-﻿using Application.Dtos.SecurityManagement;
+using Application.Dtos.SecurityManagement;
 using Application.Exceptions;
 using Application.UseCases;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
+using Microsoft.AspNetCore.Authorization;
+using Application.Common;
+
 namespace Web.Controllers
 {
+    [Authorize(Policy = Policies.EndpointAccess)]
     public class SecurityManagementController(IPasskeyService _passkey, IIdentityService _identity) : Controller
     {
         [HttpGet]

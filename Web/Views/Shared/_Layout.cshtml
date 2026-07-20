@@ -60,7 +60,7 @@
         <div class="container-fluid px-lg-5 px-3">
             <nav class="navbar navbar-expand-lg navbar-light py-2">
                 <!-- Logo -->
-                <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="/">
+                <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="@(User.Identity?.IsAuthenticated == true && User.IsInRole("Admin") ? "/UserManagement" : "/")">
                     <i class="fa fa-graduation-cap fs-3 text-primary"></i>
                     <span class="fs-4 text-dark" style="letter-spacing: -0.5px;">EnglishLMS</span>
                 </a>
@@ -72,27 +72,41 @@
                 <div class="collapse navbar-collapse" id="navbarMain">
                     <!-- Navigation Links -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 fw-medium" style="font-size: 0.95rem;">
-                        <li class="nav-item"><a class="nav-link text-dark px-3" href="#">Explore</a></li>
-                        <li class="nav-item"><a class="nav-link text-dark px-3" href="#">My Courses</a></li>
-                        <li class="nav-item"><a class="nav-link text-dark px-3" href="#">Flashcards</a></li>
+                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item"><a class="nav-link text-dark px-3" href="/UserManagement"><i class="fa fa-users me-1 text-danger"></i>User Management</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark px-3" href="/UserManagement?create=true"><i class="fa fa-user-plus me-1 text-danger"></i>Create Account</a></li>
+                        }
+                        else
+                        {
+                            <li class="nav-item"><a class="nav-link text-dark px-3" href="#">Explore</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark px-3" href="#">My Courses</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark px-3" href="#">Flashcards</a></li>
+                        }
                     </ul>
 
                     <!-- Search Bar -->
-                    <form class="d-flex mx-auto d-none d-lg-block" style="width: 450px;">
-                        <div class="input-group transition-all search-box" style="border-radius: 50px; border: 1px solid #ced4da; overflow: hidden; background-color: #f8f9fa;">
-                            <input type="text" class="form-control border-0 shadow-none bg-transparent ps-4 py-2" placeholder="Search for favorite courses..." style="font-size: 0.95rem;">
-                            <span class="input-group-text bg-transparent border-0 pe-4" style="cursor: pointer;">
-                                <i class="fa fa-search text-muted"></i>
-                            </span>
-                        </div>
-                    </form>
+                    @if (User.Identity?.IsAuthenticated != true || !User.IsInRole("Admin"))
+                    {
+                        <form class="d-flex mx-auto d-none d-lg-block" style="width: 450px;">
+                            <div class="input-group transition-all search-box" style="border-radius: 50px; border: 1px solid #ced4da; overflow: hidden; background-color: #f8f9fa;">
+                                <input type="text" class="form-control border-0 shadow-none bg-transparent ps-4 py-2" placeholder="Search for favorite courses..." style="font-size: 0.95rem;">
+                                <span class="input-group-text bg-transparent border-0 pe-4" style="cursor: pointer;">
+                                    <i class="fa fa-search text-muted"></i>
+                                </span>
+                            </div>
+                        </form>
+                    }
 
                     <!-- Right Actions -->
                     <div class="d-flex align-items-center ms-auto gap-4 mt-3 mt-lg-0">
                         <!-- Wishlist Icon -->
-                        <a href="/StudentFamily" class="text-dark text-decoration-none fs-5 hover-text-primary transition-all">
-                            <i class="fa fa-heart-o"></i>
-                        </a>
+                        @if (User.Identity?.IsAuthenticated != true || !User.IsInRole("Admin"))
+                        {
+                            <a href="/StudentFamily" class="text-dark text-decoration-none fs-5 hover-text-primary transition-all">
+                                <i class="fa fa-heart-o"></i>
+                            </a>
+                        }
 
                         @if (User.Identity?.IsAuthenticated == true)
                         {
@@ -112,6 +126,13 @@
                                         <li><a class="dropdown-item py-2" href="/StudentProfile"><i class="fa fa-user-circle-o me-2 text-muted"></i>Profile</a></li>
                                         <li><a class="dropdown-item py-2" href="/SecurityManagement/Index"><i class="fa fa-shield me-2 text-muted"></i>Security Management</a></li>
                                     }
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item py-2" href="/UserManagement"><i class="fa fa-users me-2 text-muted"></i>User Management</a></li>
+                                        <li><a class="dropdown-item py-2" href="/UserManagement?create=true"><i class="fa fa-user-plus me-2 text-muted"></i>Create Account</a></li>
+                                    }
+                                    <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item py-2" href="/Identity/SelectRole"><i class="fa fa-exchange me-2 text-muted"></i>Switch Workspace</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item py-2 text-danger fw-medium" href="/Identity/Logout"><i class="fa fa-sign-out me-2"></i>Log out</a></li>
@@ -139,7 +160,7 @@
     </main>
 </div>
 
-@if (ViewData["HideHeaderFooter"] as bool? != true)
+@if (ViewData["HideHeaderFooter"] as bool? != true && !(User.Identity?.IsAuthenticated == true && User.IsInRole("Admin")))
 {
 <footer class="text-white pt-5 pb-3 mt-5" style="background-color: #1c1d1f;">
     <div class="container py-4">

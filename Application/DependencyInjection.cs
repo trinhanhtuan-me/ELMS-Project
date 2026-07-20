@@ -15,6 +15,7 @@ namespace Application
             //Add service scoped here
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IUserManagementService, UserManagementService>();
             services.AddScoped<IFunctionService, FunctionService>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IModuleService, ModuleService>();

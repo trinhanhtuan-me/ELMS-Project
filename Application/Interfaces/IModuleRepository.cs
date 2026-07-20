@@ -16,6 +16,7 @@ namespace Application.Interfaces
         void Delete(Module module);
         Task<int> GetMaxOrderIndexAsync(Guid courseId);
         Task<List<Module>> GetByCourseIdWithItemsAsync(Guid courseId);
+
         Task<ModuleItem?> GetVideoLessonAsync(Guid itemId);
         Task<(ModuleItemType ItemType, LessonContentType? ContentType)?> GetItemTypeInfoAsync(Guid itemId);
 

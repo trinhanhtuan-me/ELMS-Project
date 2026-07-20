@@ -1,7 +1,7 @@
 @model Application.Dtos.Lesson.ReadingLessonUpdateRequest
 @{
     Layout = "_ModuleContentLayout";
-    ViewData["Title"] = "Cập nhật Bài học Reading";
+    ViewData["Title"] = "Update Reading Lesson";
     var moduleItemId = ViewBag.ModuleItemId;
     var courseId = ViewBag.CourseId;
 }
@@ -9,13 +9,13 @@
 <div>
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold text-gray-800 flex items-center">
-            <i class="fas fa-file-alt text-green-500 mr-3"></i> Cập nhật Bài học Reading
+            <i class="fas fa-file-alt text-green-500 mr-3"></i> Update Reading Lesson
         </h2>
-        <form action="/Lesson/DeleteLesson" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài học này không? Hành động này không thể hoàn tác!');">
+        <form action="/Lesson/DeleteLesson" method="post" onsubmit="return confirm('Are you sure you want to delete this lesson? This action cannot be undone!');">
             <input type="hidden" name="moduleItemId" value="@moduleItemId" />
             <input type="hidden" name="courseId" value="@courseId" />
             <button type="submit" class="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors flex items-center text-sm font-medium">
-                <i class="fas fa-trash-alt mr-2"></i> Xóa bài học
+                <i class="fas fa-trash-alt mr-2"></i> Delete Lesson
             </button>
         </form>
     </div>
@@ -25,20 +25,20 @@
         <input type="hidden" name="ModuleItemId" value="@moduleItemId" />
 
         <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Tiêu đề bài học <span class="text-red-500">*</span></label>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Lesson Title <span class="text-red-500">*</span></label>
             <input type="text" name="Title" required value="@Model.Title"
                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                   placeholder="Nhập tiêu đề (VD: Bài 1: Tài liệu tham khảo)" />
+                   placeholder="Enter title (e.g., Lesson 1: Reference document)" />
         </div>
 
         <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Nội dung bài học <span class="text-red-500">*</span></label>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Lesson Content <span class="text-red-500">*</span></label>
             <textarea id="mytextarea" name="TextContent">@Html.Raw(Model.TextContent)</textarea>
         </div>
 
         <div class="pt-4 border-t border-gray-100 flex justify-end gap-3">
             <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center">
-                <i class="fas fa-save mr-2"></i> Lưu thay đổi
+                <i class="fas fa-save mr-2"></i> Save Changes
             </button>
         </div>
     </form>

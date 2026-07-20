@@ -1,6 +1,6 @@
-@model IEnumerable<Application.Dtos.Course.CourseManagementResponse>
+@model Application.Common.Models.PagedResult<Application.Dtos.Course.CourseManagementResponse>
 @{
-    ViewData["Title"] = "Quản lý khóa học";
+    ViewData["Title"] = "Course Management";
 }
 
 @section Styles {
@@ -8,51 +8,43 @@
 }
 
 <div class="page-header">
-    <h1 class="page-title">Quản lý khóa học</h1>
+    <h1 class="page-title">Course Management</h1>
     <button class="btn btn-primary-blue" onclick="openCreateModal()">
-        + Thêm khóa học mới
+        + Add new course
     </button>
 </div>
 
 <div class="filters-bar">
-    <div>
-        Show 
-        <select class="filter-select">
-            <option>10</option>
-            <option>20</option>
-        </select> 
-        Entries
-    </div>
-    <div class="search-bar">
+    <form method="get" action="/Course/Index" class="search-bar">
         <i class="fa fa-search"></i>
-        <input type="text" placeholder="Search records">
-    </div>
+        <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="Search records">
+    </form>
 </div>
 
 <div class="card-table-wrapper">
     <table class="custom-table">
         <thead>
             <tr>
-                <th style="width: 10%;">Hình ảnh</th>
-                <th style="width: 35%;">Tên khóa học & Cấp độ</th>
-                <th style="width: 20%;">Ngôn ngữ</th>
-                <th style="width: 15%;">Trạng thái</th>
-                <th style="width: 20%;" class="text-end">Thao tác</th>
+                <th style="width: 10%;">Image</th>
+                <th style="width: 35%;">Course Name & Level</th>
+                <th style="width: 20%;">Language</th>
+                <th style="width: 15%;">Status</th>
+                <th style="width: 20%;" class="text-end">Action</th>
             </tr>
         </thead>
         <tbody>
-            @if (!Model.Any())
+            @if (!Model.Items.Any())
             {
                 <tr>
                     <td colspan="5" class="text-center py-5 text-muted">
                         <i class="fa fa-folder-open-o" style="font-size: 2rem; color: #a3aed1;"></i>
-                        <p class="mt-2">Chưa có khóa học nào. Hãy thêm mới!</p>
+                        <p class="mt-2">No courses available. Please add new!</p>
                     </td>
                 </tr>
             }
             else
             {
-                foreach (var course in Model)
+                foreach (var course in Model.Items)
                 {
                     <tr>
                         <!-- Cột 1: Hình ảnh -->
@@ -71,7 +63,7 @@
 
                         <!-- Cột 2: Tên & Cấp độ -->
                         <td>
-                            <a href="/Course/Details/@course.Id" class="course-title text-decoration-none" style="color: #2b3674;">@course.Title</a>
+                            <a href="@(course.Status == Domain.Enums.CourseStatus.Draft || course.Status == Domain.Enums.CourseStatus.Rejected ? $"/Course/Details/{course.Id}" : $"/Course/Preview/{course.Id}")" class="course-title text-decoration-none" style="color: #2b3674;">@course.Title</a>
                             <div class="course-subtitle">
                                 <i class="fa fa-check-circle" style="color: #5b72ff;"></i> @course.Level
                             </div>
@@ -85,34 +77,53 @@
                             </div>
                         </td>
 
-                        <!-- Cột 4: Trạng thái Active / Draft -->
+                        <!-- Cột 4: Trạng thái -->
                         <td>
-                            <span class="status-badge @(course.Status == Domain.Enums.CourseStatus.Draft ? "status-draft" : "status-active")">
-                                @(course.Status == Domain.Enums.CourseStatus.Draft ? "Draft" : "Active")
+                            @{
+                                string badgeClass = "status-draft"; // Mặc định cho Draft
+                                string statusName = course.Status.ToString();
+                                
+                                if (course.Status == Domain.Enums.CourseStatus.Publish || course.Status == Domain.Enums.CourseStatus.Approved)
+                                {
+                                    badgeClass = "status-active"; // Màu xanh
+                                }
+                                else if (course.Status == Domain.Enums.CourseStatus.Rejected || course.Status == Domain.Enums.CourseStatus.Unpublish)
+                                {
+                                    badgeClass = "bg-danger text-white"; // Màu đỏ
+                                }
+                                else if (course.Status == Domain.Enums.CourseStatus.Submitted)
+                                {
+                                    badgeClass = "bg-warning text-dark"; // Màu vàng
+                                }
+                            }
+                            <span class="status-badge @badgeClass" style="padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">
+                                @statusName
                             </span>
                         </td>
                         
-                        <!-- Cột 5: Thao tác (Sửa/Xóa) -->
+                        <!-- Cột 5: Thao tác -->
                         <td class="text-end">
-                            @if (course.Status != Domain.Enums.CourseStatus.Submitted)
+                            @if (course.Status == Domain.Enums.CourseStatus.Draft || course.Status == Domain.Enums.CourseStatus.Rejected)
                             {
-                                <button class="action-btn" title="Sửa khóa học" onclick="openEditModal('@course.Id', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Title))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Language))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Level))', '@course.CategoryId', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Description ?? ""))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Thumbnail ?? ""))')">
+                                <button class="action-btn" title="Edit course" onclick="openEditModal('@course.Id', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Title))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Language))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Level))', '@course.CategoryId', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Description ?? ""))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(course.Thumbnail ?? ""))')">
                                     <i class="fa fa-edit"></i>
                                 </button>
-                                <form asp-action="Submit" asp-route-id="@course.Id" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn nộp khóa học này? Khi đã nộp, bạn sẽ không thể chỉnh sửa hoặc xóa nữa.');">
-                                    <button type="submit" class="action-btn text-success" title="Nộp khóa học" style="border:none; background:transparent;">
+                                <form asp-action="Submit" asp-route-id="@course.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to submit this course? Once submitted, you cannot edit or delete it.');">
+                                    <button type="submit" class="action-btn text-success" title="Submit course" style="border:none; background:transparent;">
                                         <i class="fa fa-paper-plane"></i>
                                     </button>
                                 </form>
-                                <form asp-action="Delete" asp-route-id="@course.Id" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa khóa học này không?');">
-                                    <button type="submit" class="action-btn text-danger" title="Xóa khóa học" style="border:none; background:transparent;">
+                                <form asp-action="Delete" asp-route-id="@course.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this course?');">
+                                    <button type="submit" class="action-btn text-danger" title="Delete course" style="border:none; background:transparent;">
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </form>
                             }
                             else
                             {
-                                <span class="badge bg-warning text-dark"><i class="fa fa-clock-o"></i> Chờ duyệt</span>
+                                <a href="/Course/Preview/@course.Id" class="action-btn text-info text-decoration-none" title="Preview">
+                                    <i class="fa fa-eye"></i> 
+                                </a>
                             }
                         </td>
                     </tr>
@@ -125,15 +136,40 @@
 <!-- Pagination -->
 <div class="pagination-area">
     <div>
-        Show 1 to @(Model.Count()) of @(Model.Count()) entries
+        @{
+            int startItem = (Model.PageIndex - 1) * Model.PageSize + 1;
+            int endItem = Math.Min(Model.PageIndex * Model.PageSize, Model.TotalCount);
+            if (Model.TotalCount == 0)
+            {
+                startItem = 0;
+                endItem = 0;
+            }
+        }
+        Show @startItem to @endItem of @Model.TotalCount entries
     </div>
     <div class="pagination-controls">
-        <a href="#" class="page-btn"><i class="fa fa-angle-left"></i></a>
-        <a href="#" class="page-btn">1</a>
-        <a href="#" class="page-btn">2</a>
-        <a href="#" class="page-btn active">3</a>
-        <a href="#" class="page-btn">4</a>
-        <a href="#" class="page-btn"><i class="fa fa-angle-right"></i></a>
+        @if (Model.HasPreviousPage)
+        {
+            <a href="/Course/Index?searchTerm=@ViewBag.SearchTerm&pageIndex=@(Model.PageIndex - 1)" class="page-btn"><i class="fa fa-angle-left"></i></a>
+        }
+        else
+        {
+            <a href="#" class="page-btn disabled" style="opacity: 0.5; cursor: not-allowed;"><i class="fa fa-angle-left"></i></a>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <a href="/Course/Index?searchTerm=@ViewBag.SearchTerm&pageIndex=@i" class="page-btn @(i == Model.PageIndex ? "active" : "")">@i</a>
+        }
+
+        @if (Model.HasNextPage)
+        {
+            <a href="/Course/Index?searchTerm=@ViewBag.SearchTerm&pageIndex=@(Model.PageIndex + 1)" class="page-btn"><i class="fa fa-angle-right"></i></a>
+        }
+        else
+        {
+            <a href="#" class="page-btn disabled" style="opacity: 0.5; cursor: not-allowed;"><i class="fa fa-angle-right"></i></a>
+        }
     </div>
 </div>
 
@@ -143,8 +179,8 @@
         <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
             <div class="modal-header border-0 pb-0" style="background-color: #ffffff;">
                 <div>
-                    <h5 class="modal-title fw-bold mb-1" id="formTitle" style="color: #2b3674; font-size: 1.25rem;">Tạo/Sửa khóa học</h5>
-                    <p class="text-muted small mb-0">Điền thông tin cơ bản cho khóa học của bạn.</p>
+                    <h5 class="modal-title fw-bold mb-1" id="formTitle" style="color: #2b3674; font-size: 1.25rem;">Create/Edit Course</h5>
+                    <p class="text-muted small mb-0">Fill in the basic information for your course.</p>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="align-self: flex-start; margin-top: 0.5rem;"></button>
             </div>
@@ -156,25 +192,25 @@
                     
                     <!-- 1. Ảnh đại diện -->
                     <div class="mb-4">
-                        <label class="form-label fw-semibold small" style="color: #2b3674;">Ảnh đại diện (Thumbnail)</label>
+                        <label class="form-label fw-semibold small" style="color: #2b3674;">Thumbnail Image</label>
                         <div class="mb-2">
                             <img id="thumbnailPreview" src="" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; display: none;" />
                         </div>
                         <input type="file" name="ThumbnailFile" class="form-control" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" accept="image/*" />
-                        <small class="text-muted" id="thumbnailHelp">Để trống nếu không muốn thay đổi ảnh khi sửa.</small>
+                        <small class="text-muted" id="thumbnailHelp">Leave blank if you do not want to change the image when editing.</small>
                     </div>
 
                     <!-- 2. Tên khóa học -->
                     <div class="mb-4">
-                        <label class="form-label fw-semibold small" style="color: #2b3674;">Tên khóa học <span class="text-danger">*</span></label>
-                        <input name="Title" id="courseTitle" type="text" class="form-control" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" required placeholder="Ví dụ: Lập trình C# cơ bản" />
+                        <label class="form-label fw-semibold small" style="color: #2b3674;">Course Name <span class="text-danger">*</span></label>
+                        <input name="Title" id="courseTitle" type="text" class="form-control" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" required placeholder="Example: Basic C# Programming" />
                     </div>
 
                     <!-- 3. Ngôn ngữ -->
                     <div class="mb-4">
-                        <label class="form-label fw-semibold small" style="color: #2b3674;">Ngôn ngữ <span class="text-danger">*</span></label>
+                        <label class="form-label fw-semibold small" style="color: #2b3674;">Language <span class="text-danger">*</span></label>
                         <select name="Language" id="courseLanguage" class="form-select" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" required>
-                            <option value="">-- Chọn ngôn ngữ --</option>
+                            <option value="">-- Select language --</option>
                             <option value="English">English</option>
                             <option value="Vietnamese">Vietnamese</option>
                         </select>
@@ -182,20 +218,20 @@
                     
                     <!-- 4. Cấp độ -->
                     <div class="mb-4">
-                        <label class="form-label fw-semibold small" style="color: #2b3674;">Cấp độ <span class="text-danger">*</span></label>
+                        <label class="form-label fw-semibold small" style="color: #2b3674;">Level <span class="text-danger">*</span></label>
                         <select name="Level" id="courseLevel" class="form-select" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" required>
-                            <option value="">-- Chọn cấp độ --</option>
-                            <option value="Beginner">Người mới bắt đầu</option>
-                            <option value="Intermediate">Trung bình</option>
-                            <option value="Advanced">Nâng cao</option>
+                            <option value="">-- Select level --</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
                         </select>
                     </div>
 
                     <!-- 5. Danh mục -->
                     <div class="mb-4">
-                        <label class="form-label fw-semibold small" style="color: #2b3674;">Danh mục <span class="text-danger">*</span></label>
+                        <label class="form-label fw-semibold small" style="color: #2b3674;">Category <span class="text-danger">*</span></label>
                         <select name="CategoryId" id="courseCategoryId" class="form-select" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" required>
-                            <option value="">-- Chọn danh mục --</option>
+                            <option value="">-- Select category --</option>
                             @if (ViewBag.Categories != null)
                             {
                                 foreach (var cat in ViewBag.Categories)
@@ -208,15 +244,15 @@
 
                     <!-- 6. Mô tả -->
                     <div class="mb-2">
-                        <label class="form-label fw-semibold small" style="color: #2b3674;">Mô tả ngắn gọn</label>
-                        <textarea name="Description" id="courseDescription" class="form-control" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" rows="3" placeholder="Giới thiệu nhanh về khóa học này..."></textarea>
+                        <label class="form-label fw-semibold small" style="color: #2b3674;">Short description</label>
+                        <textarea name="Description" id="courseDescription" class="form-control" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.6rem;" rows="3" placeholder="Brief introduction about this course..."></textarea>
                     </div>
                 </div>
                 
                 <div class="modal-footer border-0 px-4 pb-4 pt-0">
-                    <button type="button" class="btn btn-light px-4" style="border-radius: 8px; font-weight: 500; border: 1px solid #e0e5f2;" data-bs-dismiss="modal">Hủy bỏ</button>
+                    <button type="button" class="btn btn-light px-4" style="border-radius: 8px; font-weight: 500; border: 1px solid #e0e5f2;" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn-primary-blue px-4 ms-2">
-                        Lưu thông tin
+                        Save information
                     </button>
                 </div>
             </form>
@@ -227,7 +263,7 @@
 @section Scripts {
     <script>
         function openCreateModal() {
-            document.getElementById('formTitle').innerText = 'Tạo khóa học mới';
+            document.getElementById('formTitle').innerText = 'Create new course';
             document.getElementById('courseForm').action = '/Course/Create';
             document.getElementById('courseId').value = '';
             document.getElementById('courseThumbnailUrl').value = '';
@@ -246,7 +282,7 @@
         }
 
         function openEditModal(id, title, language, level, categoryId, description, thumbnailUrl) {
-            document.getElementById('formTitle').innerText = 'Sửa khóa học';
+            document.getElementById('formTitle').innerText = 'Edit course';
             document.getElementById('courseForm').action = '/Course/Edit';
             document.getElementById('courseId').value = id;
             document.getElementById('courseThumbnailUrl').value = thumbnailUrl;

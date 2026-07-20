@@ -20,7 +20,8 @@ namespace Application
             services.AddScoped<IModuleService, ModuleService>();
             services.AddScoped<ILessonService, LessonService>();
             services.AddScoped<IAssignmentService, AssignmentService>();
-            services.AddScoped<IDiscussionService, DiscussionService>();
+            services.AddScoped<IQuizService, QuizService>();
+            services.AddScoped<IQuizQuestionService, QuizQuestionService>();
             services.AddScoped<ILessonQuestionService, LessonQuestionService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IParentLinkService, ParentLinkService>();

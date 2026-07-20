@@ -24,11 +24,24 @@ namespace Infrastructure.Persistence.Repositories
             await _context.Courses.AddAsync(course);
         }
 
-        public async Task<List<Course>> GetByInstructorIdAsync(Guid instructorId)
+        public async Task<(List<Course> Items, int TotalCount)> GetPagedByInstructorIdAsync(Guid instructorId, string? searchTerm, int pageIndex, int pageSize)
         {
-            return await _context.Courses
-                .Where(c => c.CreatedBy == instructorId && !c.IsDeleted)
+            var query = _context.Courses
+                .Where(c => c.CreatedBy == instructorId && !c.IsDeleted);
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(c => c.Title.Contains(searchTerm));
+            }
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .OrderByDescending(c => c.CreatedAt)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return (items, totalCount);
         }
 
         public async Task<Course?> GetByIdAsync(Guid id)
@@ -42,13 +55,27 @@ namespace Infrastructure.Persistence.Repositories
         {
             var course = await _context.Courses
          .Include(c => c.Modules)
+            .ThenInclude(m => m.ModuleItems)
+                .ThenInclude(mi => mi.Lesson)
+         .Include(c => c.Modules)
+            .ThenInclude(m => m.ModuleItems)
+                .ThenInclude(mi => mi.Quiz)
+         .Include(c => c.Modules)
+            .ThenInclude(m => m.ModuleItems)
+                .ThenInclude(mi => mi.Assignment)
          .Where(c => c.Id == id && c.CreatedBy == instructorId && !c.IsDeleted)
          .FirstOrDefaultAsync();
 
             if (course != null && course.Modules != null)
             {
-
                 course.Modules = course.Modules.OrderBy(m => m.OrderIndex).ToList();
+                foreach(var m in course.Modules)
+                {
+                    if (m.ModuleItems != null)
+                    {
+                        m.ModuleItems = m.ModuleItems.OrderBy(mi => mi.OrderIndex).ToList();
+                    }
+                }
             }
 
             return course;

@@ -70,7 +70,9 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarMain">
-                    <!-- Navigation Links -->
+                    @if (ViewData["IsCourseManager"] as bool? != true)
+                    {
+                        <!-- Navigation Links -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 fw-medium" style="font-size: 0.95rem;">
                         <li class="nav-item"><a class="nav-link text-dark px-3" href="/Catalog/Index">Explore</a></li>
                         <li class="nav-item"><a class="nav-link text-dark px-3" href="/MyProgress/Index">My Progress</a></li>
@@ -86,13 +88,17 @@
                             </button>
                         </div>
                     </form>
+                    }
 
                     <!-- Right Actions -->
-                    <div class="d-flex align-items-center ms-auto gap-4 mt-3 mt-lg-0">
-                        <!-- Wishlist Icon -->
+                    <div class="d-flex align-items-center @((ViewData["IsCourseManager"] as bool? == true) ? "ms-auto" : "ms-auto") gap-4 mt-3 mt-lg-0">
+                        @if (ViewData["IsCourseManager"] as bool? != true)
+                        {
+                            <!-- Wishlist Icon -->
                         <a href="/StudentFamily" class="text-dark text-decoration-none fs-5 hover-text-primary transition-all">
                             <i class="fa fa-heart-o"></i>
-                        </a>
+                            </a>
+                        }
 
                         @if (User.Identity?.IsAuthenticated == true)
                         {
@@ -139,7 +145,8 @@
     </main>
 </div>
 
-@if (ViewData["HideHeaderFooter"] as bool? != true)
+<<<<<<< HEAD
+@if (ViewData["IsCourseManager"] as bool? != true)
 {
 <footer class="text-white pt-5 pb-3 mt-5" style="background-color: #1c1d1f;">
     <div class="container py-4">
@@ -179,7 +186,9 @@
     </div>
 </footer>
 }
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 

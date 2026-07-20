@@ -78,6 +78,8 @@ namespace Web.Controllers
         [HttpPost("publish")]
         public async Task<IActionResult> Publish(PublishCourseRequest request, [FromForm] string? source)
         {
+            ModelState.Remove(nameof(request.PublishDate));
+
             if (!ModelState.IsValid)
             {
                 var errorMessage = ModelState.Values
@@ -92,7 +94,7 @@ namespace Web.Controllers
 
             try
             {
-                await _dashboardService.PublishCourseAsync(request.CourseId, request.PublishDate, request.Price);
+                await _dashboardService.PublishCourseAsync(request.CourseId, DateTime.Now, request.Price);
                 TempData["SuccessToast"] = "Publish Success!";
             }
             catch (BusinessRuleException ex)

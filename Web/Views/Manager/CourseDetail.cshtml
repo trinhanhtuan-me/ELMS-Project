@@ -1,13 +1,13 @@
 @model Application.Dtos.Manager.CourseDetailVm
 @{
-    ViewData["Title"] = "Chi tiết khóa học - Manager Dashboard";
+    ViewData["Title"] = "Course Details - Manager Dashboard";
 }
 
 @section Styles {
-    <!-- Phải load file này để giữ lại bộ khung Sidebar và Topbar -->
+    <!-- Must load this file to keep Sidebar and Topbar structure -->
     <link rel="stylesheet" href="~/css/manager-dashboard.css" asp-append-version="true" />
 
-    <!-- File CSS riêng của trang detail -->
+    <!-- Custom CSS for detail page -->
     <link rel="stylesheet" href="~/css/manager-detail.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 }
@@ -39,22 +39,22 @@
             <div class="course-info">
                 <h1 class="course-title">@Model.Title</h1>
                 <p class="course-desc">
-                    @(string.IsNullOrEmpty(Model.Description) ? "Chưa có mô tả." : Model.Description)
+                    @(string.IsNullOrEmpty(Model.Description) ? "No description available." : Model.Description)
                 </p>
                 <p class="muted">
-                    <i class="fa fa-calendar"></i> Ngày tạo:
-                    @(Model.CreatedAt?.ToString("dd/MM/yyyy") ?? "Không xác định")
+                    <i class="fa fa-calendar"></i> Created Date:
+                    @(Model.CreatedAt?.ToString("dd/MM/yyyy") ?? "Unknown")
                 </p>
             </div>
 
             <div class="course-meta">
                 <p>
-                    <strong>Trạng thái:</strong>
+                    <strong>Status:</strong>
                     <span class="status-badge @Model.Status">@Model.Status</span>
                 </p>
                 <p>
-                    <strong>Giá:</strong>
-                    @(Model.Price != null ? Model.Price.Value.ToString("N0") + " ₫" : "Chưa đặt")
+                    <strong>Price:</strong>
+                    @(Model.Price != null ? Model.Price.Value.ToString("N0") + " ₫" : "Not set")
                 </p>
             </div>
         </div>
@@ -65,19 +65,19 @@
                 <form method="post" action="@Url.Action("Approve", "Manager")" style="display:inline-block;">
                     <input type="hidden" name="source" value="@ViewBag.Source" />
                     <input type="hidden" name="courseId" value="@Model.CourseId" />
-                    <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Duyệt</button>
+                    <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Approve</button>
                 </form>
                 <button type="button" class="btn btn-danger" onclick="openRejectModal('@Model.CourseId')">
-                    <i class="fa fa-times"></i> Từ chối
+                    <i class="fa fa-times"></i> Reject
                 </button>
             }
             else if (Model.Status == "approved")
             {
                 <button type="button" class="btn btn-danger" onclick="openRejectModal('@Model.CourseId')">
-                    <i class="fa fa-times"></i> Từ chối lại
+                    <i class="fa fa-times"></i> Reject Again
                 </button>
                 <button type="button" class="btn btn-primary" onclick="openScheduleModal('@Model.CourseId')">
-                    <i class="fa fa-upload"></i> Xuất bản
+                    <i class="fa fa-upload"></i> Publish
                 </button>
             }
             else if (Model.Status == "publish")
@@ -85,46 +85,45 @@
                 <form method="post" action="@Url.Action("Unpublish", "Manager")" style="display:inline-block;">
                     <input type="hidden" name="source" value="@ViewBag.Source" />
                     <input type="hidden" name="courseId" value="@Model.CourseId" />
-                    <button type="submit" class="btn btn-warning"><i class="fa fa-download"></i> Gỡ đăng</button>
+                    <button type="submit" class="btn btn-warning"><i class="fa fa-download"></i> Unpublish</button>
                 </form>
             }
             else if (Model.Status == "unpublish")
             {
                 <button type="button" class="btn btn-primary" onclick="openScheduleModal('@Model.CourseId')">
-                    <i class="fa fa-upload"></i> Đăng lại
+                    <i class="fa fa-upload"></i> Republish
                 </button>
             }
         </div>
 
         <div class="course-overview">
             <section class="course-stats">
-                <h3>Tổng quan khóa học</h3>
+                <h3>Course Overview</h3>
                 <ul>
                     <li>Modules: @Model.Stats.ModuleCount</li>
-                    <li>Bài học: @Model.Stats.LessonCount</li>
-                    <li>Quiz: @Model.Stats.QuizCount</li>
-                    <li>Assignment: @Model.Stats.AssignmentCount</li>
-                    <li>Discussion: @Model.Stats.DiscussionCount</li>
-                    <li><strong>Tổng nội dung:</strong> @(Model.Stats.LessonCount + Model.Stats.QuizCount + Model.Stats.AssignmentCount + Model.Stats.DiscussionCount)</li>
+                    <li>Lessons: @Model.Stats.LessonCount</li>
+                    <li>Quizzes: @Model.Stats.QuizCount</li>
+                    <li>Assignments: @Model.Stats.AssignmentCount</li>
+                    <li><strong>Total Content:</strong> @(Model.Stats.LessonCount + Model.Stats.QuizCount + Model.Stats.AssignmentCount + Model.Stats.DiscussionCount)</li>
                 </ul>
             </section>
 
             <section class="course-instructor">
-                <h3>Giảng viên phụ trách</h3>
+                <h3>Instructor</h3>
                 <div class="instructor-card">
-                    <p><strong>Họ tên:</strong> @Model.Instructor.FullName</p>
+                    <p><strong>Full Name:</strong> @Model.Instructor.FullName</p>
                     <p><strong>Email:</strong> @Model.Instructor.Email</p>
-                    <p><strong>Chuyên môn:</strong> @(string.IsNullOrEmpty(Model.Instructor.Expertise) ? "Chưa cập nhật" : Model.Instructor.Expertise)</p>
-                    <p><strong>Giới thiệu:</strong> @(string.IsNullOrEmpty(Model.Instructor.Bio) ? "Không có mô tả" : Model.Instructor.Bio)</p>
+                    <p><strong>Expertise:</strong> @(string.IsNullOrEmpty(Model.Instructor.Expertise) ? "Not updated" : Model.Instructor.Expertise)</p>
+                    <p><strong>Bio:</strong> @(string.IsNullOrEmpty(Model.Instructor.Bio) ? "No description" : Model.Instructor.Bio)</p>
                 </div>
             </section>
         </div>
 
         <section class="course-outline">
-            <h3>Chương trình học</h3>
+            <h3>Curriculum</h3>
             @if (!Model.Modules.Any())
             {
-                <div class="empty">Khóa học này chưa có module nào.</div>
+                <div class="empty">This course has no modules yet.</div>
             }
             else
             {
@@ -132,7 +131,7 @@
                 {
                     <div class="module">
                         <div class="module-header" onclick="toggleModule(this)">
-                            <span>Chương @m.OrderIndex: @m.Title</span>
+                            <span>Module @m.OrderIndex: @m.Title</span>
                             <i class="fa fa-chevron-down"></i>
                         </div>
 
@@ -156,11 +155,7 @@
 
                                                 <i class="fa fa-tasks"></i>
                                             }
-                                            else if (i.ItemType == "discussion")
-                                            {
-
-                                                <i class="fa fa-comments"></i>
-                                            }
+                                            
                                             @i.Title
                                         </h4>
                                         <i class="fa fa-chevron-down toggle-icon"></i>
@@ -169,12 +164,12 @@
                                     <div class="item-detail" style="display:none;">
                                         @if (i.ItemType == "lesson")
                                         {
-                                            <p><strong>Loại nội dung:</strong> @i.ContentType</p>
+                                            <p><strong>Content Type:</strong> @i.ContentType</p>
                                             @if (!string.IsNullOrEmpty(i.VideoUrl))
                                             {
                                                 var embedUrl = i.VideoUrl.Replace("watch?v=", "embed/");
                                                 <iframe width="560" height="315" src="@embedUrl" frameborder="0" allowfullscreen></iframe>
-                                                <p><i class="fa fa-clock"></i> Thời lượng: @i.DurationSec giây</p>
+                                                <p><i class="fa fa-clock"></i> Duration: @i.DurationSec seconds</p>
                                             }
                                             @if (!string.IsNullOrEmpty(i.TextContent))
                                             {
@@ -183,69 +178,38 @@
                                         }
                                         else if (i.ItemType == "quiz")
                                         {
-                                            <p><strong>Giới hạn thời gian:</strong> @(i.TimeLimitMin != null ? i.TimeLimitMin + " phút" : "Không giới hạn")</p>
-                                            <p>Tỉ lệ qua: @i.QuizPassingPct%</p>
-                                            <p>Số câu chọn ngẫu nhiên: @i.PickCount</p>
+                                            <p><strong>Time Limit:</strong> @(i.TimeLimitMin != null ? i.TimeLimitMin + " minutes" : "Unlimited")</p>
+                                            <p>Passing Percentage: @i.QuizPassingPct%</p>
+                                            <p>Random Questions: @i.PickCount</p>
                                         }
                                         else if (i.ItemType == "assignment")
                                         {
                                             <div class="assignment-detail">
-                                                <p><strong>Hình thức nộp:</strong> @i.SubmissionType</p>
-                                                <p><strong>Tỉ lệ qua:</strong> @i.AssignmentPassingPct%</p>
+                                                <p><strong>Submission Type:</strong> @i.SubmissionType</p>
+                                                <p><strong>Passing Percentage:</strong> @i.AssignmentPassingPct%</p>
                                                 @if (!string.IsNullOrEmpty(i.AssignmentInstructions))
                                                 {
-                                                    <div class="text-content"><h5>Hướng dẫn:</h5> @Html.Raw(i.AssignmentInstructions)</div>
+                                                    <div class="text-content"><h5>Instructions:</h5> @Html.Raw(i.AssignmentInstructions)</div>
                                                 }
                                             </div>
                                         }
 
-                                        else if (i.ItemType == "discussion")
-                                        {
-                                            <div class="discussion-detail">
-                                                @if (!string.IsNullOrEmpty(i.DiscussionDescription))
-                                                {
-                                                    <div class="text-content"><h5>Chủ đề thảo luận:</h5> @Html.Raw(i.DiscussionDescription)</div>
-                                                }
-                                                else
-                                                {
-                                                    <p style="color: #6c757d; font-style: italic;">Chưa có chủ đề thảo luận nào.</p>
-                                                }
-
-                                                @if (i.DiscussionReplies != null && i.DiscussionReplies.Any())
-                                                {
-                                                    <div class="discussion-replies" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ccc;">
-                                                        <h6 style="margin-bottom: 10px;">Các bình luận (@i.DiscussionReplies.Count):</h6>
-                                                        @foreach (var reply in i.DiscussionReplies)
-                                                        {
-                                                            <div class="reply-item" style="margin-bottom: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 6px;">
-                                                                <div style="font-size: 0.9em; color: #4f46e5; margin-bottom: 5px;">
-                                                                    <strong><i class="fa fa-user-circle"></i> @reply.AuthorName</strong>
-                                                                    <span style="color: #999; margin-left: 10px; font-size: 0.8em;">
-                                                                        <i class="fa fa-clock"></i> @(reply.CreatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")
-                                                                    </span>
-                                                                </div>
-                                                                <div class="reply-content">@Html.Raw(reply.Content)</div>
-                                                            </div>
-                                                        }
-                                                    </div>
-                                                }
-                                            </div>
-                                        }
+                                        
 
 
 
                                         @if (i.Questions != null && i.Questions.Any())
                                         {
                                             <div class="lesson-questions">
-                                                <h5 style="margin-top: 15px;">Các câu hỏi:</h5>
+                                                <h5 style="margin-top: 15px;">Questions:</h5>
                                                 @foreach (var q in i.Questions)
                                                 {
                                                     <div class="question-item" style="margin-bottom: 15px; padding-left: 10px; border-left: 3px solid #ccc;">
-                                                        <strong>Câu hỏi:</strong> @Html.Raw(q.Content)
+                                                        <strong>Question:</strong> @Html.Raw(q.Content)
 
                                                         @if (!string.IsNullOrEmpty(q.Explanation))
                                                         {
-                                                            <div class="muted"><em>Giải thích:</em> @q.Explanation</div>
+                                                            <div class="muted"><em>Explanation:</em> @q.Explanation</div>
                                                         }
 
                                                         @if (q.Options != null && q.Options.Any())
@@ -271,18 +235,18 @@
                 }
             }
         </section>
-    </div> <!-- HẾT PHẦN COURSE-CONTAINER -->
-    <!-- Tái sử dụng lại Modal từ Dashboard cho chuẩn xác (để đồng nhất tính năng Giá tiền) -->
+    </div> <!-- END OF COURSE-CONTAINER -->
+    <!-- Reuse Modal from Dashboard for consistency -->
     <div id="rejectModal" class="modal" style="display:none;">
         <div class="modal-content">
-            <h3>Nhập lý do từ chối</h3>
+            <h3>Enter Rejection Reason</h3>
             <form method="post" action="@Url.Action("Reject", "Manager")">
                 <input type="hidden" name="source" value="@ViewBag.Source" />
                 <input type="hidden" name="courseId" id="rejectCourseId">
-                <textarea name="rejectReason" required placeholder="Nhập lý do..."></textarea>
+                <textarea name="rejectReason" required placeholder="Enter reason..."></textarea>
                 <div class="modal-buttons">
-                    <button type="submit" class="btn btn-danger">Gửi</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeRejectModal()">Hủy</button>
+                    <button type="submit" class="btn btn-danger">Submit</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeRejectModal()">Cancel</button>
                 </div>
             </form>
         </div>
@@ -290,36 +254,34 @@
 
     <div id="scheduleModal" class="modal" style="display:none;">
         <div class="modal-content">
-            <h3>Xuất bản khóa học</h3>
+            <h3>Publish Course</h3>
             <form method="post" action="@Url.Action("Publish", "Manager")">
                 <input type="hidden" name="source" value="@ViewBag.Source" />
                 <input type="hidden" name="courseId" id="scheduleCourseId">
 
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <label for="publishDate" style="display:block; margin-bottom:5px; font-weight:bold;">Ngày đăng:</label>
-                    <input type="date" name="publishDate" id="publishDate" class="form-control" style="width:100%; padding:8px;" required>
-                </div>
+                
                 <div class="form-group" style="margin-bottom: 16px;">
-                    <label for="price" style="display:block; margin-bottom:5px; font-weight:bold;">Giá bán (VNĐ):</label>
-                    <input type="number" name="price" id="price" class="form-control" style="width:100%; padding:8px;" required min="0" step="1000" placeholder="Ví dụ: 500000">
+                    <label for="price" style="display:block; margin-bottom:5px; font-weight:bold;">Price (VND):</label>
+                    <input type="number" name="price" id="price" class="form-control" style="width:100%; padding:8px;" required min="0" step="1000" placeholder="Example: 500000">
                 </div>
 
                 <div class="modal-buttons" style="display:flex; justify-content:flex-end; gap:10px;">
-                    <button type="button" class="btn btn-secondary" onclick="closeScheduleModal()">Hủy</button>
-                    <button type="submit" class="btn btn-primary" style="background-color:#4f46e5; color:white; border:none; padding:8px 16px; border-radius:4px;">Lưu lịch & Xuất bản</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeScheduleModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="background-color:#4f46e5; color:white; border:none; padding:8px 16px; border-radius:4px;">Save & Publish</button>
                 </div>
             </form>
         </div>
     </div>
 
-</main> <!-- ĐÓNG THẺ MAIN -->
+</main> <!-- CLOSE MAIN TAG -->
 @section Scripts {
     <script>
         function toggleModule(h) {
             const c = h.nextElementSibling;
             const i = h.querySelector("i");
             const open = c.style.display === "block";
-            // Đóng tất cả modules khác
+
+            // Close all other modules
             document.querySelectorAll('.module-lessons').forEach(e => e.style.display = "none");
             document.querySelectorAll('.module-header i').forEach(e => e.classList.replace("fa-chevron-up", "fa-chevron-down"));
 
@@ -333,7 +295,8 @@
             const d = h.nextElementSibling;
             const i = h.querySelector("i.toggle-icon");
             const open = d.style.display === "block";
-            // Đóng tất cả items khác trong cùng 1 module
+
+            // Close all other items in the same module
             h.closest('.module-lessons').querySelectorAll(".item-detail").forEach(e => e.style.display = "none");
             h.closest('.module-lessons').querySelectorAll(".item-header i.toggle-icon").forEach(e => e.classList.replace("fa-chevron-up", "fa-chevron-down"));
 

@@ -40,6 +40,7 @@ namespace Infrastructure.Persistence.Repositories
                     ModuleItemId = item.Id,
                     Status = ProgressStatus.InProgress,
                     PercentDone = 0,
+                    StartedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };
                 await context.Progresses.AddAsync(progress);

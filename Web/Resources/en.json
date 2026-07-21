@@ -208,5 +208,18 @@
   "parent_security_btn_add_passkey": "Add Passkey for this device",
   "parent_security_btn_register_passkey": "Register Passkey",
   "parent_security_msg_processing": "Processing... Please check your device screen.",
-  "parent_security_msg_success": "Passkey registered successfully!"
+  "parent_security_msg_success": "Passkey registered successfully!",
+  "error_403_title": "403 - Forbidden Access",
+  "error_403_header": "Access Denied",
+  "error_403_desc": "Sorry, your account does not have permission to access this resource or feature. Please contact the administrator if you believe this is an error.",
+  "error_404_title": "404 - Page Not Found",
+  "error_404_header": "Page Not Found",
+  "error_404_desc": "The URL you are trying to reach doesn't exist, or has been removed. Please double check the link or go back to the homepage.",
+  "error_500_title": "500 - Internal Server Error",
+  "error_500_header": "Server Error",
+  "error_500_desc": "The system encountered an unexpected internal server error. Our engineering team is working to resolve it as quickly as possible. Please try again later.",
+  "error_btn_home": "Back to Home",
+  "error_btn_back": "Go Back",
+  "error_need_help": "Need more help?",
+  "error_contact_support": "Contact technical support"
 }

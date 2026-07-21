@@ -1,5 +1,136 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{
+    Layout = null;
+    var currentCulture = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLower();
 }
+
+<!DOCTYPE html>
+<html lang="@currentCulture">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Localizer["error_500_title"]</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    animation: {
+                        'gear-spin': 'gearSpin 8s linear infinite',
+                        'gear-spin-reverse': 'gearSpinRev 6s linear infinite',
+                        'pulse-slow': 'pulseSlow 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        gearSpin: {
+                            '0%': { transform: 'rotate(0deg)' },
+                            '100%': { transform: 'rotate(360deg)' }
+                        },
+                        gearSpinRev: {
+                            '0%': { transform: 'rotate(0deg)' },
+                            '100%': { transform: 'rotate(-360deg)' }
+                        },
+                        pulseSlow: {
+                            '0%, 100%': { opacity: '0.8', transform: 'scale(1)' },
+                            '50%': { opacity: '1', transform: 'scale(1.03)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Font: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-amber-50 flex items-center justify-center p-4 relative overflow-hidden">
+    
+    <!-- Background Decorative Elements -->
+    <div class="absolute top-[-25%] left-[-15%] w-[60%] h-[60%] rounded-full bg-amber-400/10 blur-3xl"></div>
+    <div class="absolute bottom-[-25%] right-[-15%] w-[60%] h-[60%] rounded-full bg-red-400/10 blur-3xl"></div>
+
+    <!-- Language Switcher -->
+    <div class="absolute top-6 right-6 flex items-center gap-1 border border-slate-200/60 rounded-full p-0.5 bg-white/80 backdrop-blur-sm shadow-sm z-50">
+        <button type="button" onclick="changeLanguage('vi')" 
+                class="px-3 py-1 rounded-full text-xs font-bold transition-all @(currentCulture == "vi" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-800")">
+            VI
+        </button>
+        <button type="button" onclick="changeLanguage('en')" 
+                class="px-3 py-1 rounded-full text-xs font-bold transition-all @(currentCulture == "en" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-800")">
+            EN
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="max-w-md w-full text-center z-10 px-4">
+        <!-- Main Card -->
+        <div class="bg-white/85 backdrop-blur-md border border-slate-200/50 rounded-3xl p-8 md:p-10 shadow-2xl shadow-blue-900/5 relative overflow-hidden">
+            <!-- Decorative inner top border gradient -->
+            <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-500 via-orange-500 to-red-600"></div>
+
+            <!-- Error Code & Icon Container -->
+            <div class="mb-6 flex flex-col items-center justify-center">
+                <!-- SVG Icon representing Server/System under repair -->
+                <div class="relative w-24 h-24 mb-4 flex items-center justify-center bg-amber-50 rounded-full text-amber-600 animate-pulse-slow">
+                    <!-- Outer big gear -->
+                    <div class="absolute w-12 h-12 text-amber-500/80 animate-gear-spin">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </div>
+                    <!-- Inner small gear -->
+                    <div class="absolute w-6 h-6 text-amber-600/90 translate-x-4 -translate-y-4 animate-gear-spin-reverse">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <h1 class="text-8xl font-black bg-gradient-to-r from-amber-600 to-red-500 bg-clip-text text-transparent tracking-tighter leading-none">500</h1>
+            </div>
+
+            <!-- Message Headers -->
+            <h2 class="text-2xl font-bold text-slate-800 mb-3">@Localizer["error_500_header"]</h2>
+            <p class="text-slate-500 mb-8 text-sm leading-relaxed">
+                @Localizer["error_500_desc"]
+            </p>
+
+            <!-- Navigation Actions -->
+            <div class="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center">
+                <button type="button" onclick="history.back()" 
+                        class="flex items-center justify-center gap-2 px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 font-semibold rounded-xl border border-slate-200 transition-all hover:-translate-y-0.5 shadow-sm active:translate-y-0">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                    <span>@Localizer["error_btn_back"]</span>
+                </button>
+                
+            </div>
+        </div>
+
+        <!-- Extra Help Footer -->
+        <div class="mt-8 text-center text-xs text-slate-400">
+            <p>@Localizer["error_need_help"] <a href="mailto:support@elms.com" class="text-blue-500 hover:text-blue-600 hover:underline font-semibold">@Localizer["error_contact_support"]</a></p>
+        </div>
+    </div>
+
+    <!-- JS Cookie Language Switcher -->
+    <script>
+        function changeLanguage(culture) {
+            const expires = new Date();
+            expires.setFullYear(expires.getFullYear() + 1);
+            const cookieValue = `c=${culture}|uic=${culture}`;
+            document.cookie = `.AspNetCore.Culture=${encodeURIComponent(cookieValue)};expires=${expires.toUTCString()};path=/`;
+            location.reload();
+        }
+    </script>
+</body>
+</html>

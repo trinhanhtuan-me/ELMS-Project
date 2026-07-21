@@ -89,7 +89,7 @@ namespace Web.Controllers
                     if (roleName.ToLower().Contains("instructor") || roleName.ToLower().Contains("teacher")) return RedirectToAction("Index", "Course");
                     if (roleName.ToLower().Contains("manager")) return RedirectToAction("Dashboard", "Manager");
                     if (roleName.ToLower().Contains("parent")) return RedirectToAction("Index", "ParentProgress");
-                    if (roleName.ToLower().Contains("admin")) return RedirectToAction("Index", "???");
+                    if (roleName.ToLower().Contains("admin")) return RedirectToAction("Index", "UserManagement");
                 }
                 else if (user.Roles != null && user.Roles.Count > 1)
                 {

@@ -13,5 +13,8 @@ namespace Application.Interfaces
         Task AddAsync(User user);
         Task<User?> FindUserLoginAsync(string identifier);
         Task<User?> FindByIdAsync(Guid id);
+        Task<List<User>> GetListUsersAsync(string? searchTerm, int? roleId, bool? isActive, int pageNumber, int pageSize);
+        Task<int> CountAsync(string? searchTerm, int? roleId, bool? isActive);
+        Task<User?> FindUserWithRolesByIdAsync(Guid id);
     }
 }

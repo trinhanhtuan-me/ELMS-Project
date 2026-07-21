@@ -1,0 +1,215 @@
+@using Domain.Entities
+@model Application.Common.PaginatedList<Application.Dtos.UserManagement.UserVm>
+
+@{
+    ViewData["Title"] = "Quản lý Người dùng";
+    var allRoles = ViewBag.AllRoles as List<PRole> ?? new List<PRole>();
+
+    // Calculate pagination dynamically
+    int currentPage = int.TryParse(Context.Request.Query["PageNumber"].ToString(), out var p) && p > 0 ? p : 1;
+    int pageSize = 10;
+    int totalItems = Model.Total;
+    int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+    if (totalPages < 1) totalPages = 1;
+    bool hasPreviousPage = currentPage > 1;
+    bool hasNextPage = currentPage < totalPages;
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h4 text-dark mb-0 fw-bold">
+            <i class="fa fa-users text-danger me-2"></i>Quản lý Người dùng
+        </h2>
+        <button class="btn btn-danger" onclick="openCreateModal()">
+            <i class="fa fa-user-plus me-1"></i> Tạo tài khoản
+        </button>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4 bg-light">
+        <div class="card-body py-3">
+            <form method="get" class="row g-2 align-items-center">
+                <div class="col-md-4">
+                    <input type="text" name="SearchTerm" value="@Context.Request.Query["SearchTerm"]" class="form-control border-secondary-subtle" placeholder="Tìm theo Username, Email, Họ tên..." />
+                </div>
+                <div class="col-md-3">
+                    <select name="RoleId" class="form-select border-secondary-subtle">
+                        <option value="">-- Tất cả vai trò --</option>
+                        @foreach (var role in allRoles)
+                        {
+                            var selected = Context.Request.Query["RoleId"].ToString() == role.Id.ToString();
+                            <!option value="@role.Id" @(selected ? "selected" : "")>@role.Name</!option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="IsActive" class="form-select border-secondary-subtle">
+                        @{
+                            var currentIsActive = Context.Request.Query["IsActive"].ToString();
+                        }
+                        <option value="" selected="@(string.IsNullOrEmpty(currentIsActive))">-- Tất cả trạng thái --</option>
+                        <option value="true" selected="@(currentIsActive == "true")">Hoạt động</option>
+                        <option value="false" selected="@(currentIsActive == "false")">Bị khóa</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-danger"><i class="fa fa-search me-1"></i>Tìm kiếm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover mb-0 align-middle">
+                    <thead class="bg-danger text-white">
+                        <tr>
+                            <th class="text-center" width="5%">STT</th>
+                            <th width="15%">Username</th>
+                            <th width="20%">Họ tên</th>
+                            <th width="25%">Email</th>
+                            <th class="text-center" width="20%">Vai trò</th>
+                            <th class="text-center" width="10%">Trạng thái</th>
+                            <th class="text-center" width="5%">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Data != null && Model.Data.Any())
+                        {
+                            int stt = (currentPage - 1) * pageSize + 1;
+                            foreach (var user in Model.Data)
+                            {
+                                <tr>
+                                    <td class="text-center">@(stt++)</td>
+                                    <td class="fw-medium text-dark">@user.Username</td>
+                                    <td>@(user.FullName ?? "Chưa thiết lập")</td>
+                                    <td>@user.Email</td>
+                                    <td class="text-center">
+                                        @if (user.Roles != null && user.Roles.Any())
+                                        {
+                                            @foreach (var role in user.Roles)
+                                            {
+                                                var badgeClass = role == "Admin" ? "bg-dark" :
+                                                                 role == "Manager" ? "bg-danger" :
+                                                                 role == "Teacher" || role == "Instructor" ? "bg-warning text-dark" :
+                                                                 role == "Parent" ? "bg-success" : "bg-primary";
+                                                <span class="badge @badgeClass me-1" style="font-size: 0.8rem;">@role</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">Không có vai trò</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (user.IsActive)
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Hoạt động</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">Bị khóa</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-outline-info" onclick="openEditModal('@user.Id')">
+                                            <i class="fa fa-pencil"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">Không tìm thấy người dùng nào phù hợp.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Phân trang -->
+    @if (totalPages > 1)
+    {
+        <div class="d-flex justify-content-center mt-3">
+            <nav>
+                <ul class="pagination pagination-danger">
+                    <li class="page-item @(hasPreviousPage ? "" : "disabled")">
+                        <a class="page-link" href="?PageNumber=@(currentPage - 1)&SearchTerm=@Context.Request.Query["SearchTerm"]&RoleId=@Context.Request.Query["RoleId"]&IsActive=@Context.Request.Query["IsActive"]">
+                            <i class="fa fa-angle-left"></i>
+                        </a>
+                    </li>
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" href="?PageNumber=@i&SearchTerm=@Context.Request.Query["SearchTerm"]&RoleId=@Context.Request.Query["RoleId"]&IsActive=@Context.Request.Query["IsActive"]">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(hasNextPage ? "" : "disabled")">
+                        <a class="page-link" href="?PageNumber=@(currentPage + 1)&SearchTerm=@Context.Request.Query["SearchTerm"]&RoleId=@Context.Request.Query["RoleId"]&IsActive=@Context.Request.Query["IsActive"]">
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
+
+<!-- Modal cập nhật người dùng -->
+<div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="modal-content-body">
+            <div class="text-center p-5">
+                <div class="spinner-border text-danger" role="status"></div>
+                <p class="mt-2 text-muted">Đang tải dữ liệu...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openEditModal(userId) {
+            $('#userModal').modal('show');
+            $('#modal-content-body').html(`
+                <div class="text-center p-5">
+                    <div class="spinner-border text-danger" role="status"></div>
+                    <p class="mt-2 text-muted">Đang tải dữ liệu...</p>
+                </div>
+            `);
+            $.get('/UserManagement/Edit/' + userId, function (htmlResult) {
+                $('#modal-content-body').html(htmlResult);
+            }).fail(function () {
+                TempDataError("Không thể tải thông tin chỉnh sửa người dùng.");
+                $('#userModal').modal('hide');
+            });
+        }
+
+        function openCreateModal() {
+            $('#userModal').modal('show');
+            $('#modal-content-body').html(`
+                <div class="text-center p-5">
+                    <div class="spinner-border text-danger" role="status"></div>
+                    <p class="mt-2 text-muted">Đang tải dữ liệu...</p>
+                </div>
+            `);
+            $.get('/UserManagement/Create', function (htmlResult) {
+                $('#modal-content-body').html(htmlResult);
+            }).fail(function () {
+                TempDataError("Không thể tải biểu mẫu tạo tài khoản.");
+                $('#userModal').modal('hide');
+            });
+        }
+
+        $(document).ready(function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('create') === 'true') {
+                openCreateModal();
+            }
+        });
+    </script>
+}

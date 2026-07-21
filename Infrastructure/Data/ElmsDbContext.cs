@@ -239,6 +239,7 @@ public partial class ElmsDbContext : DbContext
             entity.HasOne(d => d.Course).WithOne(p => p.CoursePrice)
                 .HasForeignKey<CoursePrice>(d => d.CourseId)
                 .HasConstraintName("FK__CoursePri__Cours__3DE82FB7");
+            entity.HasQueryFilter(p => p.IsActive == true);
         });
 
         modelBuilder.Entity<CourseRequest>(entity =>
@@ -550,8 +551,8 @@ public partial class ElmsDbContext : DbContext
                 .HasColumnName("identity");
 
             entity.HasData(
-                new PCategory { Id = 100, Identity = "System", Description = "Hệ thống" },
-                new PCategory { Id = 101, Identity = "User", Description = "Người dùng" }
+                new PCategory { Id = 100, Identity = "System", Description = "Há»‡ thá»‘ng" },
+                new PCategory { Id = 101, Identity = "User", Description = "NgÆ°á»i dÃ¹ng" }
             );
         });
 
@@ -578,9 +579,9 @@ public partial class ElmsDbContext : DbContext
                 .HasConstraintName("FK__p_functio__categ__6DCC4D03");
 
             entity.HasData(
-                new PFunction { Id = 100, CategoryId = 100, PermissionKey = "System/Setting", Description = "Cài đặt hệ thống", IsDeleted = false },
-                new PFunction { Id = 101, CategoryId = 101, PermissionKey = "User/View", Description = "Xem người dùng", IsDeleted = false },
-                new PFunction { Id = 102, CategoryId = 101, PermissionKey = "User/Create", Description = "Tạo người dùng", IsDeleted = false }
+                new PFunction { Id = 100, CategoryId = 100, PermissionKey = "System/Setting", Description = "CÃ i Ä‘áº·t há»‡ thá»‘ng", IsDeleted = false },
+                new PFunction { Id = 101, CategoryId = 101, PermissionKey = "User/View", Description = "Xem ngÆ°á»i dÃ¹ng", IsDeleted = false },
+                new PFunction { Id = 102, CategoryId = 101, PermissionKey = "User/Create", Description = "Táº¡o ngÆ°á»i dÃ¹ng", IsDeleted = false }
             );
         });
 
@@ -799,7 +800,28 @@ new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee05"), Questi
                 new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee27"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd14"), Content = "Option A", IsCorrect = true },
                 new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee28"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd14"), Content = "Option B", IsCorrect = false },
                 new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee29"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd15"), Content = "Option A", IsCorrect = true },
-                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee30"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd15"), Content = "Option B", IsCorrect = false }
+                new QuizOption { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeee30"), QuestionId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd15"), Content = "Option B", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("4661fefc-c603-4787-9a1b-0535dcd116a0"), QuestionId = Guid.Parse("585a9610-cdbe-4b54-ac58-44f50d3a06cd"), Content = "She goes to school every day.", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("f379f2b0-6ba9-468a-b60b-66447a7fa907"), QuestionId = Guid.Parse("585a9610-cdbe-4b54-ac58-44f50d3a06cd"), Content = "She is go to school every day.", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("24249d16-7b3c-4bc9-9237-1717c5f36c0c"), QuestionId = Guid.Parse("623baaa9-17d7-4daa-9091-5113adc1131b"), Content = "I am writing an email now.", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("081279cf-105c-43b7-8de0-e35280042593"), QuestionId = Guid.Parse("623baaa9-17d7-4daa-9091-5113adc1131b"), Content = "I write an email now.", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("6d0c0e46-5998-4ad2-9d94-761a60fb1a6d"), QuestionId = Guid.Parse("fd325ccb-2cfa-4e04-a9ea-9a84e99edf60"), Content = "I have two brothers.", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("4c8f4c95-da4a-48be-b61e-6eab93466601"), QuestionId = Guid.Parse("fd325ccb-2cfa-4e04-a9ea-9a84e99edf60"), Content = "I am having two brothers.", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("8b59b9db-401d-4abe-9292-a946de654652"), QuestionId = Guid.Parse("925e1065-ce2e-45e7-b63f-37047a0529f4"), Content = "They visited Hue last summer.", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("48037826-1784-40ab-a1fd-98724b6657b3"), QuestionId = Guid.Parse("925e1065-ce2e-45e7-b63f-37047a0529f4"), Content = "They were visiting Hue last summer ...", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("dd26d988-65c3-412a-b8e1-a864e3c5d20b"), QuestionId = Guid.Parse("5ba86e00-f2d5-463a-89b6-8720a6dc44ac"), Content = "was cooking / rang", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("1a13d791-36e4-4673-b1db-97e8c9fbd881"), QuestionId = Guid.Parse("5ba86e00-f2d5-463a-89b6-8720a6dc44ac"), Content = "cooked / was ringing", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("2530b0db-6a47-4f11-99b2-5f3bb1a882f4"), QuestionId = Guid.Parse("13fb571a-8f83-4426-9b15-fbeedbe9578b"), Content = "have known / for", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("7eb7383b-c2e1-45bb-a5f1-0ebe9cf8b6e6"), QuestionId = Guid.Parse("13fb571a-8f83-4426-9b15-fbeedbe9578b"), Content = "know / since", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("41a84df2-3663-4e03-9be1-2aa751199608"), QuestionId = Guid.Parse("44286b13-94c0-45d3-809f-5492f9554969"), Content = "I have already finished my homework.", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("89b3aa12-f180-46b4-a185-eacc90731f42"), QuestionId = Guid.Parse("44286b13-94c0-45d3-809f-5492f9554969"), Content = "I just finish my homework yesterday.", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("05e7239e-f6df-46e9-84fb-80f5ac9955a0"), QuestionId = Guid.Parse("0133d7f9-9640-41d3-a285-f71c745d5102"), Content = "have never seen", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("929f0ae0-d0f0-49b7-979d-c5fbcaae15cb"), QuestionId = Guid.Parse("0133d7f9-9640-41d3-a285-f71c745d5102"), Content = "never saw", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("b51e26c7-fa84-488b-94c6-327b8ae1055f"), QuestionId = Guid.Parse("5e444722-bd1f-4e2a-b26c-966845da6daf"), Content = "has been raining", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("8ba84b94-2eb4-47f8-b7b8-9b56935e7ce3"), QuestionId = Guid.Parse("5e444722-bd1f-4e2a-b26c-966845da6daf"), Content = "has rained", IsCorrect = false },
+                new QuizOption { Id = Guid.Parse("21abbef6-7e87-4e7f-ab60-6baadf1c6fe4"), QuestionId = Guid.Parse("0177342c-18d6-4d09-8493-ebb5cbb33e72"), Content = "has been studying", IsCorrect = true },
+                new QuizOption { Id = Guid.Parse("d82be00a-1e6a-4937-b707-63e2873c6236"), QuestionId = Guid.Parse("0177342c-18d6-4d09-8493-ebb5cbb33e72"), Content = "has studied", IsCorrect = false }
+
             );
         });
 
@@ -831,7 +853,17 @@ new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), Quiz
                 new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd12"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 12 for Tenses Quiz 1" },
                 new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd13"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 13 for Tenses Quiz 1" },
                 new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd14"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 14 for Tenses Quiz 1" },
-                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd15"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 15 for Tenses Quiz 1" }
+                new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd15"), QuizId = Guid.Parse("66666666-6666-6666-6666-666666666603"), Content = "Question 15 for Tenses Quiz 1" },
+                new QuizQuestion { Id = Guid.Parse("585a9610-cdbe-4b54-ac58-44f50d3a06cd"), QuizId = Guid.Parse("38fac854-0aa4-40ba-9cce-bd56fe382b4b"), Content = "Choose the correct Present Simple sentence.", Explanation = "Present Simple dÃ¹ng cho thÃ³i quen/sá»± tháº­t chung.", IsDeleted = false },
+                new QuizQuestion { Id = Guid.Parse("623baaa9-17d7-4daa-9091-5113adc1131b"), QuizId = Guid.Parse("38fac854-0aa4-40ba-9cce-bd56fe382b4b"), Content = "Which sentence is Present Continuous (happening...", Explanation = "Present Continuous = am/is/are + V-ing.", IsDeleted = false },
+                new QuizQuestion { Id = Guid.Parse("fd325ccb-2cfa-4e04-a9ea-9a84e99edf60"), QuizId = Guid.Parse("38fac854-0aa4-40ba-9cce-bd56fe382b4b"), Content = "Pick the sentence that should not use -ing (stative m...", Explanation = "Stative verbs thÆ°á»ng khÃ´ng dÃ¹ng -ing cho Ã½ sá»Ÿ há»¯u/nháº­n thá»©c.", IsDeleted = false },
+                new QuizQuestion { Id = Guid.Parse("925e1065-ce2e-45e7-b63f-37047a0529f4"), QuizId = Guid.Parse("38fac854-0aa4-40ba-9cce-bd56fe382b4b"), Content = "Choose the Past Simple sentence.", Explanation = "Past Simple dÃ¹ng V2/ed vá»›i má»‘c thá»i gian quÃ¡ khá»© rÃµ.", IsDeleted = false },
+                new QuizQuestion { Id = Guid.Parse("5ba86e00-f2d5-463a-89b6-8720a6dc44ac"), QuizId = Guid.Parse("38fac854-0aa4-40ba-9cce-bd56fe382b4b"), Content = "While I _____ (cook), the phone _____ (ring).", Explanation = "QK tiáº¿p diá»…n cho hÃ nh Ä‘á»™ng Ä‘ang diá»…n ra; QK Ä‘Æ¡n cho hÃ nh Ä‘á»™ng xen vÃ o.", IsDeleted = false },
+                new QuizQuestion { Id = Guid.Parse("13fb571a-8f83-4426-9b15-fbeedbe9578b"), QuizId = Guid.Parse("38fac854-0aa4-40ba-9cce-bd56fe382b4b"), Content = "We _____ (know) each other _____ five years.", Explanation = "Present Perfect + since/for cho khoáº£ng thá»i gian Ä‘áº¿n hiá»‡n táº¡i.", IsDeleted = false },
+                new QuizQuestion { Id = Guid.Parse("44286b13-94c0-45d3-809f-5492f9554969"), QuizId = Guid.Parse("38fac854-0aa4-40ba-9cce-bd56fe382b4b"), Content = "Choose the correct use of already/just/yet.", Explanation = "Already/just thÆ°á»ng Ä‘i vá»›i Present Perfect; yet cho phá»§ Ä‘á»‹nh/nghi váº¥n.", IsDeleted = false },
+                new QuizQuestion { Id = Guid.Parse("0133d7f9-9640-41d3-a285-f71c745d5102"), QuizId = Guid.Parse("38fac854-0aa4-40ba-9cce-bd56fe382b4b"), Content = "I _____ (never/see) snow.", Explanation = "Ever/never dÃ¹ng vá»›i Present Perfect cho tráº£i nghiá»‡m.", IsDeleted = false },
+                new QuizQuestion { Id = Guid.Parse("5e444722-bd1f-4e2a-b26c-966845da6daf"), QuizId = Guid.Parse("38fac854-0aa4-40ba-9cce-bd56fe382b4b"), Content = "It _____ (rain) for two hours and it is still raining.", Explanation = "PPC diá»…n táº£ hÃ nh Ä‘á»™ng báº¯t Ä‘áº§u trÆ°á»›c vÃ  cÃ²n kÃ©o dÃ i.", IsDeleted = false },
+                new QuizQuestion { Id = Guid.Parse("0177342c-18d6-4d09-8493-ebb5cbb33e72"), QuizId = Guid.Parse("38fac854-0aa4-40ba-9cce-bd56fe382b4b"), Content = "She is tired because she _____ (study) all night.", Explanation = "NguyÃªn nhÃ¢n hiá»‡n táº¡i do hÃ nh Ä‘á»™ng kÃ©o dÃ i â†’ PPC.", IsDeleted = false }
             );
         });
 
@@ -1027,7 +1059,7 @@ new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), Quiz
             new User { Id = parentId, Username = "parent", Email = "parent@elms.com", FullName = "Sample Parent", Password = defaultPasswordHash, IsActive = true, IsDeleted = false },
             new User { Id = teacherId, Username = "teacher", Email = "teacher@elms.com", FullName = "Sample Teacher", Password = defaultPasswordHash, IsActive = true, IsDeleted = false },
             new User { Id = managerId, Username = "manager", Email = "manager@elms.com", FullName = "Sample Manager", Password = defaultPasswordHash, IsActive = true, IsDeleted = false },
-            new User { Id = multiRoleId, Username = "multirole", Email = "multi@elms.com", FullName = "Vừa Phụ Huynh Vừa Giáo Viên", Password = defaultPasswordHash, IsActive = true, IsDeleted = false }
+            new User { Id = multiRoleId, Username = "multirole", Email = "multi@elms.com", FullName = "Vá»«a Phá»¥ Huynh Vá»«a GiÃ¡o ViÃªn", Password = defaultPasswordHash, IsActive = true, IsDeleted = false }
         );
 
         // Data Seeding for Many-to-Many PUserRole Join Table
@@ -1037,8 +1069,8 @@ new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), Quiz
             new { UserId = parentId, RoleId = 3 },
             new { UserId = teacherId, RoleId = 4 },
             new { UserId = managerId, RoleId = 5 },
-            new { UserId = multiRoleId, RoleId = 3 }, // Cấp quyền Parent
-            new { UserId = multiRoleId, RoleId = 4 }  // Cấp quyền Teacher
+            new { UserId = multiRoleId, RoleId = 3 }, // Cáº¥p quyá»n Parent
+            new { UserId = multiRoleId, RoleId = 4 }  // Cáº¥p quyá»n Teacher
         );
 
         // Data Seeding for User Profiles
@@ -1147,24 +1179,35 @@ new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), Quiz
         );
 
         modelBuilder.Entity<Course>().HasData(
-            new Course
-            {
-                Id = seedCourseId,
-                Title = "Tenses Made Easy",
-                CategoryId = seedCategoryId,
-                CreatedBy = teacherId,
-                Level = "Beginner",
-                Language = "English",
-                Status = Domain.Enums.CourseStatus.Publish,
-                Thumbnail = "tenses.jpg",
-                CreatedAt = new DateTime(2024, 1, 1),
-                UpdatedAt = new DateTime(2024, 1, 1)
-            }
+            new Course { Id = Guid.Parse("a7fac760-5150-49ef-8c4c-45dfdec000e9"), Title = "English Course 1", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784565597/thumbnail/course/khoa-hoc-tieng-anh-online-1-1024x734_dopaw0.png", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("c3f6c320-2104-49a5-a03e-a8e2f28d17f9"), Title = "English Course 2", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784531406/thumbnail/course/OIP_qtnva8.webp", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("8642f332-26c4-49b3-9e9a-717eb5635c1c"), Title = "English Course 3", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784565597/thumbnail/course/khoa-hoc-tieng-anh-online-1-1024x734_dopaw0.png", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("797b695d-3ff0-4c3e-b808-c6cbb860d0db"), Title = "English Course 4", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784531406/thumbnail/course/OIP_qtnva8.webp", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("6ca511a0-87e2-41f5-85eb-62b0148c2372"), Title = "English Course 5", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784565597/thumbnail/course/khoa-hoc-tieng-anh-online-1-1024x734_dopaw0.png", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("ba40e913-e8b4-442d-a51b-7d00ed101f54"), Title = "English Course 6", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784531406/thumbnail/course/OIP_qtnva8.webp", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("6b44ae4b-e537-492c-a2c3-3a6c6910ab0c"), Title = "English Course 7", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784565597/thumbnail/course/khoa-hoc-tieng-anh-online-1-1024x734_dopaw0.png", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("604089d4-4678-47c3-9a13-1f9ef2369c6c"), Title = "English Course 8", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784531406/thumbnail/course/OIP_qtnva8.webp", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("a19630ec-36a4-4636-ad75-9b2e43673e60"), Title = "English Course 9", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784565597/thumbnail/course/khoa-hoc-tieng-anh-online-1-1024x734_dopaw0.png", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("2f07f110-d481-4e4e-ad06-7304dbd03bc4"), Title = "English Course 10", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784531406/thumbnail/course/OIP_qtnva8.webp", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("a534574a-c17a-4753-a006-15c1f08dada8"), Title = "English Course 11", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784565597/thumbnail/course/khoa-hoc-tieng-anh-online-1-1024x734_dopaw0.png", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("0561ab29-2eba-49bb-b81e-79253986dcba"), Title = "English Course 12", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784531406/thumbnail/course/OIP_qtnva8.webp", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("deb669bf-a38e-407c-a327-ddf5b7632e02"), Title = "English Course 13", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784565597/thumbnail/course/khoa-hoc-tieng-anh-online-1-1024x734_dopaw0.png", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("41e09acd-a45c-452a-b160-e35d0937961b"), Title = "English Course 14", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784531406/thumbnail/course/OIP_qtnva8.webp", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("61cbb7d3-3c29-44d5-8fb4-ad5cfaf353d9"), Title = "English Course 15", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784565597/thumbnail/course/khoa-hoc-tieng-anh-online-1-1024x734_dopaw0.png", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("5f515dfb-afdd-494b-8962-7cba76e2cef2"), Title = "English Course 16", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784531406/thumbnail/course/OIP_qtnva8.webp", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("266dd46e-3986-4349-badc-cdd9f93d4ff3"), Title = "English Course 17", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784565597/thumbnail/course/khoa-hoc-tieng-anh-online-1-1024x734_dopaw0.png", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("41aa5211-41d9-4588-b3e3-93be5a795493"), Title = "English Course 18", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784531406/thumbnail/course/OIP_qtnva8.webp", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("09a0e922-ab13-48c6-9905-65ff3d1368db"), Title = "English Course 19", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784565597/thumbnail/course/khoa-hoc-tieng-anh-online-1-1024x734_dopaw0.png", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = Guid.Parse("468a7aa7-f96a-434a-adb9-55ff4417e9fc"), Title = "English Course 20", CategoryId = 999, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "https://res.cloudinary.com/pewx8g7u/image/upload/v1784531406/thumbnail/course/OIP_qtnva8.webp", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) },
+            new Course { Id = seedCourseId, Title = "Tenses Made Easy", CategoryId = seedCategoryId, CreatedBy = teacherId, Level = "Beginner", Language = "English", Status = Domain.Enums.CourseStatus.Publish, Thumbnail = "tenses.jpg", CreatedAt = new DateTime(2024, 1, 1), UpdatedAt = new DateTime(2024, 1, 1) }
         );
+
+
 
         var moduleId = Guid.Parse("77777777-7777-7777-7777-777777777777");
         modelBuilder.Entity<Module>().HasData(
-            new Module { Id = moduleId, CourseId = seedCourseId, Title = "Module 1: Basics", OrderIndex = 1, CreatedBy = teacherId }
+            new Module { Id = moduleId, CourseId = seedCourseId, Title = "Module 1: Basics", OrderIndex = 1, CreatedBy = teacherId },
+            new Module { Id = Guid.Parse("d60b0d45-806e-4e2a-8082-843d0b33064f"), CourseId = Guid.Parse("95ef9dbb-cfc1-41fb-9cf1-8432c47e3d7a"), Title = "Greetings and Introductions", OrderIndex = 1 }
         );
 
         var item1Id = Guid.Parse("66666666-6666-6666-6666-666666666601");
@@ -1176,11 +1219,12 @@ new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), Quiz
             new ModuleItem { Id = item1Id, ModuleId = moduleId, ItemType = Domain.Enums.ModuleItemType.Lesson, OrderIndex = 1 },
             new ModuleItem { Id = item2Id, ModuleId = moduleId, ItemType = Domain.Enums.ModuleItemType.Lesson, OrderIndex = 2 },
             new ModuleItem { Id = item3Id, ModuleId = moduleId, ItemType = Domain.Enums.ModuleItemType.Quiz, OrderIndex = 3 },
-            new ModuleItem { Id = item4Id, ModuleId = moduleId, ItemType = Domain.Enums.ModuleItemType.Assignment, OrderIndex = 4 }
+            new ModuleItem { Id = item4Id, ModuleId = moduleId, ItemType = Domain.Enums.ModuleItemType.Assignment, OrderIndex = 4 },
+            new ModuleItem { Id = Guid.Parse("cf150c21-f76a-40bd-b198-cb89377f22fd"), ModuleId = Guid.Parse("d60b0d45-806e-4e2a-8082-843d0b33064f"),  ItemType = Domain.Enums.ModuleItemType.Quiz, OrderIndex = 1 }
         );
 
         modelBuilder.Entity<Lesson>().HasData(
-            new Lesson { Id = item1Id, Title = "Present Simple & Continuous", ContentType = Domain.Enums.LessonContentType.Video, VideoUrl = "https://res.cloudinary.com/pewx8g7u/video/upload/v1784285507/lessons/video/TIẾNG_ANH_GIAO_TIẾP_3_PHÚT_MỖI_NGÀY_-_Bài_80__TO_BE_OUT_OF_SORTS_x98vvq.mp4", DurationSec = 600 },
+            new Lesson { Id = item1Id, Title = "Present Simple & Continuous", ContentType = Domain.Enums.LessonContentType.Video, VideoUrl = "https://res.cloudinary.com/pewx8g7u/video/upload/v1784285507/lessons/video/TIáº¾NG_ANH_GIAO_TIáº¾P_3_PHÃšT_Má»–I_NGÃ€Y_-_BÃ i_80__TO_BE_OUT_OF_SORTS_x98vvq.mp4", DurationSec = 600 },
             new Lesson { Id = item2Id, Title = "Tense Timelines (Reading)", ContentType = Domain.Enums.LessonContentType.Reading, TextContent = @"
 <div class='reading-lesson'>
     <h2 class='text-primary mb-4'>Mastering English Tenses: A Timeline Approach</h2>
@@ -1228,22 +1272,22 @@ new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), Quiz
         var question2Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2");
         
         modelBuilder.Entity<LessonQuestion>().HasData(
-            new LessonQuestion { Id = question1Id, LessonId = item1Id, Content = "Thì hiện tại tiếp diễn dùng để diễn tả hành động nào?", Explanation = "Chỉ hành động đang diễn ra tại thời điểm nói." },
-            new LessonQuestion { Id = question2Id, LessonId = item1Id, Content = "Cụm từ 'to be out of sorts' có nghĩa là gì?", Explanation = "To be out of sorts = cảm thấy không khỏe, khó ở." }
+            new LessonQuestion { Id = question1Id, LessonId = item1Id, Content = "ThÃ¬ hiá»‡n táº¡i tiáº¿p diá»…n dÃ¹ng Ä‘á»ƒ diá»…n táº£ hÃ nh Ä‘á»™ng nÃ o?", Explanation = "Chá»‰ hÃ nh Ä‘á»™ng Ä‘ang diá»…n ra táº¡i thá»i Ä‘iá»ƒm nÃ³i." },
+            new LessonQuestion { Id = question2Id, LessonId = item1Id, Content = "Cá»¥m tá»« 'to be out of sorts' cÃ³ nghÄ©a lÃ  gÃ¬?", Explanation = "To be out of sorts = cáº£m tháº¥y khÃ´ng khá»e, khÃ³ á»Ÿ." }
         );
 
         modelBuilder.Entity<LessonOption>().HasData(
-            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc01"), QuestionId = question1Id, Content = "Hành động lặp đi lặp lại", IsCorrect = false },
-            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc02"), QuestionId = question1Id, Content = "Hành động đang xảy ra ngay lúc nói", IsCorrect = true },
-            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc03"), QuestionId = question2Id, Content = "Rất vui vẻ và năng động", IsCorrect = false },
-            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc04"), QuestionId = question2Id, Content = "Cảm thấy không khỏe, hơi khó ở", IsCorrect = true },
-            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc05"), QuestionId = question2Id, Content = "Hết tiền, rỗng túi", IsCorrect = false },
-            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc06"), QuestionId = question2Id, Content = "Đi ra ngoài chơi", IsCorrect = false }
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc01"), QuestionId = question1Id, Content = "HÃ nh Ä‘á»™ng láº·p Ä‘i láº·p láº¡i", IsCorrect = false },
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc02"), QuestionId = question1Id, Content = "HÃ nh Ä‘á»™ng Ä‘ang xáº£y ra ngay lÃºc nÃ³i", IsCorrect = true },
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc03"), QuestionId = question2Id, Content = "Ráº¥t vui váº» vÃ  nÄƒng Ä‘á»™ng", IsCorrect = false },
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc04"), QuestionId = question2Id, Content = "Cáº£m tháº¥y khÃ´ng khá»e, hÆ¡i khÃ³ á»Ÿ", IsCorrect = true },
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc05"), QuestionId = question2Id, Content = "Háº¿t tiá»n, rá»—ng tÃºi", IsCorrect = false },
+            new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc06"), QuestionId = question2Id, Content = "Äi ra ngoÃ i chÆ¡i", IsCorrect = false }
         );
 
 
-        modelBuilder.Entity<Quiz>().HasData(            new Quiz { Id = item3Id, Title = "Tenses Quiz 1", PassingScorePct = 70.00m, TimeLimitMin = 15, AttemptCooldownMin = 60, PickCount = 10 }
-
+        modelBuilder.Entity<Quiz>().HasData(            new Quiz { Id = item3Id, Title = "Tenses Quiz 1", PassingScorePct = 70.00m, TimeLimitMin = 15, AttemptCooldownMin = 60, PickCount = 10 },
+            new Quiz { Id = Guid.Parse("38fac854-0aa4-40ba-9cce-bd56fe382b4b"), Title = "Basic Greetings Quiz", PassingScorePct = 70.00m, TimeLimitMin = 15, AttemptCooldownMin = 60, PickCount = 10 }
         );
 
         modelBuilder.Entity<Assignment>().HasData(
@@ -1252,7 +1296,7 @@ new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), Quiz
                 Id = item4Id, 
                 Title = "Daily Routine Paragraph (Present Simple)", 
                 Content = "<strong>Task:</strong> Write a 120-150-word paragraph describing your daily routine using the Present Simple.<br><ul><li>Include frequency markers (always/usually/often...)</li><li>Use 3 sequence words (first, then, finally...)</li><li>Highlight 3 typical verbs of your day</li></ul><p><em>Tip: draft &rarr; revise &rarr; finalize. Check S-V agreement (he/she/it + s/es).</em></p>", 
-                Instructions = "1) Viết 120-150 từ về thói quen hằng ngày (Present Simple).<br>2) Dùng từ chỉ tần suất: always/usually/often/sometimes/never.<br>3) Thêm từ nối trình tự: first/then/after that/finally.<br>4) Gạch chân 3 động từ tiêu biểu (get up, have breakfast, do homework).<br>5) Kiểm tra chia động từ đúng với he/she/it (+s/es).<br>6) Soát lỗi chính tả & dấu câu trước khi nộp.<br>7) Đọc to để rà nhịp điệu và mạch lạc.", 
+                Instructions = "1) Viáº¿t 120-150 tá»« vá» thÃ³i quen háº±ng ngÃ y (Present Simple).<br>2) DÃ¹ng tá»« chá»‰ táº§n suáº¥t: always/usually/often/sometimes/never.<br>3) ThÃªm tá»« ná»‘i trÃ¬nh tá»±: first/then/after that/finally.<br>4) Gáº¡ch chÃ¢n 3 Ä‘á»™ng tá»« tiÃªu biá»ƒu (get up, have breakfast, do homework).<br>5) Kiá»ƒm tra chia Ä‘á»™ng tá»« Ä‘Ãºng vá»›i he/she/it (+s/es).<br>6) SoÃ¡t lá»—i chÃ­nh táº£ & dáº¥u cÃ¢u trÆ°á»›c khi ná»™p.<br>7) Äá»c to Ä‘á»ƒ rÃ  nhá»‹p Ä‘iá»‡u vÃ  máº¡ch láº¡c.", 
                 SubmissionType = Domain.Enums.AssignmentSubmissionType.Text,
                 MaxScore = 100m, 
                 PassingScorePct = 70.00m 
@@ -1270,16 +1314,16 @@ new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), Quiz
 
         var comments = new[]
         {
-            "Cân bằng tốt giữa video, reading và drill; học không bị chán. Ước gì có thêm cheat sheet.",
-            "Trước đây mình hay rối Present Perfect, giờ đã hiểu logic since/for.",
-            "Bài luyện thi rất thực tế, mình nắm rõ hơn cách dùng các thì.",
-            "Giải thích ngắn gọn nhưng đi thẳng vào trọng tâm, kèm ví dụ dễ nhớ.",
-            "Khóa học khá khó, giảng viên nói hơi nhanh.",
-            "Khóa học tuyệt vời, nội dung dễ hiểu, bài tập đa dạng.",
-            "Rất hữu ích cho người mất gốc như mình.",
-            "Giáo viên vui tính, tài liệu đầy đủ.",
-            "Mini-test cuối mỗi mục phản hồi rõ ràng để biết mình đang thiếu chỗ nào.",
-            "Bài tập có độ khó tăng dần, tốc độ hợp lý, không bị nặng nề."
+            "CÃ¢n báº±ng tá»‘t giá»¯a video, reading vÃ  drill; há»c khÃ´ng bá»‹ chÃ¡n. Æ¯á»›c gÃ¬ cÃ³ thÃªm cheat sheet.",
+            "TrÆ°á»›c Ä‘Ã¢y mÃ¬nh hay rá»‘i Present Perfect, giá» Ä‘Ã£ hiá»ƒu logic since/for.",
+            "BÃ i luyá»‡n thi ráº¥t thá»±c táº¿, mÃ¬nh náº¯m rÃµ hÆ¡n cÃ¡ch dÃ¹ng cÃ¡c thÃ¬.",
+            "Giáº£i thÃ­ch ngáº¯n gá»n nhÆ°ng Ä‘i tháº³ng vÃ o trá»ng tÃ¢m, kÃ¨m vÃ­ dá»¥ dá»… nhá»›.",
+            "KhÃ³a há»c khÃ¡ khÃ³, giáº£ng viÃªn nÃ³i hÆ¡i nhanh.",
+            "KhÃ³a há»c tuyá»‡t vá»i, ná»™i dung dá»… hiá»ƒu, bÃ i táº­p Ä‘a dáº¡ng.",
+            "Ráº¥t há»¯u Ã­ch cho ngÆ°á»i máº¥t gá»‘c nhÆ° mÃ¬nh.",
+            "GiÃ¡o viÃªn vui tÃ­nh, tÃ i liá»‡u Ä‘áº§y Ä‘á»§.",
+            "Mini-test cuá»‘i má»—i má»¥c pháº£n há»“i rÃµ rÃ ng Ä‘á»ƒ biáº¿t mÃ¬nh Ä‘ang thiáº¿u chá»— nÃ o.",
+            "BÃ i táº­p cÃ³ Ä‘á»™ khÃ³ tÄƒng dáº§n, tá»‘c Ä‘á»™ há»£p lÃ½, khÃ´ng bá»‹ náº·ng ná»."
         };
         
         var random = new Random(123); // Fixed seed for deterministic rating
@@ -1316,4 +1360,6 @@ new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), Quiz
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
+
+
 

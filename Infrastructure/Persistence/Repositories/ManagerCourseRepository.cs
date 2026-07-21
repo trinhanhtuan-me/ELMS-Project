@@ -25,7 +25,6 @@ namespace Infrastructure.Persistence.Repositories
                 .Include(c => c.CreatedByNavigation)
                     .ThenInclude(i => i.IdNavigation)
                 .Include(c => c.CoursePrice)
-         
                 .AsQueryable();
 
 

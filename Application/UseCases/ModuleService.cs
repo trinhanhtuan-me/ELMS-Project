@@ -15,18 +15,21 @@ namespace Application.UseCases
         Task<bool> CreateModuleAsync(ModuleRequest request, Guid userId);
         Task<bool> UpdateModuleAsync(ModuleRequest request, Guid userId);
         Task<bool> DeleteModuleAsync(Guid id, Guid userId);
+        Task<ModuleItem?> GetModuleItemFullDetailByIdAsync(Guid itemId);
     }
 
     public class ModuleService : IModuleService
     {
         private readonly IModuleRepository _moduleRepository;
         private readonly ICourseRepository _courseRepository;
+        private readonly IModuleItemRepository _moduleItemRepository;
         private readonly IUnitOfWork _uow;
 
-        public ModuleService(IModuleRepository moduleRepository, ICourseRepository courseRepository, IUnitOfWork uow)
+        public ModuleService(IModuleRepository moduleRepository, ICourseRepository courseRepository, IModuleItemRepository moduleItemRepository, IUnitOfWork uow)
         {
             _moduleRepository = moduleRepository;
             _courseRepository = courseRepository;
+            _moduleItemRepository = moduleItemRepository;
             _uow = uow;
         }
 
@@ -38,6 +41,11 @@ namespace Application.UseCases
         public async Task<List<Module>> GetModulesWithItemsAsync(Guid courseId)
         {
             return await _moduleRepository.GetByCourseIdWithItemsAsync(courseId);
+        }
+
+        public async Task<ModuleItem?> GetModuleItemFullDetailByIdAsync(Guid itemId)
+        {
+            return await _moduleItemRepository.GetFullDetailByIdAsync(itemId);
         }
 
         public async Task<bool> CreateModuleAsync(ModuleRequest request, Guid userId)

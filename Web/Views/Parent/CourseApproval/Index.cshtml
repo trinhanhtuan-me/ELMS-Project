@@ -109,13 +109,21 @@
                         <!-- Course & Details block -->
                         <div class="space-y-4 border-t border-b border-slate-100 py-4 my-4">
                             <!-- Course Name -->
-                            <div class="flex items-start gap-3">
+                            <div class="flex items-start gap-3 w-full">
                                 <div class="w-8 h-8 rounded-xl bg-indigo-50/60 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5 border border-indigo-100/30">
                                     <i class="fa-solid fa-graduation-cap text-xs"></i>
                                 </div>
-                                <div class="min-w-0">
-                                    <span class="text-slate-400 text-[10px] uppercase tracking-wider font-extrabold block">@Localizer["course_approval_course_label"]</span>
-                                    <span class="text-slate-700 font-bold text-sm block mt-0.5 leading-snug" title="@item.CourseName">@item.CourseName</span>
+                                <div class="min-w-0 flex-grow">
+                                    <div class="flex justify-between items-start gap-2">
+                                        <div class="min-w-0 flex-grow">
+                                            <span class="text-slate-400 text-[10px] uppercase tracking-wider font-extrabold block">@Localizer["course_approval_course_label"]</span>
+                                            <span class="text-slate-700 font-bold text-sm block mt-0.5 leading-snug truncate" title="@item.CourseName">@item.CourseName</span>
+                                        </div>
+                                        <button type="button" onclick="openPreviewModal('@item.CourseId')" 
+                                                class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 hover:text-indigo-700 rounded-xl text-xxs font-bold transition-all border border-indigo-100/40 shadow-sm hover:shadow active:scale-95 duration-150">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -273,6 +281,8 @@
     </div>
 </div>
 
+<partial name="~/Views/Parent/CourseApproval/_PreviewModal.cshtml" />
+
 <script>
     function openApproveModal(id, studentName, courseName) {
         document.getElementById('approveRequestId').value = id;
@@ -324,4 +334,6 @@
         }
         return true;
     }
+
+
 </script>

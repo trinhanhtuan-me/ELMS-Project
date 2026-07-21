@@ -21,13 +21,13 @@ namespace Web.Controllers
     {
         private readonly ICourseService _courseService;
         private readonly ICategoryService _categoryService;
-        private readonly IModuleItemRepository _moduleItemRepository;
+        private readonly IModuleService _moduleService;
 
-        public CourseController(ICourseService courseService, ICategoryService categoryService, IModuleItemRepository moduleItemRepository)
+        public CourseController(ICourseService courseService, ICategoryService categoryService, IModuleService moduleService)
         {
             _courseService = courseService;
             _categoryService = categoryService;
-            _moduleItemRepository = moduleItemRepository;
+            _moduleService = moduleService;
         }
 
         public async Task<IActionResult> Index(string? searchTerm, int pageIndex = 1)
@@ -76,7 +76,7 @@ namespace Web.Controllers
             Domain.Entities.ModuleItem? currentItem = null;
             if (itemId.HasValue)
             {
-                currentItem = await _moduleItemRepository.GetFullDetailByIdAsync(itemId.Value);
+                currentItem = await _moduleService.GetModuleItemFullDetailByIdAsync(itemId.Value);
             }
             else if (course.Modules != null && course.Modules.Any())
             {
@@ -84,7 +84,7 @@ namespace Web.Controllers
                 var firstItem = firstModule?.ModuleItems?.OrderBy(mi => mi.OrderIndex).FirstOrDefault();
                 if (firstItem != null)
                 {
-                    currentItem = await _moduleItemRepository.GetFullDetailByIdAsync(firstItem.Id);
+                    currentItem = await _moduleService.GetModuleItemFullDetailByIdAsync(firstItem.Id);
                 }
             }
 

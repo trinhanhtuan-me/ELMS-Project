@@ -177,13 +177,23 @@ namespace Infrastructure.Persistence.Repositories
         
             var existingPrice = await _context.CoursePrices
                 .FirstOrDefaultAsync(p => p.CourseId == courseId && p.IsActive);
-            
-            if (existingPrice != null)
+
+            if (existingPrice != null && existingPrice.PriceAmount == price)
             {
-                existingPrice.IsActive = false; 
-                existingPrice.EndDate = DateTime.UtcNow;
+                return true;
             }
 
+         
+            if (existingPrice != null)
+            {
+                // 1. Dùng SQL thuần update giá cũ trong Database
+                await _context.Database.ExecuteSqlRawAsync(
+                    "UPDATE CoursePrice SET IsActive = 0, EndDate = {0} WHERE Id = {1}",
+                    DateTime.UtcNow, existingPrice.Id);
+
+                _context.Entry(existingPrice).State = EntityState.Detached;
+            }
+            // 3. Giờ thì tạo và Add giá mới bình thường. EF Core tưởng đây là giá duy nhất!
             var newPrice = new CoursePrice
             {
                 CourseId = courseId,
@@ -192,9 +202,8 @@ namespace Infrastructure.Persistence.Repositories
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
-
             _context.CoursePrices.Add(newPrice);
-            return true; 
+            return true;
         }
 
         public async Task<CourseDetailVm?> GetCourseDetailAsync(Guid courseId)

@@ -208,5 +208,18 @@
   "parent_security_btn_add_passkey": "Thêm Passkey cho thiết bị này",
   "parent_security_btn_register_passkey": "Đăng ký Passkey",
   "parent_security_msg_processing": "Đang xử lý... Vui lòng kiểm tra màn hình thiết bị của bạn.",
-  "parent_security_msg_success": "Đăng ký Passkey thành công!"
+  "parent_security_msg_success": "Đăng ký Passkey thành công!",
+  "error_403_title": "403 - Không Có Quyền Truy Cập",
+  "error_403_header": "Truy Cập Bị Từ Chối",
+  "error_403_desc": "Xin lỗi, tài khoản của bạn không có quyền truy cập tài nguyên hoặc chức năng này. Vui lòng liên hệ với quản trị viên nếu bạn nghĩ đây là sự nhầm lẫn.",
+  "error_404_title": "404 - Không Tìm Thấy Trang",
+  "error_404_header": "Trang Không Tồn Tại",
+  "error_404_desc": "Đường dẫn bạn truy cập không chính xác hoặc trang web này đã bị gỡ bỏ. Vui lòng kiểm tra lại URL hoặc quay về trang chủ.",
+  "error_500_title": "500 - Lỗi Máy Chủ",
+  "error_500_header": "Sự Cố Hệ Thống",
+  "error_500_desc": "Hệ thống đang gặp sự cố kỹ thuật ngoài ý muốn từ phía máy chủ. Đội ngũ kỹ thuật đang tiến hành khắc phục nhanh nhất có thể. Vui lòng thử lại sau.",
+  "error_btn_home": "Về Trang Chủ",
+  "error_btn_back": "Quay Lại",
+  "error_need_help": "Bạn cần hỗ trợ thêm?",
+  "error_contact_support": "Liên hệ hỗ trợ kỹ thuật"
 }

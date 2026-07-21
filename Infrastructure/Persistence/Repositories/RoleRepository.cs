@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+using Application.Interfaces;
 using Domain.Entities;
 using Domain.Enums;
 using Infrastructure.Data;
@@ -46,6 +46,14 @@ namespace Infrastructure.Persistence.Repositories
                 .Where(r => string.IsNullOrEmpty(roleName) || r.Name.Contains(roleName))
                 .Where(r => !status.HasValue || r.Status == status)
                 .CountAsync();
+        }
+
+        public async Task<List<PRole>> GetAllRolesAsync()
+        {
+            return await _context.PRoles
+                .Where(r => r.Status == RoleStatus.Active && !r.IsDeleted)
+                .OrderBy(r => r.Name)
+                .ToListAsync();
         }
 
 

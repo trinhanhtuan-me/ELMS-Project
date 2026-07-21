@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -16,5 +16,6 @@ namespace Application.Interfaces
             int pageNumber, int pageSize);
         Task<int> Count(string? roleName, RoleStatus? status);
         Task Create(PRole role);
+        Task<List<PRole>> GetAllRolesAsync();
     }
 }

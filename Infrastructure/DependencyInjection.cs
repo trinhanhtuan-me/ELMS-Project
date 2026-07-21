@@ -24,7 +24,6 @@ namespace Infrastructure
             services.AddCacheService(configuration);
             services.AddMailService(configuration);
             services.AddScoped<IFileStorageService, CloudinaryStorageService>();
-
             services.AddScoped<Application.Interfaces.IVNPayService, Infrastructure.Shared.Payment.VNPayService>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddFido2Security(configuration);

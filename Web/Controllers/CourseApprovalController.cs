@@ -12,7 +12,10 @@ using Web.Services;
 namespace Web.Controllers;
 
 [Authorize(Roles = "Parent")]
-public class CourseApprovalController(ICourseApprovalService approvalService, ILocalizationService localizer) : Controller
+public class CourseApprovalController(
+    ICourseApprovalService approvalService,
+    ILocalizationService localizer,
+    ICourseService courseService) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(string status = "Pending", int pageNumber = 1, int pageSize = 6)
@@ -74,6 +77,24 @@ public class CourseApprovalController(ICourseApprovalService approvalService, IL
         {
             TempData["ErrorToast"] = ex.Message;
             return RedirectToAction("Index", new { status = "Pending" });
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetCoursePreview(Guid courseId)
+    {
+        try
+        {
+            var details = await courseService.GetPublicCourseDetailsAsync(courseId, null);
+            if (details == null)
+            {
+                return NotFound(new { message = "Khóa học không tồn tại." });
+            }
+            return Json(details);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
         }
     }
 

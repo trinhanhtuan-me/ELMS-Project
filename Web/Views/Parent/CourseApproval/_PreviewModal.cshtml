@@ -1,0 +1,348 @@
+<!-- ================= PREVIEW MODAL ================= -->
+<div id="previewModal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden transform scale-95 transition-all duration-300">
+        
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-150 shrink-0 bg-slate-50/50">
+            <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-indigo-600"></i>
+                @Localizer["preview_modal_title"]
+            </h3>
+            <button type="button" onclick="closePreviewModal()" class="text-slate-400 hover:text-slate-650 rounded-lg p-1.5 hover:bg-slate-100 transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body (Scrollable) -->
+        <div class="p-6 overflow-y-auto flex-grow">
+            <!-- Loading State -->
+            <div id="previewLoading" class="flex flex-col items-center justify-center py-16">
+                <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-650 border-t-transparent shadow-sm"></div>
+                <p class="text-slate-500 text-sm mt-4 font-semibold">@Localizer["loading_course_details"]</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="previewError" class="hidden flex flex-col items-center justify-center py-16 text-center">
+                <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-650 flex items-center justify-center mb-3 text-xl border border-rose-100">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <p class="text-slate-700 font-bold text-base">@Localizer["error_loading_details"]</p>
+                <p class="text-slate-450 text-xs mt-1" id="previewErrorMessage"></p>
+            </div>
+
+            <!-- Content State (Grid) -->
+            <div id="previewContent" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Left Column: Course Info (5 cols) -->
+                <div class="lg:col-span-5 space-y-5">
+                    <!-- Thumbnail with clean overlay -->
+                    <div class="relative rounded-2xl overflow-hidden aspect-video bg-slate-100 border border-slate-200/60 shadow-sm">
+                        <img id="previewThumbnail" src="" alt="Course Thumbnail" class="w-full h-full object-cover">
+                        <div id="previewThumbnailFallback" class="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white hidden">
+                            <i class="fa-solid fa-graduation-cap text-5xl opacity-60"></i>
+                        </div>
+                    </div>
+
+                    <!-- Course Meta Statistics -->
+                    <div class="bg-slate-50/70 border border-slate-100 rounded-2xl p-5 space-y-4">
+                        <h4 class="font-extrabold text-slate-800 text-xs uppercase tracking-wider mb-1">@Localizer["course_approval_course_label"]</h4>
+                        
+                        <!-- Title (Large) -->
+                        <h2 id="previewTitle" class="text-xl font-extrabold text-slate-900 leading-snug"></h2>
+
+                        <div class="h-px bg-slate-200/70 my-3"></div>
+
+                        <!-- Stats fields -->
+                        <div class="grid grid-cols-2 gap-4 text-xs font-semibold">
+                            <div>
+                                <span class="text-slate-400 block text-[10px] uppercase tracking-wider">@Localizer["preview_modal_instructor"]</span>
+                                <span id="previewInstructor" class="text-slate-700 font-bold block mt-0.5 truncate"></span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block text-[10px] uppercase tracking-wider">@Localizer["preview_modal_category"]</span>
+                                <span id="previewCategory" class="text-slate-700 font-bold block mt-0.5 truncate"></span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block text-[10px] uppercase tracking-wider">@Localizer["preview_modal_level"]</span>
+                                <span id="previewLevel" class="text-slate-700 font-bold block mt-0.5 truncate"></span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block text-[10px] uppercase tracking-wider">@Localizer["preview_modal_language"]</span>
+                                <span id="previewLanguage" class="text-slate-700 font-bold block mt-0.5 truncate"></span>
+                            </div>
+                        </div>
+
+                        <div class="h-px bg-slate-200/70 my-3"></div>
+
+                        <!-- Rating & Review -->
+                        <div class="flex items-center gap-4">
+                            <div class="min-w-0">
+                                <span class="text-slate-400 block text-[10px] uppercase tracking-wider">@Localizer["preview_modal_rating"]</span>
+                                <div class="flex items-center gap-1.5 mt-1">
+                                    <span id="previewRatingValue" class="text-amber-500 font-extrabold text-sm leading-none"></span>
+                                    <div id="previewStars" class="flex text-amber-400 text-xxs gap-0.5"></div>
+                                    <span id="previewReviewsCount" class="text-slate-400 text-xxs font-bold block"></span>
+                                </div>
+                            </div>
+                            <div class="border-l border-slate-200 pl-4">
+                                <span class="text-slate-400 block text-[10px] uppercase tracking-wider">@Localizer["preview_modal_students"]</span>
+                                <span id="previewStudents" class="text-slate-750 font-extrabold text-sm block mt-0.5"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="space-y-2">
+                        <h4 class="font-extrabold text-slate-800 text-xs uppercase tracking-wider">Mô tả khóa học</h4>
+                        <div id="previewDescription" class="text-xs text-slate-550 leading-relaxed max-h-48 overflow-y-auto pr-2 scrollbar-thin border border-slate-100 rounded-xl p-3 bg-slate-50/30"></div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Curriculum (7 cols) -->
+                <div class="lg:col-span-7 flex flex-col min-h-[400px]">
+                    <h4 class="font-extrabold text-slate-800 text-sm flex items-center gap-2 mb-4 border-b border-slate-100 pb-2">
+                        <i class="fa-solid fa-list-check text-indigo-500"></i>
+                        @Localizer["preview_modal_curriculum"]
+                        <span id="previewModuleCount" class="text-xxs font-bold bg-indigo-50 text-indigo-650 px-2 py-0.5 rounded-full border border-indigo-100/50"></span>
+                    </h4>
+
+                    <!-- Curriculum List Container -->
+                    <div id="previewCurriculum" class="space-y-3 overflow-y-auto max-h-[50vh] pr-2"></div>
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <div id="previewReviewsSection" class="mt-8 border-t border-slate-100 pt-6 hidden">
+                <h4 class="font-extrabold text-slate-800 text-sm flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-comments text-indigo-500"></i>
+                    @Localizer["preview_modal_reviews_title"]
+                </h4>
+                <div id="previewReviewsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-150 flex justify-end shrink-0">
+            <button type="button" onclick="closePreviewModal()" class="px-5 py-2 text-sm font-bold text-slate-650 hover:bg-slate-150 hover:text-slate-800 rounded-xl border border-slate-200 transition duration-150 shadow-sm">
+                @Localizer["btn_cancel"]
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openPreviewModal(courseId) {
+        const modal = document.getElementById('previewModal');
+        const loading = document.getElementById('previewLoading');
+        const error = document.getElementById('previewError');
+        const content = document.getElementById('previewContent');
+        const reviewsSection = document.getElementById('previewReviewsSection');
+
+        modal.classList.remove('hidden');
+        loading.classList.remove('hidden');
+        error.classList.add('hidden');
+        content.classList.add('hidden');
+        reviewsSection.classList.add('hidden');
+        
+        setTimeout(() => {
+            modal.firstElementChild.classList.remove('scale-95');
+        }, 10);
+
+        fetch(`/CourseApproval/GetCoursePreview?courseId=${courseId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Lỗi tải thông tin khóa học.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const thumbImg = document.getElementById('previewThumbnail');
+                const thumbFallback = document.getElementById('previewThumbnailFallback');
+                if (data.thumbnail) {
+                    thumbImg.src = data.thumbnail;
+                    thumbImg.classList.remove('hidden');
+                    thumbFallback.classList.add('hidden');
+                } else {
+                    thumbImg.classList.add('hidden');
+                    thumbFallback.classList.remove('hidden');
+                }
+
+                document.getElementById('previewTitle').innerText = data.title || 'N/A';
+                document.getElementById('previewInstructor').innerText = data.instructorName || 'Unknown';
+                document.getElementById('previewCategory').innerText = data.categoryName || 'General';
+                document.getElementById('previewLevel').innerText = data.level || 'All Levels';
+                document.getElementById('previewLanguage').innerText = data.language || 'English';
+                document.getElementById('previewStudents').innerText = data.totalStudents !== undefined ? `${data.totalStudents} học viên` : '0 học viên';
+                
+                document.getElementById('previewDescription').innerHTML = data.description 
+                    ? data.description.replace(/\n/g, '<br/>') 
+                    : '<span class="italic text-slate-450">Không có mô tả cho khóa học này.</span>';
+
+                const ratingVal = data.averageRating || 0;
+                document.getElementById('previewRatingValue').innerText = ratingVal.toFixed(1);
+                document.getElementById('previewReviewsCount').innerText = `(${data.totalReviews || 0} đánh giá)`;
+
+                const starsContainer = document.getElementById('previewStars');
+                starsContainer.innerHTML = '';
+                const roundedRating = Math.round(ratingVal);
+                for (let i = 1; i <= 5; i++) {
+                    const star = document.createElement('i');
+                    star.className = i <= roundedRating ? 'fa-solid fa-star' : 'fa-regular fa-star';
+                    starsContainer.appendChild(star);
+                }
+
+                const modules = data.modules || [];
+                document.getElementById('previewModuleCount').innerText = `${modules.length} modules`;
+
+                const curriculumContainer = document.getElementById('previewCurriculum');
+                curriculumContainer.innerHTML = '';
+
+                if (modules.length === 0) {
+                    curriculumContainer.innerHTML = `
+                        <div class="text-center py-8 text-slate-450 text-xs italic">
+                            Chưa có chương trình học cho khóa học này.
+                        </div>
+                    `;
+                } else {
+                    modules.forEach((mod) => {
+                        const materials = [];
+                        if (mod.videoCount > 0) materials.push(`${mod.videoCount} video`);
+                        if (mod.readingCount > 0) materials.push(`${mod.readingCount} bài đọc`);
+                        if (mod.assignmentCount > 0) materials.push(`${mod.assignmentCount} bài tập`);
+                        if (mod.quizCount > 0) materials.push(`${mod.quizCount} trắc nghiệm`);
+                        if (mod.discussionCount > 0) materials.push(`${mod.discussionCount} thảo luận`);
+                        const materialsText = materials.join(', ') || 'Không có học liệu';
+
+                        const itemHtml = `
+                            <div class="border border-slate-150 rounded-xl bg-slate-50/40 overflow-hidden transition-all duration-200">
+                                <button type="button" onclick="toggleModule('${mod.moduleId}')" 
+                                        class="w-full flex items-center justify-between p-4 text-left font-bold text-slate-700 hover:bg-slate-100/70 transition-colors">
+                                    <div class="min-w-0 pr-4">
+                                        <h5 class="text-xs md:text-sm font-bold text-slate-800 leading-snug truncate">${mod.title}</h5>
+                                        <p class="text-[10px] text-slate-400 font-semibold mt-1 flex items-center gap-1.5">
+                                            <i class="fa-solid fa-book-bookmark text-[9px] text-indigo-400"></i>
+                                            ${materialsText}
+                                        </p>
+                                    </div>
+                                    <i id="caret-${mod.moduleId}" class="fa-solid fa-chevron-down text-slate-450 text-xs transition-transform duration-200"></i>
+                                </button>
+                                
+                                <div id="content-${mod.moduleId}" class="hidden border-t border-slate-150 bg-white p-4 space-y-3">
+                                    ${mod.description ? `<p class="text-xs text-slate-550 italic mb-3 leading-relaxed">${mod.description}</p>` : ''}
+                                    
+                                    <div class="space-y-2.5">
+                                        ${mod.items && mod.items.length > 0 ? mod.items.map(item => {
+                                            let icon = 'fa-file-lines';
+                                            if (item.itemType === 'Video') icon = 'fa-circle-play text-indigo-500';
+                                            else if (item.itemType === 'Reading') icon = 'fa-book-open text-sky-500';
+                                            else if (item.itemType === 'Assignment') icon = 'fa-clipboard-list text-emerald-500';
+                                            else if (item.itemType === 'Quiz') icon = 'fa-circle-question text-amber-500';
+                                            else if (item.itemType === 'Discussion') icon = 'fa-comments text-purple-500';
+
+                                            return `
+                                                <div class="flex items-center gap-3 py-1">
+                                                    <i class="fa-solid ${icon} text-xs shrink-0"></i>
+                                                    <span class="text-xs text-slate-650 font-medium truncate">${item.title}</span>
+                                                </div>
+                                            `;
+                                        }).join('') : `<p class="text-xxs text-slate-450 italic">Không có bài học chi tiết.</p>`}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        curriculumContainer.insertAdjacentHTML('beforeend', itemHtml);
+                    });
+                }
+
+                // Render Reviews
+                const reviewsContainer = document.getElementById('previewReviewsContainer');
+                reviewsContainer.innerHTML = '';
+
+                const reviews = data.reviews || [];
+                if (reviews.length > 0) {
+                    reviewsSection.classList.remove('hidden');
+                    reviews.forEach(review => {
+                        let starIcons = '';
+                        for (let j = 1; j <= 5; j++) {
+                            if (j <= review.rating) {
+                                starIcons += '<i class="fa-solid fa-star text-amber-400"></i>';
+                            } else {
+                                starIcons += '<i class="fa-regular fa-star text-slate-200"></i>';
+                            }
+                        }
+
+                        let formattedDate = '';
+                        try {
+                            const dateObj = new Date(review.reviewDate);
+                            formattedDate = dateObj.toLocaleDateString('vi-VN', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                            });
+                        } catch (e) {
+                            formattedDate = review.reviewDate;
+                        }
+
+                        const reviewHtml = `
+                            <div class="bg-slate-50/60 rounded-2xl p-4 border border-slate-150 flex flex-col justify-between hover:bg-slate-50 transition duration-150">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-650 flex items-center justify-center font-bold text-xs shrink-0 border border-indigo-100/30">
+                                                ${review.studentName ? review.studentName.substring(0, 1).toUpperCase() : 'S'}
+                                            </div>
+                                            <div>
+                                                <h5 class="text-xs font-bold text-slate-800 leading-snug">${review.studentName || 'Học sinh'}</h5>
+                                                <div class="flex gap-0.5 mt-0.5 text-[9px]">${starIcons}</div>
+                                            </div>
+                                        </div>
+                                        <span class="text-slate-400 text-[10px] font-medium">${formattedDate}</span>
+                                    </div>
+                                    <p class="text-xs text-slate-650 leading-relaxed italic mt-2">
+                                        "${review.comment || 'Không có bình luận.'}"
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                        reviewsContainer.insertAdjacentHTML('beforeend', reviewHtml);
+                    });
+                } else {
+                    reviewsSection.classList.remove('hidden');
+                    reviewsContainer.innerHTML = `
+                        <div class="col-span-full text-center py-6 text-slate-450 text-xs italic bg-slate-50/30 border border-dashed border-slate-200 rounded-xl">
+                            @Localizer["preview_modal_no_reviews"]
+                        </div>
+                    `;
+                }
+
+                loading.classList.add('hidden');
+                content.classList.remove('hidden');
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('previewErrorMessage').innerText = err.message || 'Lỗi không xác định.';
+                loading.classList.add('hidden');
+                error.classList.remove('hidden');
+            });
+    }
+
+    function closePreviewModal() {
+        const modal = document.getElementById('previewModal');
+        modal.firstElementChild.classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 200);
+    }
+
+    function toggleModule(moduleId) {
+        const content = document.getElementById(`content-${moduleId}`);
+        const caret = document.getElementById(`caret-${moduleId}`);
+        
+        if (content.classList.contains('hidden')) {
+            content.classList.remove('hidden');
+            caret.classList.add('rotate-180');
+        } else {
+            content.classList.add('hidden');
+            caret.classList.remove('rotate-180');
+        }
+    }
+</script>

@@ -33,6 +33,7 @@ namespace Infrastructure.Persistence.Repositories.Common
             services.AddScoped<ICategoryRepository,CategoryRepository>();
             services.AddScoped<IParentLinkRequestRepository, ParentLinkRequestRepository>();
             services.AddScoped<IStudentProfileRepository, StudentProfileRepository>();
+            services.AddScoped<IInstructorProfileRepository, InstructorProfileRepository>();
             services.AddScoped<ICourseRequestRepository, CourseRequestRepository>();
             services.AddScoped<IPasskeyRepository, PasskeyRepository>();
             services.AddScoped<IParentRepository, ParentRepository>();
@@ -46,6 +47,10 @@ namespace Infrastructure.Persistence.Repositories.Common
             services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
+            services.AddScoped<IQuizQuestionRepository, QuizQuestionRepository>();
+            services.AddScoped<IInstructorAssignmentRepository, InstructorAssignmentRepository>();
+            services.AddScoped<IModuleItemRepository, ModuleItemRepository>();
+            services.AddScoped<ILessonQuestionRepository, LessonQuestionRepository>();
             return services;
         }
     }

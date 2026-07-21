@@ -1,0 +1,128 @@
+@model Web.ViewModels.GradeAssignmentViewModel
+@{
+    ViewData["Title"] = "Grade Assignment";
+    Layout = "~/Views/Shared/_InstructorLayout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/course.css" asp-append-version="true" />
+    <style>
+        .grade-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .grade-info-label {
+            font-size: 0.85rem;
+            color: #a3aed1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .grade-info-value {
+            font-size: 1.1rem;
+            color: #2b3674;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .answer-box {
+            background: #f4f7fe;
+            border-radius: 12px;
+            padding: 1.5rem;
+            min-height: 150px;
+            color: #2b3674;
+            white-space: pre-wrap;
+            border: 1px solid #e0e5f2;
+        }
+    </style>
+}
+
+<div class="page-header">
+    <h1 class="page-title">Grade Assignment</h1>
+    <a href="@Url.Action("Index", "InstructorAssignment")" class="btn btn-light" style="border-radius: 8px; font-weight: 500; border: 1px solid #e0e5f2;">
+        <i class="fa fa-arrow-left me-2"></i> Back to List
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-7">
+        <div class="grade-card">
+            <h4 class="mb-4" style="color: #2b3674; font-weight: 700;">Submission Details</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="grade-info-label">Student Name</div>
+                    <div class="grade-info-value">@Model.StudentName</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="grade-info-label">Submitted At</div>
+                    <div class="grade-info-value">@(Model.SubmittedAt.HasValue ? Model.SubmittedAt.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="grade-info-label">Course</div>
+                    <div class="grade-info-value" style="color: #4318ff;">@Model.CourseTitle</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="grade-info-label">Assignment</div>
+                    <div class="grade-info-value">@Model.AssignmentTitle</div>
+                </div>
+            </div>
+
+            <hr style="border-color: #e0e5f2; margin: 1.5rem 0;" />
+
+            <div class="grade-info-label mb-3">Student's Answer</div>
+            @if (!string.IsNullOrEmpty(Model.TextAnswer))
+            {
+                <div class="answer-box mb-4">@Model.TextAnswer</div>
+            }
+            else
+            {
+                <div class="answer-box mb-4 text-muted fst-italic">No text answer provided.</div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.FileUrl))
+            {
+                <div class="grade-info-label mb-2">Attached File</div>
+                <a href="@Model.FileUrl" target="_blank" class="btn btn-sm btn-outline-primary" style="border-radius: 8px;">
+                    <i class="fa fa-download me-2"></i> Download Attachment
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="grade-card">
+            <h4 class="mb-4" style="color: #2b3674; font-weight: 700;">Grading</h4>
+            
+            <form asp-action="SubmitGrade" asp-controller="InstructorAssignment" method="post">
+                <input type="hidden" asp-for="AssignmentId" />
+                <input type="hidden" asp-for="StudentId" />
+                
+                <div class="mb-4">
+                    <label asp-for="Score" class="form-label fw-semibold" style="color: #2b3674;">Score (0 - @Model.MaxScore) <span class="text-danger">*</span></label>
+                    <input asp-for="Score" type="number" step="0.5" min="0" max="@Model.MaxScore" class="form-control" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.8rem; font-size: 1.1rem; color: #4318ff; font-weight: 600;" required />
+                    <span asp-validation-for="Score" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Feedback" class="form-label fw-semibold" style="color: #2b3674;">Feedback (Optional)</label>
+                    <textarea asp-for="Feedback" class="form-control" rows="5" style="border-radius: 8px; border: 1px solid #e0e5f2; padding: 0.8rem;" placeholder="Write your feedback for the student..."></textarea>
+                    <span asp-validation-for="Feedback" class="text-danger small"></span>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary-blue py-3" style="font-size: 1.1rem; font-weight: 600; border-radius: 12px;">
+                        <i class="fa fa-check-circle me-2"></i> Submit Grade
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

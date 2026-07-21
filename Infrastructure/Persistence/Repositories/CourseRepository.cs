@@ -27,6 +27,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<(List<Course> Items, int TotalCount)> GetPagedByInstructorIdAsync(Guid instructorId, string? searchTerm, int pageIndex, int pageSize)
         {
             var query = _context.Courses
+                .Include(c => c.CourseManagers)
                 .Where(c => c.CreatedBy == instructorId && !c.IsDeleted);
 
             if (!string.IsNullOrWhiteSpace(searchTerm))

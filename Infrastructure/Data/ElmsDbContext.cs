@@ -239,6 +239,7 @@ public partial class ElmsDbContext : DbContext
             entity.HasOne(d => d.Course).WithOne(p => p.CoursePrice)
                 .HasForeignKey<CoursePrice>(d => d.CourseId)
                 .HasConstraintName("FK__CoursePri__Cours__3DE82FB7");
+            entity.HasQueryFilter(p => p.IsActive == true);
         });
 
         modelBuilder.Entity<CourseRequest>(entity =>

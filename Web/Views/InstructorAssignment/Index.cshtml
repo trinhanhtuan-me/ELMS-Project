@@ -1,0 +1,108 @@
+@model Application.Common.Models.PagedResult<Application.Dtos.InstructorAssignment.InstructorAssignmentWorkDto>
+@{
+    ViewData["Title"] = "Submitted Assignments";
+    Layout = "~/Views/Shared/_InstructorLayout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/course.css" asp-append-version="true" />
+}
+
+<div class="page-header">
+    <h1 class="page-title">Submitted Assignments</h1>
+</div>
+
+<div class="card-table-wrapper">
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th style="width: 25%;">Student & Email</th>
+                <th style="width: 25%;">Course & Module</th>
+                <th style="width: 25%;">Assignment Title</th>
+                <th style="width: 15%;">Submitted At</th>
+                <th style="width: 10%;" class="text-end">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Items.Any())
+            {
+                <tr>
+                    <td colspan="5" class="text-center py-5 text-muted">
+                        <i class="fa fa-folder-open-o" style="font-size: 2rem; color: #a3aed1;"></i>
+                        <p class="mt-2">No submitted assignments available to grade.</p>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var aw in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            <div class="fw-bold text-dark">@aw.StudentName</div>
+                            <div class="text-muted small">@aw.StudentEmail</div>
+                        </td>
+                        <td>
+                            <div class="fw-bold" style="color: #4318ff;">@aw.CourseTitle</div>
+                            <div class="text-muted small">@aw.ModuleTitle</div>
+                        </td>
+                        <td>
+                            <div class="text-dark">@aw.AssignmentTitle</div>
+                        </td>
+                        <td>
+                            <div class="text-muted small">
+                                @(aw.SubmittedAt.HasValue ? aw.SubmittedAt.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")
+                            </div>
+                        </td>
+                        <td class="text-end">
+                            <a href="@Url.Action("Grade", "InstructorAssignment", new { assignmentId = aw.AssignmentId, studentId = aw.StudentId })" 
+                               class="btn btn-sm btn-primary-blue" title="Grade Assignment">
+                                Grade
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<div class="pagination-area">
+    <div>
+        @{
+            int startItem = (Model.PageIndex - 1) * Model.PageSize + 1;
+            int endItem = Math.Min(Model.PageIndex * Model.PageSize, Model.TotalCount);
+            if (Model.TotalCount == 0)
+            {
+                startItem = 0;
+                endItem = 0;
+            }
+        }
+        Show @startItem to @endItem of @Model.TotalCount entries
+    </div>
+    <div class="pagination-controls">
+        @if (Model.HasPreviousPage)
+        {
+            <a href="/InstructorAssignment/Index?pageIndex=@(Model.PageIndex - 1)" class="page-btn"><i class="fa fa-angle-left"></i></a>
+        }
+        else
+        {
+            <a href="#" class="page-btn disabled" style="opacity: 0.5; cursor: not-allowed;"><i class="fa fa-angle-left"></i></a>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <a href="/InstructorAssignment/Index?pageIndex=@i" class="page-btn @(i == Model.PageIndex ? "active" : "")">@i</a>
+        }
+
+        @if (Model.HasNextPage)
+        {
+            <a href="/InstructorAssignment/Index?pageIndex=@(Model.PageIndex + 1)" class="page-btn"><i class="fa fa-angle-right"></i></a>
+        }
+        else
+        {
+            <a href="#" class="page-btn disabled" style="opacity: 0.5; cursor: not-allowed;"><i class="fa fa-angle-right"></i></a>
+        }
+    </div>
+</div>

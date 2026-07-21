@@ -20,6 +20,7 @@ namespace Infrastructure.Persistence.Repositories
             {
                 progress.Status = ProgressStatus.Completed;
                 progress.PercentDone = 100;
+                progress.CompletedAt = DateTime.UtcNow;
                 return true;
             }
             return false;
@@ -40,6 +41,7 @@ namespace Infrastructure.Persistence.Repositories
             {
                 progress.Status = ProgressStatus.Completed;
                 progress.PercentDone = 100;
+                progress.CompletedAt = DateTime.UtcNow;
 
                 if (progress.ScorePct == null || scorePct > progress.ScorePct)
                 {
@@ -62,6 +64,7 @@ namespace Infrastructure.Persistence.Repositories
                 {
                     progress.Status = ProgressStatus.Completed;
                     progress.PercentDone = 100;
+                    progress.CompletedAt = DateTime.UtcNow;
                 }
 
                 if (progress.ScorePct == null || scorePct > progress.ScorePct)

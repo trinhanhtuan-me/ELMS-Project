@@ -15,6 +15,7 @@ namespace Application
             //Add service scoped here
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IUserManagementService, UserManagementService>();
             services.AddScoped<IFunctionService, FunctionService>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IModuleService, ModuleService>();
@@ -37,7 +38,13 @@ namespace Application
             services.AddScoped<ICourseReviewService, CourseReviewService>();
             services.AddScoped<ILearningService, LearningService>();
             services.AddScoped<IStudentProfileService, StudentProfileService>();
+            services.AddScoped<IInstructorProfileService, InstructorProfileService>();
+            services.AddScoped<IInstructorAssignmentService, InstructorAssignmentService>();
             services.AddScoped<IHomeService, HomeService>();
+            services.AddScoped<ICourseApprovalService, CourseApprovalService>();
+            services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IParentProgressService, ParentProgressService>();
+            services.AddScoped<IParentProfileService, ParentProfileService>();
             services.AddScoped<ICourseApprovalService, CourseApprovalService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IParentProgressService, ParentProgressService>();

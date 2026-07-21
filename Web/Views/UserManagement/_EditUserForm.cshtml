@@ -1,0 +1,118 @@
+@using Domain.Entities
+@using Domain.Enums
+@model Application.Dtos.UserManagement.UpdateUserRequest
+
+@{
+    var allRoles = ViewBag.AllRoles as List<PRole> ?? new List<PRole>();
+}
+
+<div class="modal-header bg-danger text-white">
+    <h5 class="modal-title fw-bold" id="userModalLabel">
+        <i class="fa fa-user-circle me-2"></i>Chỉnh sửa Thông tin & Vai trò
+    </h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<form method="post" action="/UserManagement/Edit">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="UserId" />
+
+    <div class="modal-body px-4">
+        <!-- Thông tin tài khoản -->
+        <h6 class="text-danger fw-bold border-bottom pb-2 mb-3">Thông tin Tài khoản</h6>
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <label class="form-label fw-medium">Tên đăng nhập (Username)</label>
+                <input type="text" asp-for="Username" class="form-control" placeholder="Nhập username..." required />
+                <span asp-validation-for="Username" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-medium">Địa chỉ Email</label>
+                <input type="email" asp-for="Email" class="form-control" placeholder="Nhập email..." required />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <!-- Thông tin cá nhân -->
+        <h6 class="text-danger fw-bold border-bottom pb-2 mb-3">Thông tin Cá nhân</h6>
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <label class="form-label fw-medium">Họ và tên</label>
+                <input type="text" asp-for="FullName" class="form-control" placeholder="Nhập họ và tên..." />
+                <span asp-validation-for="FullName" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-medium">Số điện thoại</label>
+                <input type="text" asp-for="Phone" class="form-control" placeholder="Nhập số điện thoại..." />
+                <span asp-validation-for="Phone" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-medium">Giới tính</label>
+                <select asp-for="Gender" class="form-select">
+                    <option value="">-- Chọn giới tính --</option>
+                    <!option value="@Gender.Male" @(Model.Gender == Gender.Male ? "selected" : "")>Nam</!option>
+                    <!option value="@Gender.Female" @(Model.Gender == Gender.Female ? "selected" : "")>Nữ</!option>
+                    <!option value="@Gender.Other" @(Model.Gender == Gender.Other ? "selected" : "")>Khác</!option>
+                </select>
+                <span asp-validation-for="Gender" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-medium">Ngày sinh</label>
+                <input type="date" asp-for="DateOfBirth" class="form-control" value="@(Model.DateOfBirth?.ToString("yyyy-MM-dd"))" />
+                <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+            </div>
+            <div class="col-12">
+                <div class="form-check form-switch mt-2">
+                    <input class="form-check-input" type="checkbox" role="switch" id="IsActiveSwitch" asp-for="IsActive" />
+                    <label class="form-check-input-label fw-medium ms-2" for="IsActiveSwitch">Cho phép tài khoản hoạt động</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cấu hình vai trò -->
+        <h6 class="text-danger fw-bold border-bottom pb-2 mb-3">Phân quyền Vai trò (Roles)</h6>
+        <div class="alert alert-warning-subtle text-warning-emphasis border border-warning-subtle small py-2 mb-3">
+            <i class="fa fa-exclamation-triangle me-2"></i><strong>Lưu ý:</strong> Vai trò <strong>Admin</strong> là cố định, không thể gán mới hoặc gỡ bỏ từ trang này để đảm bảo an toàn hệ thống.
+        </div>
+        
+        <div class="row g-3">
+            @foreach (var role in allRoles)
+            {
+                var isChecked = Model.RoleIds.Contains(role.Id);
+                var isSystemAdminRole = (role.Id == 1 || role.Name.Equals("Admin", StringComparison.OrdinalIgnoreCase));
+                
+                <div class="col-md-6">
+                    <div class="card h-100 border-light-subtle shadow-xs @(isSystemAdminRole ? "bg-light-subtle" : "")">
+                        <div class="card-body py-2 px-3">
+                            <div class="form-check d-flex align-items-center">
+                                <input type="checkbox" name="RoleIds" value="@role.Id" 
+                                       class="form-check-input" id="role_@role.Id" 
+                                       @(isChecked ? "checked" : "") 
+                                       @(isSystemAdminRole ? "disabled" : "") />
+                                <label class="form-check-label fw-medium ms-2 text-dark" for="role_@role.Id">
+                                    @role.Name
+                                    <span class="d-block text-muted small fw-normal">@role.Description</span>
+                                </label>
+
+                                @if (isSystemAdminRole)
+                                {
+                                    @if (isChecked)
+                                    {
+                                        <!-- Post back value since disabled check-boxes do not post values -->
+                                        <input type="hidden" name="RoleIds" value="@role.Id" />
+                                    }
+                                    <span class="badge bg-secondary ms-auto text-uppercase" style="font-size: 0.65rem;">Cố định</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="modal-footer px-4 border-top-0">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="submit" class="btn btn-danger px-4"><i class="fa fa-save me-1"></i>Lưu thay đổi</button>
+    </div>
+</form>

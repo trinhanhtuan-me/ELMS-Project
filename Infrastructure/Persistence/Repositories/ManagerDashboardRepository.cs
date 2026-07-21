@@ -186,14 +186,13 @@ namespace Infrastructure.Persistence.Repositories
          
             if (existingPrice != null)
             {
-                // 1. Dùng SQL thuần update giá cũ trong Database
                 await _context.Database.ExecuteSqlRawAsync(
                     "UPDATE CoursePrice SET IsActive = 0, EndDate = {0} WHERE Id = {1}",
                     DateTime.UtcNow, existingPrice.Id);
 
                 _context.Entry(existingPrice).State = EntityState.Detached;
             }
-            // 3. Giờ thì tạo và Add giá mới bình thường. EF Core tưởng đây là giá duy nhất!
+
             var newPrice = new CoursePrice
             {
                 CourseId = courseId,
@@ -210,6 +209,7 @@ namespace Infrastructure.Persistence.Repositories
         {
             var courseDetail = await _context.Courses
                 .AsNoTracking() 
+                .AsSplitQuery()
                 .Where(c => c.Id == courseId && !c.IsDeleted)
                 .Select(c => new CourseDetailVm
                 {
@@ -276,16 +276,6 @@ namespace Infrastructure.Persistence.Repositories
                             AttachmentUrl = i.Assignment != null ? i.Assignment.AttachmentUrl : null,
                             AssignmentContent = i.Assignment != null ? i.Assignment.Content : null,
 
-                            // discussion 
-                            DiscussionDescription = i.Discussion != null ? i.Discussion.Description : null,
-                            
-                            DiscussionReplies = i.Discussion != null ? i.Discussion.DiscussionReplies.Select(dr => new DiscussionReplyVm
-                            {
-                                ReplyId = dr.Id,
-                                Content = dr.Content,
-                                AuthorName = dr.Author != null ? dr.Author.FullName : "None",
-                                CreatedAt = dr.CreatedAt
-                            }).OrderBy(dr => dr.CreatedAt).ToList() : new List<DiscussionReplyVm>(),
                             
                             // key
                             Questions = i.Lesson != null ? i.Lesson.LessonQuestions.Select(lq => new QuestionDetailVm

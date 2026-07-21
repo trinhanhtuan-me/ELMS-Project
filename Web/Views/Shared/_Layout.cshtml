@@ -81,8 +81,8 @@
                         }
                         else
                         {
-                            <li class="nav-item"><a class="nav-link text-dark px-3" href="#">Explore</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark px-3" href="#">My Courses</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark px-3" href="/Catalog/Index">Explore</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark px-3" href="/MyProgress/Index">My Courses</a></li>
                             <li class="nav-item"><a class="nav-link text-dark px-3" href="#">Flashcards</a></li>
                         }
                     </ul>
@@ -104,7 +104,7 @@
                     <!-- Right Actions -->
                     <div class="d-flex align-items-center ms-auto gap-4 mt-3 mt-lg-0">
                         <!-- Wishlist Icon -->
-                        @if (User.Identity?.IsAuthenticated != true || !User.IsInRole("Admin"))
+                        @if ((ViewData["IsCourseManager"] as bool? != true) && (User.Identity?.IsAuthenticated != true || !User.IsInRole("Admin")))
                         {
                             <a href="/StudentFamily" class="text-dark text-decoration-none fs-5 hover-text-primary transition-all">
                                 <i class="fa fa-heart-o"></i>

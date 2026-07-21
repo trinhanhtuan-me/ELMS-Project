@@ -3,6 +3,7 @@
     var modules = ViewBag.Modules as List<Domain.Entities.Module> ?? new List<Domain.Entities.Module>();
     var courseId = ViewBag.CourseId?.ToString();
     var activeModuleId = ViewBag.ModuleId?.ToString();
+    ViewData["IsCourseManager"] = true;
 }
 
 @section Styles {
@@ -21,9 +22,9 @@
     <div class="mb-6 flex items-center justify-between">
         <div>
             <a href="/Course/Details/@courseId" class="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-2 mb-2">
-                <i class="fas fa-arrow-left"></i> Quay lại chi tiết khóa học
+                <i class="fas fa-arrow-left"></i> Back to course details
             </a>
-            <h1 class="text-2xl font-bold text-gray-900">Quản lý nội dung bài học</h1>
+            <h1 class="text-2xl font-bold text-gray-900">Manage lesson content</h1>
         </div>
     </div>
 
@@ -33,13 +34,13 @@
         <div class="w-full md:w-1/4">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sticky top-24">
                 <h3 class="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-gray-100">
-                    <i class="fas fa-layer-group text-blue-500 mr-2"></i> Danh sách Module
+                    <i class="fas fa-layer-group text-blue-500 mr-2"></i> Module List
                 </h3>
                 
                 <div class="space-y-3">
                     @if (!modules.Any())
                     {
-                        <p class="text-sm text-gray-500 italic">Chưa có module nào.</p>
+                        <p class="text-sm text-gray-500 italic">No modules yet.</p>
                     }
                     
                     @foreach (var module in modules)
@@ -62,17 +63,17 @@
                                     </button>
                                     <div id="dropdown-@module.Id" class="hidden absolute left-full top-0 ml-2 w-48 bg-white rounded-md shadow-lg z-50 border border-gray-100 py-1">
                                         <a href="/Lesson/CreateVideoLesson?moduleId=@module.Id&courseId=@courseId" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
-                                            <i class="fas fa-video mr-2"></i> Bài học Video
+                                            <i class="fas fa-video mr-2"></i> Video Lesson
                                         </a>
                                         <a href="/Lesson/CreateReadingLesson?moduleId=@module.Id&courseId=@courseId" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
-                                            <i class="fas fa-file-alt mr-2"></i> Bài học Reading
+                                            <i class="fas fa-file-alt mr-2"></i> Reading Lesson
                                         </a>
                                         <div class="border-t border-gray-100 my-1"></div>
-                                        <a href="/Assignment/CreateAssignment?moduleId=@module.Id&courseId=@courseId" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
-                                            <i class="fas fa-tasks mr-2"></i> Bài tập (Assignment)
+                                        <a href="/Quiz/CreateQuiz?moduleId=@module.Id&courseId=@courseId" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                                            <i class="fas fa-question-circle mr-2"></i> Quiz
                                         </a>
-                                        <a href="/Discussion/CreateDiscussion?moduleId=@module.Id&courseId=@courseId" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
-                                            <i class="fas fa-comments mr-2"></i> Thảo luận (Discussion)
+                                        <a href="/Assignment/CreateAssignment?moduleId=@module.Id&courseId=@courseId" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+                                            <i class="fas fa-tasks mr-2"></i> Assignment
                                         </a>
                                     </div>
                                 </div>
@@ -91,15 +92,15 @@
                                             
                                             if (item.ItemType == Domain.Enums.ModuleItemType.Lesson) {
                                                 updateUrl = isVideo ? $"/Lesson/UpdateVideoLesson?lessonId={item.Id}" : $"/Lesson/UpdateReadingLesson?lessonId={item.Id}";
-                                                title = item.Lesson?.Title ?? "Bài học";
+                                                title = item.Lesson?.Title ?? "Lesson";
                                             }
                                             else if (item.ItemType == Domain.Enums.ModuleItemType.Assignment) {
                                                 updateUrl = $"/Assignment/UpdateAssignment?lessonId={item.Id}";
-                                                title = item.Assignment?.Title ?? "Bài tập";
+                                                title = item.Assignment?.Title ?? "Assignment";
                                             }
-                                            else if (item.ItemType == Domain.Enums.ModuleItemType.Discussion) {
-                                                updateUrl = $"/Discussion/UpdateDiscussion?lessonId={item.Id}";
-                                                title = item.Discussion?.Title ?? "Thảo luận";
+                                            else if (item.ItemType == Domain.Enums.ModuleItemType.Quiz) {
+                                                updateUrl = $"/Quiz/UpdateQuiz?lessonId={item.Id}";
+                                                title = item.Quiz?.Title ?? "Quiz";
                                             }
                                                 
                                             <li>
@@ -119,9 +120,9 @@
                                                     {
                                                         <i class="fas fa-tasks text-orange-500 w-4"></i>
                                                     }
-                                                    else if (item.ItemType == Domain.Enums.ModuleItemType.Discussion)
+                                                    else if (item.ItemType == Domain.Enums.ModuleItemType.Quiz)
                                                     {
-                                                        <i class="fas fa-comments text-purple-500 w-4"></i>
+                                                        <i class="fas fa-question-circle text-purple-500 w-4"></i>
                                                     }
                                                     else
                                                     {
@@ -136,7 +137,7 @@
                                 else
                                 {
                                     <div class="px-4 py-3 text-xs text-gray-400 italic text-center">
-                                        Chưa có bài học nào
+                                        No lessons yet
                                     </div>
                                 }
                             </div>

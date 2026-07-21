@@ -70,7 +70,9 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarMain">
-                    <!-- Navigation Links -->
+                    @if (ViewData["IsCourseManager"] as bool? != true)
+                    {
+                        <!-- Navigation Links -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 fw-medium" style="font-size: 0.95rem;">
                         @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
                         {
@@ -200,7 +202,9 @@
     </div>
 </footer>
 }
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 

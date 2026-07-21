@@ -1241,7 +1241,9 @@ new QuizQuestion { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddd03"), Quiz
             new LessonOption { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccc06"), QuestionId = question2Id, Content = "Đi ra ngoài chơi", IsCorrect = false }
         );
 
+
         modelBuilder.Entity<Quiz>().HasData(            new Quiz { Id = item3Id, Title = "Tenses Quiz 1", PassingScorePct = 70.00m, TimeLimitMin = 15, AttemptCooldownMin = 60, PickCount = 10 }
+
         );
 
         modelBuilder.Entity<Assignment>().HasData(

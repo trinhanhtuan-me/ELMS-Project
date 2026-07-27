@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-07-28T00:00:00.000Z" agent="Antigravity" version="21.0.0" type="device">
+  <diagram id="english-lms-context" name="EnglishLMS Context Diagram">
+    <mxGraphModel dx="1800" dy="1300" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2400" pageHeight="1600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- CENTRAL SYSTEM PROCESS -->
+        <mxCell id="sys_lms" value="&lt;b style=&quot;font-size: 18px;&quot;&gt;English Elearning&lt;br/&gt;Management System&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 13px; color: #1e429f;&quot;&gt;(EnglishLMS C# .NET Core)&lt;/span&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#e1effe;strokeColor=#1a56db;strokeWidth=3;fontSize=14;align=center;fontColor=#1e429f;" vertex="1" parent="1">
+          <mxGeometry x="900" y="550" width="340" height="340" as="geometry" />
+        </mxCell>
+
+        <!-- EXTERNAL ENTITIES / ACTORS (USER ACTORS - ORANGE/YELLOW) -->
+        <mxCell id="actor_student" value="&lt;b style=&quot;font-size: 16px;&quot;&gt;Student&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 12px; color: #771d1d;&quot;&gt;(System Learner)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdf2f2;strokeColor=#f05252;strokeWidth=2;fontSize=13;fontColor=#9b1c1c;" vertex="1" parent="1">
+          <mxGeometry x="120" y="590" width="220" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="actor_instructor" value="&lt;b style=&quot;font-size: 16px;&quot;&gt;Instructor&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 12px; color: #723b10;&quot;&gt;(Teacher / Educator)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#feecdc;strokeColor=#f9807b;strokeWidth=2;fontSize=13;fontColor=#8a2c0d;" vertex="1" parent="1">
+          <mxGeometry x="580" y="80" width="220" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="actor_parent" value="&lt;b style=&quot;font-size: 16px;&quot;&gt;Parent&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 12px; color: #633112;&quot;&gt;(Student Guardian)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#f59e0b;strokeWidth=2;fontSize=13;fontColor=#92400e;" vertex="1" parent="1">
+          <mxGeometry x="200" y="1180" width="220" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="actor_manager" value="&lt;b style=&quot;font-size: 16px;&quot;&gt;Manager / Admin&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 12px; color: #1e3a8a;&quot;&gt;(System Administrator)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=2;fontSize=13;fontColor=#0369a1;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="140" width="230" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- EXTERNAL SYSTEMS (PURPLE / TEAL) -->
+        <mxCell id="ext_vnpay" value="&lt;b style=&quot;font-size: 16px;&quot;&gt;VNPay Gateway&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 12px; color: #4c1d95;&quot;&gt;(Payment Service)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#a855f7;strokeWidth=2;fontSize=13;fontColor=#6b21a8;" vertex="1" parent="1">
+          <mxGeometry x="720" y="1280" width="220" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ext_cloudinary" value="&lt;b style=&quot;font-size: 16px;&quot;&gt;Cloudinary Storage&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 12px; color: #581c87;&quot;&gt;(Media CDN Service)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#a855f7;strokeWidth=2;fontSize=13;fontColor=#6b21a8;" vertex="1" parent="1">
+          <mxGeometry x="1750" y="580" width="220" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ext_gmail" value="&lt;b style=&quot;font-size: 16px;&quot;&gt;Gmail / SMTP Service&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 12px; color: #581c87;&quot;&gt;(Email &amp; OTP Service)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#a855f7;strokeWidth=2;fontSize=13;fontColor=#6b21a8;" vertex="1" parent="1">
+          <mxGeometry x="1680" y="960" width="220" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ext_fido2" value="&lt;b style=&quot;font-size: 16px;&quot;&gt;FIDO2 / WebAuthn&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size: 12px; color: #581c87;&quot;&gt;(Passkey Auth Service)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#a855f7;strokeWidth=2;fontSize=13;fontColor=#6b21a8;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="1280" width="220" height="130" as="geometry" />
+        </mxCell>
+
+
+        <!-- ==================== DATA FLOWS (GROUPED: ALL INFLOWS FIRST, THEN ALL OUTFLOWS) ==================== -->
+
+        <!-- 1. STUDENT FLOWS -->
+        <!-- Student INFLOWS (Student -> System) -->
+        <mxCell id="f_std_in" value="&lt;b style=&quot;color: #b91c1c;&quot;&gt;[INFLOWS: Student &amp;rarr; System]&lt;/b&gt;&lt;br/&gt;&amp;bull; Account registration &amp;amp; login request&lt;br/&gt;&amp;bull; Passkey / FIDO2 authentication credentials&lt;br/&gt;&amp;bull; Quiz answers &amp;amp; assignment submissions&lt;br/&gt;&amp;bull; Parent linking request &amp;amp; passcode&lt;br/&gt;&amp;bull; Course reviews &amp;amp; lesson discussions" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#ef4444;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="actor_student" target="sys_lms">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Student OUTFLOWS (System -> Student) -->
+        <mxCell id="f_std_out" value="&lt;b style=&quot;color: #1d4ed8;&quot;&gt;[OUTFLOWS: System &amp;rarr; Student]&lt;/b&gt;&lt;br/&gt;&amp;bull; Course materials, videos &amp;amp; flashcards&lt;br/&gt;&amp;bull; Quiz / assignment scores &amp;amp; feedback&lt;br/&gt;&amp;bull; Learning progress &amp;amp; vocabulary stats&lt;br/&gt;&amp;bull; Parent linking status notification" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#3b82f6;exitX=0;exitY=0.7;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="sys_lms" target="actor_student">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+
+        <!-- 2. INSTRUCTOR FLOWS -->
+        <!-- Instructor INFLOWS (Instructor -> System) -->
+        <mxCell id="f_ins_in" value="&lt;b style=&quot;color: #c2410c;&quot;&gt;[INFLOWS: Instructor &amp;rarr; System]&lt;/b&gt;&lt;br/&gt;&amp;bull; Course, module &amp;amp; lesson content&lt;br/&gt;&amp;bull; Quiz questions &amp;amp; assignment tasks&lt;br/&gt;&amp;bull; Course approval request (CourseRequest)&lt;br/&gt;&amp;bull; Assignment grades &amp;amp; feedback submission" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#f97316;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.35;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="actor_instructor" target="sys_lms">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Instructor OUTFLOWS (System -> Instructor) -->
+        <mxCell id="f_ins_out" value="&lt;b style=&quot;color: #1d4ed8;&quot;&gt;[OUTFLOWS: System &amp;rarr; Instructor]&lt;/b&gt;&lt;br/&gt;&amp;bull; Student assignment submissions&lt;br/&gt;&amp;bull; Course request approval status&lt;br/&gt;&amp;bull; Student progress &amp;amp; class analytics" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#3b82f6;exitX=0.15;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="sys_lms" target="actor_instructor">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+
+        <!-- 3. PARENT FLOWS -->
+        <!-- Parent INFLOWS (Parent -> System) -->
+        <mxCell id="f_prt_in" value="&lt;b style=&quot;color: #b45309;&quot;&gt;[INFLOWS: Parent &amp;rarr; System]&lt;/b&gt;&lt;br/&gt;&amp;bull; Parent-child link approval request&lt;br/&gt;&amp;bull; Course enrollment &amp;amp; payment initiation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#eab308;exitX=0.8;exitY=0;exitDx=0;exitDy=0;entryX=0.15;entryY=0.9;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="actor_parent" target="sys_lms">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Parent OUTFLOWS (System -> Parent) -->
+        <mxCell id="f_prt_out" value="&lt;b style=&quot;color: #1d4ed8;&quot;&gt;[OUTFLOWS: System &amp;rarr; Parent]&lt;/b&gt;&lt;br/&gt;&amp;bull; Child progress &amp;amp; grade reports&lt;br/&gt;&amp;bull; Unpaid course request list&lt;br/&gt;&amp;bull; Payment confirmation receipt" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#3b82f6;exitX=0.05;exitY=0.75;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="sys_lms" target="actor_parent">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+
+        <!-- 4. MANAGER / ADMIN FLOWS -->
+        <!-- Manager INFLOWS (Manager -> System) -->
+        <mxCell id="f_mng_in" value="&lt;b style=&quot;color: #0369a1;&quot;&gt;[INFLOWS: Manager &amp;rarr; System]&lt;/b&gt;&lt;br/&gt;&amp;bull; Course approval / rejection decision&lt;br/&gt;&amp;bull; User, role &amp;amp; permission configurations&lt;br/&gt;&amp;bull; System catalog &amp;amp; category management" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#0284c7;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.95;entryY=0.25;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="actor_manager" target="sys_lms">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Manager OUTFLOWS (System -> Manager) -->
+        <mxCell id="f_mng_out" value="&lt;b style=&quot;color: #1d4ed8;&quot;&gt;[OUTFLOWS: System &amp;rarr; Manager]&lt;/b&gt;&lt;br/&gt;&amp;bull; Pending course approval list&lt;br/&gt;&amp;bull; System analytics &amp;amp; revenue reports&lt;br/&gt;&amp;bull; Security &amp;amp; system audit logs" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#3b82f6;exitX=0.85;exitY=0.1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="sys_lms" target="actor_manager">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+
+        <!-- 5. VNPAY GATEWAY FLOWS -->
+        <!-- System INFLOWS to VNPay (LMS -> VNPay) -->
+        <mxCell id="f_vnp_in" value="&lt;b style=&quot;color: #6b21a8;&quot;&gt;[INFLOWS: System &amp;rarr; VNPay]&lt;/b&gt;&lt;br/&gt;&amp;bull; Payment initiation request (Amount, TxnRef, OrderInfo)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#a855f7;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.35;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="sys_lms" target="ext_vnpay">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- VNPay OUTFLOWS to System (VNPay -> LMS) -->
+        <mxCell id="f_vnp_out" value="&lt;b style=&quot;color: #1d4ed8;&quot;&gt;[OUTFLOWS: VNPay &amp;rarr; System]&lt;/b&gt;&lt;br/&gt;&amp;bull; Payment transaction result (IPN / Callback parameters)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#3b82f6;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.45;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="ext_vnpay" target="sys_lms">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+
+        <!-- 6. CLOUDINARY STORAGE FLOWS -->
+        <!-- System INFLOWS to Cloudinary (LMS -> Cloudinary) -->
+        <mxCell id="f_cld_in" value="&lt;b style=&quot;color: #6b21a8;&quot;&gt;[INFLOWS: System &amp;rarr; Cloudinary]&lt;/b&gt;&lt;br/&gt;&amp;bull; Media upload request (Video, Image, File)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#a855f7;exitX=1;exitY=0.45;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="sys_lms" target="ext_cloudinary">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Cloudinary OUTFLOWS to System (Cloudinary -> LMS) -->
+        <mxCell id="f_cld_out" value="&lt;b style=&quot;color: #1d4ed8;&quot;&gt;[OUTFLOWS: Cloudinary &amp;rarr; System]&lt;/b&gt;&lt;br/&gt;&amp;bull; Media CDN URL &amp;amp; upload response" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#3b82f6;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.95;entryY=0.65;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="ext_cloudinary" target="sys_lms">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+
+        <!-- 7. GMAIL / SMTP SERVICE FLOWS -->
+        <!-- System INFLOWS to Gmail (LMS -> Gmail) -->
+        <mxCell id="f_gml_in" value="&lt;b style=&quot;color: #6b21a8;&quot;&gt;[INFLOWS: System &amp;rarr; Gmail]&lt;/b&gt;&lt;br/&gt;&amp;bull; Email dispatch request (OTP, Notifications, Receipts)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#a855f7;exitX=0.9;exitY=0.8;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="sys_lms" target="ext_gmail">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Gmail OUTFLOWS to System (Gmail -> LMS) -->
+        <mxCell id="f_gml_out" value="&lt;b style=&quot;color: #1d4ed8;&quot;&gt;[OUTFLOWS: Gmail &amp;rarr; System]&lt;/b&gt;&lt;br/&gt;&amp;bull; Email delivery status report" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#3b82f6;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.8;entryY=0.9;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="ext_gmail" target="sys_lms">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+
+        <!-- 8. FIDO2 / WEBAUTHN FLOWS -->
+        <!-- System INFLOWS to FIDO2 (LMS -> FIDO2) -->
+        <mxCell id="f_fdo_in" value="&lt;b style=&quot;color: #6b21a8;&quot;&gt;[INFLOWS: System &amp;rarr; FIDO2]&lt;/b&gt;&lt;br/&gt;&amp;bull; Passkey registration &amp;amp; auth challenge" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#a855f7;exitX=0.65;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="sys_lms" target="ext_fido2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- FIDO2 OUTFLOWS to System (FIDO2 -> LMS) -->
+        <mxCell id="f_fdo_out" value="&lt;b style=&quot;color: #1d4ed8;&quot;&gt;[OUTFLOWS: FIDO2 &amp;rarr; System]&lt;/b&gt;&lt;br/&gt;&amp;bull; Verified credential &amp;amp; assertion response" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeWidth=2;strokeColor=#3b82f6;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.8;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;align=left;spacingLeft=5;" edge="1" parent="1" source="ext_fido2" target="sys_lms">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

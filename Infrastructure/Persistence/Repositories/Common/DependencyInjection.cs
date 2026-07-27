@@ -51,6 +51,7 @@ namespace Infrastructure.Persistence.Repositories.Common
             services.AddScoped<IInstructorAssignmentRepository, InstructorAssignmentRepository>();
             services.AddScoped<IModuleItemRepository, ModuleItemRepository>();
             services.AddScoped<ILessonQuestionRepository, LessonQuestionRepository>();
+            services.AddScoped<ITeacherEvaluationRepository, TeacherEvaluationRepository>();
             return services;
         }
     }

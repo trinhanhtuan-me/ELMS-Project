@@ -1,4 +1,4 @@
-﻿@model Application.Dtos.Role.UpdateRoleRequest
+@model Application.Dtos.Role.UpdateRoleRequest
 
 <div class="modal-header">
     <h5 class="modal-title">Chỉnh sửa Nhóm quyền</h5>
@@ -46,10 +46,10 @@
                         {
                             bool isChecked = Model.FunctionIds != null && Model.FunctionIds.Contains((int)func.FunctionId);
 
-                            <div class="col-md-3 mb-2">
+                            <div class="col-md-6 mb-2">
                                 <div class="form-check">
                                     <input class="form-check-input func-checkbox" type="checkbox" name="FunctionIds" value="@func.FunctionId" id="editFunc_@func.FunctionId" @(isChecked ? "checked" : "")>
-                                    <label class="form-check-label" for="editFunc_@func.FunctionId">@func.FunctionDescription</label>
+                                    <label class="form-check-label text-dark" for="editFunc_@func.FunctionId">@func.FunctionDescription</label>
                                 </div>
                             </div>
                         }

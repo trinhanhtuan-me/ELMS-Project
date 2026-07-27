@@ -1,4 +1,4 @@
-﻿@using System.Security.Claims
+@using System.Security.Claims
 @using Application.UseCases
 @inject IManagerProfileService ProfileService
 
@@ -28,40 +28,67 @@
     {
         profilePicture = $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(fullName)}&background=4f46e5&color=fff&size=100";
     }
+
+    bool isAdmin = User.IsInRole("Admin");
+    bool isManager = User.IsInRole("Manager");
 }
 <aside class="sidebar">
     <div class="sidebar-header">
-        <a href="@Url.Action("Dashboard", "Manager")" class="logo">
+        <a href="@(isAdmin && !isManager ? Url.Action("Index", "UserManagement") : Url.Action("Dashboard", "Manager"))" class="logo">
             <img src="~/Images/views-manager/Icon/ELMS.png" alt="Logo">
         </a>
     </div>
 
     <nav class="sidebar-nav">
         
-        <a href="@Url.Action("Dashboard", "Manager")"
-           class="@(currentPath.EndsWith("/manager/dashboard") ? "active" : "")">
-            <i class="fas fa-home"></i> Dashboard
-        </a>
+        @if (isAdmin)
+        {
+            <a href="@Url.Action("Index", "UserManagement")"
+               class="@(currentPath.Contains("/usermanagement") ? "active" : "")">
+                <i class="fas fa-users"></i> User Management
+            </a>
 
-        <a href="@Url.Action("CourseManagement", "Manager")"
-           class="@(currentPath.Contains("/course-management") ? "active" : "")">
-            <i class="fas fa-book"></i> Course Management
-        </a>
+            <a href="@Url.Action("Index", "Role")"
+               class="@(currentPath.Contains("/role") ? "active" : "")">
+                <i class="fas fa-user-shield"></i> Role Management
+            </a>
+        }
 
-        <a href="@Url.Action("CoursePublish", "Manager")"
-           class="@(currentPath.Contains("/course-publish") ? "active" : "")">
-            <i class="fas fa-calendar-days"></i> Course Public Schedule
-        </a>
+        @if (isManager)
+        {
+            <a href="@Url.Action("Dashboard", "Manager")"
+               class="@(currentPath.EndsWith("/manager/dashboard") ? "active" : "")">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
 
-        <a href="@Url.Action("CategoryManagement", "Manager")"
-           class="@(currentPath.Contains("/category-management") ? "active" : "")">
-            <i class="fa fa-layer-group"></i> Category Manager
-        </a>
+            <a href="@Url.Action("CourseManagement", "Manager")"
+               class="@(currentPath.Contains("/course-management") ? "active" : "")">
+                <i class="fas fa-book"></i> Course Management
+            </a>
 
-        <a href="@Url.Action("RevenueReport", "Manager")"
-           class="@(currentPath.Contains("/revenue-report") ? "active" : "")">
-            <i class="fas fa-chart-bar"></i> Revenue Report
-        </a>
+            <a href="@Url.Action("CoursePublish", "Manager")"
+               class="@(currentPath.Contains("/course-publish") ? "active" : "")">
+                <i class="fas fa-calendar-days"></i> Course Public Schedule
+            </a>
+
+            <a href="@Url.Action("CategoryManagement", "Manager")"
+               class="@(currentPath.Contains("/category-management") ? "active" : "")">
+                <i class="fa fa-layer-group"></i> Category Manager
+            </a>
+        }
+
+        @if (isAdmin || isManager)
+        {
+            <a href="@Url.Action("RevenueReport", "Manager")"
+               class="@(currentPath.Contains("/revenue-report") ? "active" : "")">
+                <i class="fas fa-chart-bar"></i> Revenue Report
+            </a>
+
+            <a href="@Url.Action("Index", "TeacherEvaluation")"
+               class="@(currentPath.Contains("/teacher-evaluations") ? "active" : "")">
+                <i class="fas fa-star-half-stroke"></i> Teacher Evaluations
+            </a>
+        }
 
     </nav>
 
@@ -72,7 +99,7 @@
 
         <div class="sidebar-dropdown">
             <a href="@Url.Action("ManagerProfile", "Manager")">
-                <i class="fas fa-user"></i> Manager Profle
+                <i class="fas fa-user"></i> My Profile
             </a>
             <a href="@Url.Action("ChangePassword", "Manager")">
                 <i class="fas fa-key"></i> Change Password

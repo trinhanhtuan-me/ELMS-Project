@@ -1,0 +1,394 @@
+@using Application.Dtos.TeacherEvaluation
+@model TeacherDetailEvaluationDto
+
+@{
+    ViewData["Title"] = $"Evaluation Details — {Model?.TeacherName ?? "Teacher"}";
+    var reviews = ViewBag.Reviews as Application.Common.PaginatedList<TeacherReviewDetailDto> ?? new Application.Common.PaginatedList<TeacherReviewDetailDto>(0, new List<TeacherReviewDetailDto>());
+    var reviewFilter = ViewBag.ReviewRequest as TeacherReviewFilterRequest ?? new TeacherReviewFilterRequest();
+
+    int currentPage = reviewFilter != null && reviewFilter.PageNumber > 0 ? reviewFilter.PageNumber : 1;
+    int pageSize = reviewFilter != null && reviewFilter.PageSize > 0 ? reviewFilter.PageSize : 10;
+    int totalItems = reviews?.Total ?? 0;
+    int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+    if (totalPages < 1) totalPages = 1;
+
+    var avatarUrl = Model != null && !string.IsNullOrEmpty(Model.Avatar)
+        ? Model.Avatar
+        : $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(Model?.TeacherName ?? "Teacher")}&background=4f46e5&color=fff&size=128";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/manager-dashboard.css" asp-append-version="true">
+    <style>
+        .detail-page {
+            padding: 24px;
+            background-color: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .profile-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 24px;
+        }
+
+        .profile-avatar-lg {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #e0e7ff;
+        }
+
+        .rating-summary-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .rating-score {
+            font-size: 42px;
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1;
+        }
+
+        .star-rating-lg {
+            color: #fbbf24;
+            font-size: 18px;
+            margin: 6px 0;
+        }
+
+        .progress-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .course-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+        .course-card:hover {
+            border-color: #c7d2fe;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08);
+        }
+
+        .course-thumb {
+            width: 72px;
+            height: 52px;
+            border-radius: 8px;
+            object-fit: cover;
+            background-color: #f1f5f9;
+        }
+
+        .review-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #f1f5f9;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+        }
+        .review-card:hover {
+            border-color: #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .comment-box {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #334155;
+            margin-top: 12px;
+            border-left: 3px solid #6366f1;
+        }
+    </style>
+}
+
+<main class="main-content detail-page">
+    <!-- Back Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <a href="@Url.Action("Index", "TeacherEvaluation")" class="btn btn-outline-secondary btn-sm rounded-circle" style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div>
+                <h3 class="fw-bold text-dark mb-0">Teacher Profile & Evaluations</h3>
+                <span class="text-muted small">Detailed statistics and course feedback</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teacher Profile & Rating Overview Card -->
+    <div class="profile-card">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <div class="d-flex align-items-center gap-4">
+                    <img src="@avatarUrl" alt="@Model.TeacherName" class="profile-avatar-lg" />
+                    <div>
+                        <h4 class="fw-bold text-dark mb-1">@Model.TeacherName</h4>
+                        <div class="text-muted small mb-2"><i class="fas fa-envelope me-1"></i> @Model.Email</div>
+                        <div class="mb-2">
+                            <span class="badge bg-indigo-subtle text-indigo px-3 py-1 rounded-pill fw-semibold" style="background-color: #e0e7ff; color: #4338ca;">
+                                <i class="fas fa-award me-1"></i> @(string.IsNullOrEmpty(Model.Expertise) ? "EnglishLMS Instructor" : Model.Expertise)
+                            </span>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.Bio))
+                        {
+                            <p class="text-secondary small mb-0 line-clamp-2" style="max-width: 480px;">@Model.Bio</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Score Box -->
+            <div class="col-lg-2 col-md-4">
+                <div class="rating-summary-box">
+                    <div class="rating-score">
+                        @(Model.TotalReviews > 0 ? Model.AverageRating.ToString("0.0") : "N/A")
+                    </div>
+                    <div class="star-rating-lg">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= Math.Floor(Model.AverageRating))
+                            {
+                                <i class="fas fa-star"></i>
+                            }
+                            else if (i - Model.AverageRating <= 0.5 && Model.TotalReviews > 0)
+                            {
+                                <i class="fas fa-star-half-stroke"></i>
+                            }
+                            else
+                            {
+                                <i class="far fa-star text-muted"></i>
+                            }
+                        }
+                    </div>
+                    <div class="small fw-semibold text-secondary">
+                        @Model.TotalReviews total reviews
+                    </div>
+                    <div class="text-muted" style="font-size: 11px;">
+                        across @Model.TotalCourses courses
+                    </div>
+                </div>
+            </div>
+
+            <!-- Star Breakdown -->
+            <div class="col-lg-4 col-md-8 border-start ps-lg-4">
+                <h6 class="fw-bold text-dark mb-3 small text-uppercase tracking-wider">Star Rating Breakdown</h6>
+
+                @{
+                    int totalR = Model.TotalReviews > 0 ? Model.TotalReviews : 1;
+                    int[] counts = { Model.Star5Count, Model.Star4Count, Model.Star3Count, Model.Star2Count, Model.Star1Count };
+                    string[] barColors = { "bg-success", "bg-info", "bg-warning", "bg-orange", "bg-danger" };
+                }
+
+                @for (int star = 5; star >= 1; star--)
+                {
+                    int count = counts[5 - star];
+                    int pct = (int)Math.Round((double)count / totalR * 100);
+                    string barColor = barColors[5 - star];
+
+                    <div class="progress-bar-row">
+                        <span style="width: 32px;" class="fw-semibold text-muted">@star <i class="fas fa-star text-warning" style="font-size: 11px;"></i></span>
+                        <div class="progress flex-grow-1" style="height: 8px; background-color: #f1f5f9;">
+                            <div class="progress-bar @barColor" style="width: @pct%"></div>
+                        </div>
+                        <span style="width: 48px;" class="text-end text-muted small">@count (@pct%)</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Courses Created by Teacher -->
+    <div class="mb-4">
+        <h5 class="fw-bold text-dark mb-3">
+            <i class="fas fa-layer-group text-primary me-2"></i>Courses Created by Instructor (@Model.Courses.Count)
+        </h5>
+
+        @if (!Model.Courses.Any())
+        {
+            <div class="alert alert-light border text-muted">This teacher has not published any courses yet.</div>
+        }
+        else
+        {
+            <div class="row g-3">
+                @foreach (var course in Model.Courses)
+                {
+                    var thumb = !string.IsNullOrEmpty(course.Thumbnail)
+                        ? course.Thumbnail
+                        : "https://via.placeholder.com/150x100?text=ELMS+Course";
+
+                    bool isSelectedCourse = reviewFilter.CourseId == course.CourseId;
+
+                    <div class="col-md-6 col-lg-4">
+                        <div class="course-card @(isSelectedCourse ? "border-primary bg-light-subtle" : "")">
+                            <img src="@thumb" alt="@course.CourseTitle" class="course-thumb" />
+                            <div class="flex-grow-1 overflow-hidden">
+                                <h6 class="fw-bold text-dark mb-1 text-truncate" title="@course.CourseTitle">@course.CourseTitle</h6>
+                                <div class="d-flex align-items-center gap-2 small text-muted mb-1">
+                                    <span class="badge bg-light text-dark border">@course.CategoryName</span>
+                                    <span>•</span>
+                                    <span>@course.TotalReviews reviews</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span class="fw-bold text-warning small">⭐ @course.AverageRating.ToString("0.0")</span>
+                                    <a href="@Url.Action("Detail", "TeacherEvaluation", new { id = Model.TeacherId, CourseId = isSelectedCourse ? (Guid?)null : course.CourseId })"
+                                       class="btn btn-sm @(isSelectedCourse ? "btn-primary" : "btn-outline-primary") py-0 px-2 style-btn" style="font-size: 12px;">
+                                        @(isSelectedCourse ? "Filtering" : "Filter Reviews")
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Student Reviews Section -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <h5 class="fw-bold text-dark mb-0">
+                <i class="fas fa-comment-dots text-indigo me-2" style="color: #4f46e5;"></i>Student Reviews & Feedback (@reviews.Total)
+            </h5>
+
+            <!-- Review Filter Form -->
+            <form method="get" class="d-flex align-items-center gap-2 flex-wrap">
+                <input type="hidden" name="CourseId" value="@reviewFilter.CourseId" />
+
+                <!-- Filter by Star -->
+                <select name="Rating" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                    <!option value="" @(reviewFilter.Rating == null ? "selected" : "")>All Star Levels</!option>
+                    <!option value="5" @(reviewFilter.Rating == 5 ? "selected" : "")>⭐ 5 Stars</!option>
+                    <!option value="4" @(reviewFilter.Rating == 4 ? "selected" : "")>⭐ 4 Stars</!option>
+                    <!option value="3" @(reviewFilter.Rating == 3 ? "selected" : "")>⭐ 3 Stars</!option>
+                    <!option value="2" @(reviewFilter.Rating == 2 ? "selected" : "")>⭐ 2 Stars</!option>
+                    <!option value="1" @(reviewFilter.Rating == 1 ? "selected" : "")>⭐ 1 Star</!option>
+                </select>
+
+                <!-- Search comment -->
+                <div class="input-group input-group-sm" style="width: 220px;">
+                    <input type="text" name="SearchTerm" value="@reviewFilter.SearchTerm" class="form-control" placeholder="Search review text..." />
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fas fa-search"></i></button>
+                </div>
+
+                @if (reviewFilter.CourseId.HasValue || reviewFilter.Rating.HasValue || !string.IsNullOrEmpty(reviewFilter.SearchTerm))
+                {
+                    <a href="@Url.Action("Detail", "TeacherEvaluation", new { id = Model.TeacherId })" class="btn btn-sm btn-light text-danger" title="Clear Filter">
+                        <i class="fas fa-times"></i> Clear Filter
+                    </a>
+                }
+            </form>
+        </div>
+
+        <div class="card-body p-4">
+            @if (reviews.Data == null || !reviews.Data.Any())
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-comment-slash fa-3x mb-3 opacity-50"></i>
+                    <p class="mb-0 fs-6">No student reviews match the current filter criteria</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var item in reviews.Data)
+                {
+                    var stAvatar = !string.IsNullOrEmpty(item.StudentAvatar)
+                        ? item.StudentAvatar
+                        : $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(item.StudentName)}&background=e2e8f0&color=334155";
+
+                    <div class="review-card">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="@stAvatar" alt="@item.StudentName" class="student-avatar" />
+                                <div>
+                                    <div class="fw-bold text-dark mb-0">@item.StudentName</div>
+                                    <div class="small text-muted">
+                                        Course: <span class="badge bg-light text-primary border">@item.CourseTitle</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-warning small mb-1">
+                                    @for (int s = 1; s <= 5; s++)
+                                    {
+                                        if (s <= item.Rating)
+                                        {
+                                            <i class="fas fa-star"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="far fa-star text-muted"></i>
+                                        }
+                                    }
+                                </div>
+                                <div class="text-muted" style="font-size: 12px;">
+                                    <i class="far fa-clock me-1"></i>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="comment-box">
+                            @(string.IsNullOrWhiteSpace(item.Comment) ? "Student left a star rating without written comments." : item.Comment)
+                        </div>
+                    </div>
+                }
+
+                <!-- Review Pagination -->
+                @if (totalPages > 1)
+                {
+                    <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                        <div class="text-muted small">
+                            Page <strong>@currentPage</strong> of <strong>@totalPages</strong> (@totalItems total reviews)
+                        </div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("Detail", "TeacherEvaluation", new { id = Model.TeacherId, CourseId = reviewFilter.CourseId, Rating = reviewFilter.Rating, SearchTerm = reviewFilter.SearchTerm, PageNumber = currentPage - 1 })">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                @for (int p = 1; p <= totalPages; p++)
+                                {
+                                    <li class="page-item @(p == currentPage ? "active" : "")">
+                                        <a class="page-link" href="@Url.Action("Detail", "TeacherEvaluation", new { id = Model.TeacherId, CourseId = reviewFilter.CourseId, Rating = reviewFilter.Rating, SearchTerm = reviewFilter.SearchTerm, PageNumber = p })">@p</a>
+                                    </li>
+                                }
+                                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("Detail", "TeacherEvaluation", new { id = Model.TeacherId, CourseId = reviewFilter.CourseId, Rating = reviewFilter.Rating, SearchTerm = reviewFilter.SearchTerm, PageNumber = currentPage + 1 })">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</main>

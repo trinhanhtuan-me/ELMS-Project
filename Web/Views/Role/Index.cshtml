@@ -1,11 +1,18 @@
-﻿@using Domain.Enums;
+@using Domain.Enums;
 @model Application.Common.PaginatedList<Application.Dtos.Role.RoleVm>
 
 @{
     ViewData["Title"] = "Quản lý Nhóm quyền";
 }
 
-<div class="container-fluid mt-4">
+@section Styles {
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/manager-dashboard.css" asp-append-version="true">
+}
+
+<main class="main-content">
+    <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between mb-2">
         <form method="get" class="d-flex gap-2">
             <input type="text" name="RoleName" value="@Context.Request.Query["RoleName"]" class="form-control" placeholder="Tên role..." />
@@ -75,6 +82,7 @@
         </div>
     </div>
 </div>
+</main>
 
 <div class="modal fade" id="roleModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl">
@@ -91,19 +99,19 @@
 @section Scripts {
     <script>
         function openCreateModal() {
-        $('#roleModal').modal('show');
-        $.get('/Role/Create', function (htmlResult) {
-        $('#modal-content-body').html(htmlResult);
-        initCheckboxLogic();
-        });
+            $('#roleModal').modal('show');
+            $.get('/Role/Create', function (htmlResult) {
+                $('#modal-content-body').html(htmlResult);
+                initCheckboxLogic();
+            });
         }
         function openEditModal(roleId) {
-        $('#roleModal').modal('show');
-        // Gọi AJAX lấy form Edit kèm theo ID
-        $.get('/Role/Edit/' + roleId, function (htmlResult) {
-        $('#modal-content-body').html(htmlResult);
-        initCheckboxLogic();
-        });
+            $('#roleModal').modal('show');
+            // Gọi AJAX lấy form Edit kèm theo ID
+            $.get('/Role/Edit/' + roleId, function (htmlResult) {
+                $('#modal-content-body').html(htmlResult);
+                initCheckboxLogic();
+            });
         }
 
         function initCheckboxLogic() {

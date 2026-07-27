@@ -1,0 +1,378 @@
+@using Application.Dtos.TeacherEvaluation
+@model Application.Common.PaginatedList<TeacherOverviewDto>
+
+@{
+    ViewData["Title"] = "Teacher Evaluations — EnglishLMS";
+    var stats = ViewBag.SystemStats as TeacherEvaluationStatsDto ?? new TeacherEvaluationStatsDto();
+    var filter = ViewBag.FilterRequest as TeacherEvaluationFilterRequest ?? new TeacherEvaluationFilterRequest();
+
+    int currentPage = filter != null && filter.PageNumber > 0 ? filter.PageNumber : 1;
+    int pageSize = filter != null && filter.PageSize > 0 ? filter.PageSize : 10;
+    int totalItems = Model != null ? Model.Total : 0;
+    int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+    if (totalPages < 1) totalPages = 1;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/manager-dashboard.css" asp-append-version="true">
+    <style>
+        .evaluation-page {
+            padding: 24px;
+            background-color: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+        .stat-icon.purple { background: #f3e8ff; color: #7e22ce; }
+        .stat-icon.amber { background: #fef3c7; color: #d97706; }
+        .stat-icon.emerald { background: #d1fae5; color: #059669; }
+        .stat-icon.blue { background: #dbeafe; color: #2563eb; }
+
+        .stat-val {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+        .stat-label {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 2px;
+        }
+
+        .filter-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+            margin-bottom: 24px;
+        }
+
+        .teacher-table-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+            overflow: hidden;
+        }
+
+        .table-custom {
+            width: 100%;
+            margin-bottom: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .table-custom th {
+            background: #f8fafc;
+            color: #475569;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 14px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .table-custom td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .table-custom tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .table-custom tbody tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        .teacher-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e2e8f0;
+        }
+
+        .rating-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .rating-badge.excellent { background: #d1fae5; color: #065f46; }
+        .rating-badge.good { background: #dbeafe; color: #1e40af; }
+        .rating-badge.average { background: #fef3c7; color: #92400e; }
+        .rating-badge.poor { background: #fee2e2; color: #991b1b; }
+        .rating-badge.none { background: #f1f5f9; color: #64748b; font-weight: 400; font-size: 12px; }
+
+        .btn-view-detail {
+            background-color: #4f46e5;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-view-detail:hover {
+            background-color: #4338ca;
+            color: white;
+            box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);
+        }
+    </style>
+}
+
+<main class="main-content evaluation-page">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">
+                Teacher Evaluations
+            </h2>
+            <p class="text-muted mb-0">Monitor teaching quality and course feedback for instructors across the system</p>
+        </div>
+    </div>
+
+    <!-- KPI Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon purple"><i class="fas fa-chalkboard-teacher"></i></div>
+                <div>
+                    <div class="stat-label">Total Teachers</div>
+                    <div class="stat-val">@stats.TotalTeachers</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-comments"></i></div>
+                <div>
+                    <div class="stat-label">Total Feedback Reviews</div>
+                    <div class="stat-val">@stats.TotalSystemReviews</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon amber"><i class="fas fa-star"></i></div>
+                <div>
+                    <div class="stat-label">System Average Rating</div>
+                    <div class="stat-val">@stats.SystemAverageRating.ToString("0.0") <span class="fs-6 text-muted">/ 5.0</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon emerald"><i class="fas fa-trophy"></i></div>
+                <div>
+                    <div class="stat-label">Top-Rated Teacher</div>
+                    <div class="stat-val fs-6 text-truncate" title="@stats.TopRatedTeacherName" style="max-width: 180px;">@stats.TopRatedTeacherName</div>
+                    <div class="small text-emerald fw-semibold">⭐ @stats.TopRatedTeacherRating.ToString("0.0") / 5.0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="filter-card">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label fw-semibold text-secondary small">Search Teacher</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" name="SearchTerm" value="@filter.SearchTerm" class="form-control border-start-0 ps-0" placeholder="Teacher name, email, expertise..." />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold text-secondary small">Min Rating Filter</label>
+                <select name="MinRating" class="form-select">
+                    <!option value="" @(filter.MinRating == null ? "selected" : "")>-- All Rating Levels --</!option>
+                    <!option value="4.5" @(filter.MinRating == 4.5 ? "selected" : "")>⭐ 4.5+ (Excellent)</!option>
+                    <!option value="4.0" @(filter.MinRating == 4.0 ? "selected" : "")>⭐ 4.0+ (Good)</!option>
+                    <!option value="3.0" @(filter.MinRating == 3.0 ? "selected" : "")>⭐ 3.0+ (Average)</!option>
+                    <!option value="1.0" @(filter.MinRating == 1.0 ? "selected" : "")>⭐ Needs Improvement (&lt; 3.0)</!option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold text-secondary small">Sort By</label>
+                <select name="SortBy" class="form-select">
+                    <!option value="rating_desc" @(filter.SortBy == "rating_desc" ? "selected" : "")>Rating: High to Low</!option>
+                    <!option value="rating_asc" @(filter.SortBy == "rating_asc" ? "selected" : "")>Rating: Low to High</!option>
+                    <!option value="reviews_desc" @(filter.SortBy == "reviews_desc" ? "selected" : "")>Most Reviews</!option>
+                    <!option value="courses_desc" @(filter.SortBy == "courses_desc" ? "selected" : "")>Most Courses</!option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                    <i class="fas fa-filter me-1"></i> Filter
+                </button>
+                <a href="@Url.Action("Index", "TeacherEvaluation")" class="btn btn-outline-secondary" title="Reset">
+                    <i class="fas fa-undo"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Table Card -->
+    <div class="teacher-table-card">
+        <div class="table-responsive">
+            <table class="table table-custom align-middle">
+                <thead>
+                    <tr>
+                        <th>Teacher</th>
+                        <th>Expertise</th>
+                        <th class="text-center">Total Courses</th>
+                        <th class="text-center">Total Reviews</th>
+                        <th class="text-center">Average Rating</th>
+                        <th>Rating Distribution</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Data == null || !Model.Data.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="fas fa-inbox fa-3x mb-3 opacity-50"></i>
+                                <p class="mb-0 fs-6">No matching teacher evaluation records found</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var teacher in Model.Data)
+                        {
+                            var avatarUrl = !string.IsNullOrEmpty(teacher.Avatar)
+                                ? teacher.Avatar
+                                : $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(teacher.TeacherName)}&background=6366f1&color=fff";
+
+                            string badgeClass = teacher.TotalReviews == 0 ? "none" :
+                                                teacher.AverageRating >= 4.5 ? "excellent" :
+                                                teacher.AverageRating >= 4.0 ? "good" :
+                                                teacher.AverageRating >= 3.0 ? "average" : "poor";
+
+                            int totalR = teacher.TotalReviews > 0 ? teacher.TotalReviews : 1;
+                            int p5 = (int)Math.Round((double)teacher.Star5Count / totalR * 100);
+                            int p4 = (int)Math.Round((double)teacher.Star4Count / totalR * 100);
+                            int p3 = (int)Math.Round((double)teacher.Star3Count / totalR * 100);
+                            int p2 = (int)Math.Round((double)teacher.Star2Count / totalR * 100);
+                            int p1 = (int)Math.Round((double)teacher.Star1Count / totalR * 100);
+
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="@avatarUrl" alt="@teacher.TeacherName" class="teacher-avatar" />
+                                        <div>
+                                            <div class="fw-bold text-dark">@teacher.TeacherName</div>
+                                            <div class="small text-muted">@teacher.Email</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        @(string.IsNullOrEmpty(teacher.Expertise) ? "EnglishLMS Instructor" : teacher.Expertise)
+                                    </span>
+                                </td>
+                                <td class="text-center fw-semibold">@teacher.TotalCourses</td>
+                                <td class="text-center fw-semibold">@teacher.TotalReviews</td>
+                                <td class="text-center">
+                                    @if (teacher.TotalReviews > 0)
+                                    {
+                                        <span class="rating-badge @badgeClass">
+                                            ⭐ @teacher.AverageRating.ToString("0.0")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="rating-badge none">No reviews</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div style="min-width: 140px;">
+                                        <div class="progress mb-1" style="height: 6px; background-color: #e2e8f0;" title="5★: @teacher.Star5Count, 4★: @teacher.Star4Count, 3★: @teacher.Star3Count, 2★: @teacher.Star2Count, 1★: @teacher.Star1Count">
+                                            <div class="progress-bar bg-success" style="width: @p5%"></div>
+                                            <div class="progress-bar bg-info" style="width: @p4%"></div>
+                                            <div class="progress-bar bg-warning" style="width: @p3%"></div>
+                                            <div class="progress-bar bg-orange" style="width: @p2%; background-color: #f97316;"></div>
+                                            <div class="progress-bar bg-danger" style="width: @p1%"></div>
+                                        </div>
+                                        <div class="d-flex justify-content-between text-muted" style="font-size: 11px;">
+                                            <span>5★ (@teacher.Star5Count)</span>
+                                            <span>1-3★ (@(teacher.Star3Count + teacher.Star2Count + teacher.Star1Count))</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-end">
+                                    <a href="@Url.Action("Detail", "TeacherEvaluation", new { id = teacher.TeacherId })" class="btn-view-detail">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages > 1)
+        {
+            <div class="d-flex justify-content-between align-items-center p-3 border-top bg-light">
+                <div class="text-muted small">
+                    Showing <strong>@Model.Data.Count</strong> of <strong>@totalItems</strong> teachers
+                </div>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "TeacherEvaluation", new { SearchTerm = filter.SearchTerm, MinRating = filter.MinRating, SortBy = filter.SortBy, PageNumber = currentPage - 1 })">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        @for (int p = 1; p <= totalPages; p++)
+                        {
+                            <li class="page-item @(p == currentPage ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", "TeacherEvaluation", new { SearchTerm = filter.SearchTerm, MinRating = filter.MinRating, SortBy = filter.SortBy, PageNumber = p })">@p</a>
+                            </li>
+                        }
+                        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "TeacherEvaluation", new { SearchTerm = filter.SearchTerm, MinRating = filter.MinRating, SortBy = filter.SortBy, PageNumber = currentPage + 1 })">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+</main>

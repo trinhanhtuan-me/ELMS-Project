@@ -1,5 +1,6 @@
 using System.Reflection;
 using Application.Common.Cache;
+using Application.Interfaces;
 using Application.UseCases;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,6 +52,7 @@ namespace Application
             services.AddScoped<IParentProfileService, ParentProfileService>();
             services.AddScoped<IStudentProgressService, StudentProgressService>();
             services.AddScoped<ICatalogService, CatalogService>();
+            services.AddScoped<ITeacherEvaluationService, TeacherEvaluationService>();
             return services;
         }
     }

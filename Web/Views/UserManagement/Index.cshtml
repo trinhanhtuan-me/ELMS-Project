@@ -8,14 +8,21 @@
     // Calculate pagination dynamically
     int currentPage = int.TryParse(Context.Request.Query["PageNumber"].ToString(), out var p) && p > 0 ? p : 1;
     int pageSize = 10;
-    int totalItems = Model.Total;
+    int totalItems = Model != null ? Model.Total : 0;
     int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
     if (totalPages < 1) totalPages = 1;
     bool hasPreviousPage = currentPage > 1;
     bool hasNextPage = currentPage < totalPages;
 }
 
-<div class="container-fluid mt-4">
+@section Styles {
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/manager-dashboard.css" asp-append-version="true">
+}
+
+<main class="main-content">
+    <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="h4 text-dark mb-0 fw-bold">
             <i class="fa fa-users text-danger me-2"></i>Quản lý Người dùng
@@ -158,10 +165,11 @@
         </div>
     }
 </div>
+</main>
 
 <!-- Modal cập nhật người dùng -->
 <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content" id="modal-content-body">
             <div class="text-center p-5">
                 <div class="spinner-border text-danger" role="status"></div>

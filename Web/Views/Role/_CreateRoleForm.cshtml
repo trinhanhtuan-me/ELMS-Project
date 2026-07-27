@@ -1,4 +1,4 @@
-﻿@model Application.Dtos.Role.CreateRoleRequest
+@model Application.Dtos.Role.CreateRoleRequest
 
 <div class="modal-header">
     <h5 class="modal-title">Tạo mới Nhóm quyền</h5>
@@ -42,10 +42,10 @@
                     <div class="row">
                         @foreach (var func in category.Functions)
                         {
-                            <div class="col-md-3 mb-2">
+                            <div class="col-md-6 mb-2">
                                 <div class="form-check">
                                     <input class="form-check-input func-checkbox" type="checkbox" name="FunctionIds" value="@func.FunctionId" id="func_@func.FunctionId">
-                                    <label class="form-check-label" for="func_@func.FunctionId">@func.FunctionDescription</label>
+                                    <label class="form-check-label text-dark" for="func_@func.FunctionId">@func.FunctionDescription</label>
                                 </div>
                             </div>
                         }
